@@ -1,20 +1,19 @@
 package com.anshtya.weatherapp.data.remote
 
 import com.anshtya.weatherapp.BuildConfig
-import com.anshtya.weatherapp.data.remote.model.searchLocation.SearchLocation
-import com.anshtya.weatherapp.data.remote.model.currentWeather.WeatherResponse
+import com.anshtya.weatherapp.data.model.Weather
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WeatherApi {
 
-    @GET("/v1/search.json")
-    suspend fun searchLocation(
-        @Query("q")
-        q: String,
-        @Query("key")
-        key: String = BuildConfig.API_KEY
-    ): List<SearchLocation>
+//    @GET("/v1/search.json")
+//    suspend fun searchLocation(
+//        @Query("q")
+//        q: String,
+//        @Query("key")
+//        key: String = BuildConfig.API_KEY
+//    ): List<SearchLocation>
 
     @GET("/v1/current.json")
     suspend fun getCurrentWeather(
@@ -22,7 +21,7 @@ interface WeatherApi {
         q: String,
         @Query("key")
         key: String = BuildConfig.API_KEY
-    ): WeatherResponse
+    ): Weather
 
 //    @GET("/v1/forecast.json")
 //    suspend fun getWeatherForecast(

@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.data.remote.model.currentWeather
+package com.anshtya.weatherapp.data.model
 
 data class Location(
     val country: String,

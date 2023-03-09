@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.anshtya.weatherapp.ui.theme.WeatherAppTheme
+import com.anshtya.weatherapp.presentation.ui.theme.WeatherAppTheme
 
 @Composable
 fun SelectLocationScreen(modifier: Modifier = Modifier) {

@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.ui
+package com.anshtya.weatherapp.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
