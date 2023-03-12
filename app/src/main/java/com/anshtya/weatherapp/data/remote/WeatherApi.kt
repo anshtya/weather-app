@@ -1,8 +1,8 @@
 package com.anshtya.weatherapp.data.remote
 
 import com.anshtya.weatherapp.BuildConfig
-import com.anshtya.weatherapp.data.remote.dto.SearchLocationDto
 import com.anshtya.weatherapp.data.model.Weather
+import com.anshtya.weatherapp.data.remote.dto.SearchLocationDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

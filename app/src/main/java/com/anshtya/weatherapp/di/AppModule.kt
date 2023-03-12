@@ -50,7 +50,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchLocationRepositoryImpl(api: WeatherApi): SearchLocationRepositoryImpl {
+    fun provideSearchLocationRepository(api: WeatherApi): SearchLocationRepository {
         return SearchLocationRepositoryImpl(api)
     }
 
