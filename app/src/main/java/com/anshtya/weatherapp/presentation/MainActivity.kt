@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.anshtya.weatherapp.presentation.ui.screens.location.SelectLocationScreen
+import com.anshtya.weatherapp.presentation.ui.screens.weather.WeatherScreen
 import com.anshtya.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +23,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SelectLocationScreen()
+//                    SelectLocationScreen()
+                    WeatherScreen()
                 }
             }
         }

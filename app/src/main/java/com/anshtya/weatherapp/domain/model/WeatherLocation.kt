@@ -1,6 +1,6 @@
-package com.anshtya.weatherapp.data.model
+package com.anshtya.weatherapp.domain.model
 
-data class Location(
+data class WeatherLocation(
     val country: String,
     val localtime: String,
     val localtime_epoch: Int,

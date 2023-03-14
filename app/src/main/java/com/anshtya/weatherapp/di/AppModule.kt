@@ -6,8 +6,11 @@ import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.core.Constants.Companion.BASE_URL
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.repository.SearchLocationRepositoryImpl
+import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
 import com.anshtya.weatherapp.domain.repository.SearchLocationRepository
+import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.GetSearchLocationUseCase
+import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,7 +59,19 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
+        return WeatherRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
     fun provideSearchLocationUseCase(repository: SearchLocationRepository): GetSearchLocationUseCase {
         return GetSearchLocationUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherUseCase(repository: WeatherRepository): GetWeatherUseCase {
+        return GetWeatherUseCase(repository)
     }
 }

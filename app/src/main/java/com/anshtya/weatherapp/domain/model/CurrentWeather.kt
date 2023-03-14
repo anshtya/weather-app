@@ -1,8 +1,8 @@
-package com.anshtya.weatherapp.data.model
+package com.anshtya.weatherapp.domain.model
 
-data class Current(
+data class CurrentWeather(
     val cloud: Int,
-    val condition: Condition,
+    val condition: WeatherCondition,
     val feelslike_c: Double,
     val feelslike_f: Double,
     val humidity: Int,
