@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.domain.repository
 
-import com.anshtya.weatherapp.domain.model.SearchLocation
+import com.anshtya.weatherapp.data.remote.dto.SearchLocationDto
 
 interface SearchLocationRepository {
-    suspend fun getLocations(searchQuery: String): List<SearchLocation>
+    suspend fun getLocations(searchQuery: String): List<SearchLocationDto>
 }

@@ -10,7 +10,8 @@ class GetSearchLocationUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(searchQuery: String): Resource<SearchLocationResponse> {
         return try {
-            val list = searchLocationRepository.getLocations(searchQuery)
+            val list =
+                searchLocationRepository.getLocations(searchQuery).map { it.toSearchLocation() }
             Resource.Success(SearchLocationResponse(list))
         } catch (e: Exception) {
             Resource.Error(e.message)
