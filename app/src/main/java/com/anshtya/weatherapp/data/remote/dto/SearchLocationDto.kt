@@ -15,3 +15,17 @@ data class SearchLocationDto(
         return SearchLocation(name, region, country, url)
     }
 }
+
+//data class NetworkSearchLocation(
+////    val id: Int,
+//    val name: String,
+//    val region: String,
+//    val country: String,
+////    val lat: Double,
+////    val lon: Double,
+//    val url: String
+//) {
+////    fun toSearchLocation(): SearchLocation {
+////        return SearchLocation(name, region, country, url)
+////    }
+//}

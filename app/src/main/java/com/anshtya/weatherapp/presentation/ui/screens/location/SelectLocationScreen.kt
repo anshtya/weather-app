@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.core.Resource
+import com.anshtya.weatherapp.common.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.model.SearchLocationResponse
 import com.anshtya.weatherapp.presentation.ui.theme.Typography

@@ -2,7 +2,8 @@ package com.anshtya.weatherapp.presentation.ui.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.Resource
+import com.anshtya.weatherapp.common.Resource
+import com.anshtya.weatherapp.data.local.WeatherDao
 import com.anshtya.weatherapp.domain.model.WeatherResponse
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.core
+package com.anshtya.weatherapp.common
 
 sealed class Resource<out T> {
     object Loading : Resource<Nothing>()

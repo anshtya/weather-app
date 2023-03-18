@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.useCase
 
-import com.anshtya.weatherapp.core.Resource
+import com.anshtya.weatherapp.common.Resource
 import com.anshtya.weatherapp.domain.model.WeatherResponse
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow

@@ -1,5 +1,6 @@
 package com.anshtya.weatherapp.data.remote.dto
 
+import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
 import com.anshtya.weatherapp.domain.model.WeatherResponse
 
 data class WeatherResponseDto(
@@ -12,4 +13,5 @@ data class WeatherResponseDto(
             location = location.toWeatherLocation()
         )
     }
+    fun toWeather() = current.toWeather()
 }

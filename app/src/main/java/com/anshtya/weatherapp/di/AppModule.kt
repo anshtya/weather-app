@@ -3,7 +3,8 @@ package com.anshtya.weatherapp.di
 import android.content.Context
 import androidx.room.Room
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.core.Constants.Companion.BASE_URL
+import com.anshtya.weatherapp.common.Constants.Companion.BASE_URL
+import com.anshtya.weatherapp.data.local.WeatherDao
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.repository.SearchLocationRepositoryImpl
 import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
@@ -42,14 +43,17 @@ object AppModule {
             .create(WeatherApi::class.java)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideWeatherDatabase(@ApplicationContext app: Context) =
-//        Room.databaseBuilder(app, WeatherDatabase::class.java, "weather.db").build()
-//
-//    @Provides
-//    @Singleton
-//    fun provideWeatherDao(db: WeatherDatabase) = db.getWeatherDao()
+    @Provides
+    @Singleton
+    fun provideWeatherDatabase(@ApplicationContext app: Context): WeatherDatabase {
+        return Room.databaseBuilder(app, WeatherDatabase::class.java, "weather.db").build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherDao(db: WeatherDatabase): WeatherDao {
+        return db.getWeatherDao()
+    }
 
     @Provides
     @Singleton
@@ -59,8 +63,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
-        return WeatherRepositoryImpl(api)
+    fun provideWeatherRepository(api: WeatherApi, dao: WeatherDao): WeatherRepository {
+        return WeatherRepositoryImpl(api, dao)
     }
 
     @Provides

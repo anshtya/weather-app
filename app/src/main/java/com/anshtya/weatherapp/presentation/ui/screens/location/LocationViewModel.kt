@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.ui.screens.location
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.Resource
+import com.anshtya.weatherapp.common.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocationResponse
 import com.anshtya.weatherapp.domain.useCase.GetSearchLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
