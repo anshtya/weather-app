@@ -2,14 +2,14 @@ package com.anshtya.weatherapp.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.anshtya.weatherapp.data.remote.dto.WeatherConditionDto
+import com.anshtya.weatherapp.core.model.WeatherCondition
 
 @Entity (tableName = "current_weather")
 data class CurrentWeatherEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
     val cloud: Int,
-    val condition: WeatherConditionDto,
+    val condition: WeatherCondition,
     val feelslike_c: Double,
     val feelslike_f: Double,
     val humidity: Int,

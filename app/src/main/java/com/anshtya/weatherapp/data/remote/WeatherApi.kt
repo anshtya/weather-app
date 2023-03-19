@@ -1,8 +1,8 @@
 package com.anshtya.weatherapp.data.remote
 
 import com.anshtya.weatherapp.BuildConfig
-import com.anshtya.weatherapp.data.remote.dto.WeatherResponseDto
-import com.anshtya.weatherapp.data.remote.dto.SearchLocationDto
+import com.anshtya.weatherapp.data.remote.model.NetworkSearchLocation
+import com.anshtya.weatherapp.data.remote.model.NetworkWeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,7 +14,7 @@ interface WeatherApi {
         q: String,
         @Query("key")
         key: String = BuildConfig.API_KEY
-    ): List<SearchLocationDto>
+    ): List<NetworkSearchLocation>
 
     @GET("/v1/current.json")
     suspend fun getCurrentWeather(
@@ -22,7 +22,7 @@ interface WeatherApi {
         q: String = "alwar-rajasthan-india",
         @Query("key")
         key: String = BuildConfig.API_KEY
-    ): WeatherResponseDto
+    ): NetworkWeatherResponse
 
 //    @GET("/v1/forecast.json")
 //    suspend fun getWeatherForecast(

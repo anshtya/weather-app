@@ -1,9 +1,8 @@
-package com.anshtya.weatherapp.domain.model
+package com.anshtya.weatherapp.data.remote.model
 
 import com.anshtya.weatherapp.core.model.WeatherCondition
 
-data class CurrentWeather(
-    val id: String,
+data class NetworkCurrentWeather(
     val cloud: Int,
     val condition: WeatherCondition,
     val feelslike_c: Double,

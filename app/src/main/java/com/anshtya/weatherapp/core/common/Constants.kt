@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.common
+package com.anshtya.weatherapp.core.common
 
 class Constants {
 

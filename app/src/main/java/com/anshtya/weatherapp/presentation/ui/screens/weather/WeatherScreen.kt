@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.anshtya.weatherapp.common.Resource
+import com.anshtya.weatherapp.core.common.Resource
 
 @Composable
 fun WeatherScreen(
@@ -31,7 +31,7 @@ fun WeatherScreen(
         when (w) {
             is Resource.Success -> {
                 Text(
-                    text = w.data.current.condition.text,
+                    text = w.data.condition.text,
 //            modifier = Modifier.align(CenterHorizontally)
                 )
             }

@@ -1,10 +1,10 @@
-package com.anshtya.weatherapp.data.remote.dto
+package com.anshtya.weatherapp.data.local.dto
 
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
-import com.anshtya.weatherapp.data.remote.model.NetworkCurrentWeather
+import com.anshtya.weatherapp.domain.model.CurrentWeather
 
-fun NetworkCurrentWeather.toEntity(id: String): CurrentWeatherEntity {
-    return CurrentWeatherEntity(
+fun CurrentWeatherEntity.toModel(): CurrentWeather {
+    return CurrentWeather(
         id = id,
         cloud = cloud,
         condition = condition,

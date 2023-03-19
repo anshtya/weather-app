@@ -1,7 +1,6 @@
-package com.anshtya.weatherapp.domain.model
+package com.anshtya.weatherapp.core.model
 
 data class WeatherCondition(
-//    val code: Int,
     val icon: String,
     val text: String
 )

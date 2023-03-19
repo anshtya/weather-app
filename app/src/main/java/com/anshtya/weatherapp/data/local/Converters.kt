@@ -1,19 +1,19 @@
 package com.anshtya.weatherapp.data.local
 
 import androidx.room.TypeConverter
-import com.anshtya.weatherapp.data.remote.dto.WeatherConditionDto
+import com.anshtya.weatherapp.core.model.WeatherCondition
 
 class Converters {
 
     @TypeConverter
-    fun fromWeatherCondition(weatherCondition: WeatherConditionDto): String {
+    fun fromWeatherCondition(weatherCondition: WeatherCondition): String {
         return "${weatherCondition.icon.removePrefix("//")}, ${weatherCondition.text}"
     }
 
     @TypeConverter
-    fun fromWeatherConditionText(weatherCondition: String): WeatherConditionDto {
+    fun fromWeatherConditionText(weatherCondition: String): WeatherCondition {
         val properties = weatherCondition.split(",")
-        return WeatherConditionDto(icon = properties[0], text = properties[1])
+        return WeatherCondition(icon = properties[0], text = properties[1])
     }
 
 }

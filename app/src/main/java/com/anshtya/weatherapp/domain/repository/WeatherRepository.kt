@@ -1,8 +1,7 @@
 package com.anshtya.weatherapp.domain.repository
 
-import com.anshtya.weatherapp.data.remote.dto.WeatherResponseDto
+import com.anshtya.weatherapp.domain.model.CurrentWeather
 
 interface WeatherRepository {
-
-    suspend fun getWeatherConditions(): WeatherResponseDto
+    suspend fun getWeatherConditions(): CurrentWeather
 }

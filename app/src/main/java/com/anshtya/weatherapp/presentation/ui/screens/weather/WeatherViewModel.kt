@@ -2,9 +2,8 @@ package com.anshtya.weatherapp.presentation.ui.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.common.Resource
-import com.anshtya.weatherapp.data.local.WeatherDao
-import com.anshtya.weatherapp.domain.model.WeatherResponse
+import com.anshtya.weatherapp.core.common.Resource
+import com.anshtya.weatherapp.domain.model.CurrentWeather
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -21,7 +20,7 @@ class WeatherViewModel @Inject constructor(
 //        initialValue = Resource.Loading
 //    )
 
-    private val _weather = MutableStateFlow<Resource<WeatherResponse>>(Resource.Loading)
+    private val _weather = MutableStateFlow<Resource<CurrentWeather>>(Resource.Loading)
     val weather = _weather.asStateFlow()
 
     init {
