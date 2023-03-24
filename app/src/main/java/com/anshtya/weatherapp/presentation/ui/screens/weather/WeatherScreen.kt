@@ -18,25 +18,33 @@ fun WeatherScreen(
     modifier: Modifier = Modifier,
     viewModel: WeatherViewModel = viewModel()
 ) {
-    val weather by viewModel.weather.collectAsStateWithLifecycle()
-    val w = weather
-    Column(
-        modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = CenterHorizontally
-    ) {
-        Button(onClick = {}) {
-            Text("hi")
-        }
-        when (w) {
-            is Resource.Success -> {
-                Text(
-                    text = w.data.condition.text,
-//            modifier = Modifier.align(CenterHorizontally)
-                )
-            }
-            else -> {}
-        }
 
-    }
 }
+
+//@Composable
+//fun WeatherScreen(
+//    modifier: Modifier = Modifier,
+//    viewModel: WeatherViewModel = viewModel()
+//) {
+//    val weather by viewModel.weather.collectAsStateWithLifecycle()
+//    val w = weather
+//    Column(
+//        modifier.fillMaxSize(),
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = CenterHorizontally
+//    ) {
+//        Button(onClick = {}) {
+//            Text("hi")
+//        }
+//        when (w) {
+//            is Resource.Success -> {
+//                Text(
+//                    text = w.data.condition.text,
+////            modifier = Modifier.align(CenterHorizontally)
+//                )
+//            }
+//            else -> {}
+//        }
+//
+//    }
+//}

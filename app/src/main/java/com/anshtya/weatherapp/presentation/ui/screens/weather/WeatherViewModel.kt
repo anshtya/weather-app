@@ -20,14 +20,14 @@ class WeatherViewModel @Inject constructor(
 //        initialValue = Resource.Loading
 //    )
 
-    private val _weather = MutableStateFlow<Resource<CurrentWeather>>(Resource.Loading)
-    val weather = _weather.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            getWeatherUseCase().collect {
-                _weather.value = it
-            }
-        }
-    }
+//    private val _weather = MutableStateFlow<Resource<CurrentWeather>>(Resource.Loading)
+//    val weather = _weather.asStateFlow()
+//
+//    init {
+//        viewModelScope.launch {
+//            getWeatherUseCase().collect {
+//                _weather.value = it
+//            }
+//        }
+//    }
 }
