@@ -1,10 +1,13 @@
 package com.anshtya.weatherapp.presentation.screens.location
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,13 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
@@ -32,7 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SelectLocationScreen(
     modifier: Modifier = Modifier,
-    viewModel: LocationViewModel = viewModel()
+    viewModel: LocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -75,14 +79,14 @@ fun SearchBar(
             if (searchText.isNotEmpty() && id != searchText) {
                 id = searchText
                 onSubmit(id)
-//                keyboardController?.hide()
             }
         }
         Icon(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = null,
             modifier = Modifier
-                .size(30.dp)
+                .size(35.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .clickable(enabled = true) {}
         )
         Spacer(modifier = Modifier.size(10.dp))

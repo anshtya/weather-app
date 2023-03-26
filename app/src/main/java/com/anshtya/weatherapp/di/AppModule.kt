@@ -1,16 +1,22 @@
 package com.anshtya.weatherapp.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.core.common.Constants.Companion.BASE_URL
+import com.anshtya.weatherapp.core.common.Constants.Companion.USER_PREFERENCES
 import com.anshtya.weatherapp.data.local.dao.CurrentWeatherDao
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
-import com.anshtya.weatherapp.data.repository.SearchLocationRepositoryImpl
+import com.anshtya.weatherapp.data.repository.LocationRepositoryImpl
 import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
-import com.anshtya.weatherapp.domain.repository.SearchLocationRepository
+import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
+import com.anshtya.weatherapp.domain.useCase.GetSavedLocationsUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSearchLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.Module
@@ -27,7 +33,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     @Singleton
     fun provideApi(): WeatherApi {
@@ -64,8 +69,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchLocationRepository(api: WeatherApi): SearchLocationRepository {
-        return SearchLocationRepositoryImpl(api)
+    fun provideLocationRepository(api: WeatherApi, dao: WeatherLocationDao): LocationRepository {
+        return LocationRepositoryImpl(api, dao)
     }
 
     @Provides
@@ -80,13 +85,27 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchLocationUseCase(repository: SearchLocationRepository): GetSearchLocationUseCase {
+    fun provideSearchLocationUseCase(repository: LocationRepository): GetSearchLocationUseCase {
         return GetSearchLocationUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavedLocationUseCase(repository: LocationRepository): GetSavedLocationsUseCase {
+        return GetSavedLocationsUseCase(repository)
     }
 
     @Provides
     @Singleton
     fun provideWeatherUseCase(repository: WeatherRepository): GetWeatherUseCase {
         return GetWeatherUseCase(repository)
+    }
+
+    @Singleton
+    @Provides
+    fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = { appContext.preferencesDataStoreFile(USER_PREFERENCES) }
+        )
     }
 }
