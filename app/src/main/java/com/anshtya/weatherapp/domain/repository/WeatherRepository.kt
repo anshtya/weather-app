@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.domain.repository
 
-import com.anshtya.weatherapp.domain.model.CurrentWeather
+import com.anshtya.weatherapp.domain.model.Weather
 
 interface WeatherRepository {
-    suspend fun getWeatherConditions(): CurrentWeather
+    suspend fun getWeatherConditions(): Weather
 }

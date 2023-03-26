@@ -27,20 +27,21 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WeatherApp() {
     WeatherAppTheme {
-        val navController = rememberNavController()
-        NavHost(
-            navController = navController,
-            startDestination = Destinations.selectLocationScreen
-        ) {
-            composable(Destinations.weatherScreen) {
-                WeatherScreen()
-            }
-            composable(Destinations.selectLocationScreen) {
-                SelectLocationScreen()
-            }
-            composable(Destinations.savedLocationsScreen) {
-                SavedLocationScreen()
-            }
-        }
+        WeatherScreen()
+//        val navController = rememberNavController()
+//        NavHost(
+//            navController = navController,
+//            startDestination = Destinations.selectLocationScreen
+//        ) {
+//            composable(Destinations.weatherScreen) {
+//                WeatherScreen()
+//            }
+//            composable(Destinations.selectLocationScreen) {
+//                SelectLocationScreen()
+//            }
+//            composable(Destinations.savedLocationsScreen) {
+//                SavedLocationScreen()
+//            }
+//        }
     }
 }

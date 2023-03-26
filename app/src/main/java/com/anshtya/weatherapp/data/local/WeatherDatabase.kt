@@ -3,17 +3,14 @@ package com.anshtya.weatherapp.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.anshtya.weatherapp.data.local.dao.CurrentWeatherDao
-import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
-import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
-import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
+import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.entity.WeatherEntity
 
 @Database(
-    entities = [CurrentWeatherEntity::class, WeatherLocationEntity::class],
+    entities = [WeatherEntity::class],
     version = 1
 )
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase: RoomDatabase() {
-    abstract fun getCurrentWeatherDao(): CurrentWeatherDao
-    abstract fun getWeatherLocationDao(): WeatherLocationDao
+    abstract fun getCurrentWeatherDao(): WeatherDao
 }

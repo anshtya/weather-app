@@ -5,6 +5,5 @@ data class NetworkWeatherLocation(
     val localtime: String,
     val localtime_epoch: Int,
     val name: String,
-    val region: String,
-    val tz_id: String
+    val region: String
 )

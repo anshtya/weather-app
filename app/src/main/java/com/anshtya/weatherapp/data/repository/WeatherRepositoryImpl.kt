@@ -1,27 +1,24 @@
 package com.anshtya.weatherapp.data.repository
 
-import com.anshtya.weatherapp.data.local.dao.CurrentWeatherDao
-import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
-import com.anshtya.weatherapp.data.local.dto.toModel
+import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.dto.toDomainModel
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.remote.dto.toEntity
-import com.anshtya.weatherapp.domain.model.CurrentWeather
+import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
-    private val currentWeatherDao: CurrentWeatherDao,
-    private val weatherLocationDao: WeatherLocationDao
-): WeatherRepository {
-    override suspend fun getWeatherConditions(): CurrentWeather {
+    private val currentWeatherDao: WeatherDao
+) : WeatherRepository {
+    override suspend fun getWeatherConditions(): Weather {
         val response = weatherApi.getCurrentWeather()
         val currentWeather = response.current
         val location = response.location
-        val id = "${location.name}-${location.region}"
+        val id = "${location.name}-${location.region}-${location.country}"
 
-        weatherLocationDao.insertWeatherLocation(location.toEntity(id))
-        currentWeatherDao.insertCurrentWeather(currentWeather.toEntity(id))
-        return currentWeatherDao.getCurrentWeather().toModel()
+        currentWeatherDao.insertCurrentWeather(response.toEntity(id, currentWeather, location))
+        return currentWeatherDao.getCurrentWeather().toDomainModel()
     }
 }

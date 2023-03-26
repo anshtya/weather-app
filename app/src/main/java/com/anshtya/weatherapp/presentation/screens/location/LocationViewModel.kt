@@ -16,11 +16,11 @@ class LocationViewModel @Inject constructor(
     getSavedLocationsUseCase: GetSavedLocationsUseCase
 ) : ViewModel() {
 
-    val savedLocations = getSavedLocationsUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = emptyList()
-    )
+//    val savedLocations = getSavedLocationsUseCase().stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.WhileSubscribed(5000L),
+//        initialValue = emptyList()
+//    )
 
     private val _uiState = MutableStateFlow(SearchLocationState())
     val uiState = _uiState.asStateFlow()

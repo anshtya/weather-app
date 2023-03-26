@@ -9,9 +9,8 @@ import androidx.room.Room
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.core.common.Constants.Companion.BASE_URL
 import com.anshtya.weatherapp.core.common.Constants.Companion.USER_PREFERENCES
-import com.anshtya.weatherapp.data.local.dao.CurrentWeatherDao
+import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.WeatherDatabase
-import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.repository.LocationRepositoryImpl
 import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
 import com.anshtya.weatherapp.domain.repository.LocationRepository
@@ -57,19 +56,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCurrentWeatherDao(db: WeatherDatabase): CurrentWeatherDao {
+    fun provideCurrentWeatherDao(db: WeatherDatabase): WeatherDao {
         return db.getCurrentWeatherDao()
     }
 
     @Provides
     @Singleton
-    fun provideWeatherLocationDao(db: WeatherDatabase): WeatherLocationDao {
-        return db.getWeatherLocationDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideLocationRepository(api: WeatherApi, dao: WeatherLocationDao): LocationRepository {
+    fun provideLocationRepository(api: WeatherApi, dao: WeatherDao): LocationRepository {
         return LocationRepositoryImpl(api, dao)
     }
 
@@ -77,10 +70,9 @@ object AppModule {
     @Singleton
     fun provideWeatherRepository(
         api: WeatherApi,
-        currentWeatherDao: CurrentWeatherDao,
-        weatherLocationDao: WeatherLocationDao
+        currentWeatherDao: WeatherDao
     ): WeatherRepository {
-        return WeatherRepositoryImpl(api, currentWeatherDao, weatherLocationDao)
+        return WeatherRepositoryImpl(api, currentWeatherDao)
     }
 
     @Provides

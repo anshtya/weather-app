@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.anshtya.weatherapp.core.model.WeatherCondition
 
-@Entity (tableName = "current_weather")
-data class CurrentWeatherEntity(
+@Entity(tableName = "weather")
+data class WeatherEntity(
     @PrimaryKey
     val id: String,
     val cloud: Int,
@@ -16,7 +16,6 @@ data class CurrentWeatherEntity(
     val is_day: Int,
     val last_updated: String,
     val last_updated_epoch: Int,
-    val precip_in: Double,
     val precip_mm: Double,
     val temp_c: Double,
     val temp_f: Double,
@@ -25,5 +24,10 @@ data class CurrentWeatherEntity(
     val vis_miles: Double,
     val wind_dir: String,
     val wind_kph: Double,
-    val wind_mph: Double
+    val wind_mph: Double,
+    val country: String,
+    val localtime: String,
+    val localtime_epoch: Int,
+    val name: String,
+    val region: String
 )

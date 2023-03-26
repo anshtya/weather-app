@@ -15,14 +15,14 @@ fun SavedLocationScreen(
     modifier: Modifier = Modifier,
     viewModel: LocationViewModel = hiltViewModel()
 ) {
-    val savedLocations by viewModel.savedLocations.collectAsStateWithLifecycle()
+//    val savedLocations by viewModel.savedLocations.collectAsStateWithLifecycle()
 
-    Column(modifier) {
-        for (location in savedLocations) {
-            Text(
-                text = location.name,
-                modifier = Modifier.padding(vertical = 10.dp)
-            )
-        }
-    }
+//    Column(modifier) {
+//        for (location in savedLocations) {
+//            Text(
+//                text = location.name,
+//                modifier = Modifier.padding(vertical = 10.dp)
+//            )
+//        }
+//    }
 }
