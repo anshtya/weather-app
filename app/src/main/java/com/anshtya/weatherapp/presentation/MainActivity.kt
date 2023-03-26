@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import com.anshtya.weatherapp.presentation.ui.screens.location.SelectLocationScreen
+import com.anshtya.weatherapp.presentation.screens.location.SelectLocationScreen
 import com.anshtya.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

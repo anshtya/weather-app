@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.presentation.ui.screens.location
+package com.anshtya.weatherapp.presentation.screens.location
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable

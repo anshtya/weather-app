@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.presentation.ui.screens.weather
+package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
