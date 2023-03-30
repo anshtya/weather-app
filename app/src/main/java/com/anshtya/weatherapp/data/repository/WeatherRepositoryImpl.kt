@@ -10,15 +10,19 @@ import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
-    private val currentWeatherDao: WeatherDao
+    private val weatherDao: WeatherDao
 ) : WeatherRepository {
-    override suspend fun getWeatherConditions(): Weather {
-        val response = weatherApi.getCurrentWeather()
+    override suspend fun getWeatherCondition(locationId: String): Weather {
+        val response = weatherApi.getCurrentWeather(locationId)
         val currentWeather = response.current
         val location = response.location
-        val id = "${location.name}-${location.region}-${location.country}"
+        val entity = response.toEntity(locationId, currentWeather, location)
 
-        currentWeatherDao.insertCurrentWeather(response.toEntity(id, currentWeather, location))
-        return currentWeatherDao.getCurrentWeather().toDomainModel()
+        if (weatherDao.getWeatherById(locationId) != null) {
+            weatherDao.updateCurrentWeather(entity)
+        } else {
+            weatherDao.insertCurrentWeather(entity)
+        }
+        return weatherDao.getWeatherById(locationId)!!.toDomainModel()
     }
 }

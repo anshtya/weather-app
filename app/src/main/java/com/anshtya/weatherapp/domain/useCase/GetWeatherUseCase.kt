@@ -9,14 +9,12 @@ import javax.inject.Inject
 class GetWeatherUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) {
-    operator fun invoke(): Flow<Resource<Weather>> {
-        return flow {
-            try {
-                val weather = weatherRepository.getWeatherConditions()
-                emit(Resource.Success(weather))
-            } catch (e: Exception) {
-                emit(Resource.Error(e.message))
-            }
+    operator fun invoke(locationId: String): Flow<Resource<Weather>> = flow {
+        try {
+            val weather = weatherRepository.getWeatherCondition(locationId)
+            emit(Resource.Success(weather))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message))
         }
     }
 }

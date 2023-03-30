@@ -19,7 +19,7 @@ interface WeatherApi {
     @GET("/v1/current.json")
     suspend fun getCurrentWeather(
         @Query("q")
-        q: String = "alwar-rajasthan-india",
+        q: String,
         @Query("key")
         key: String = BuildConfig.API_KEY
     ): NetworkWeatherResponse

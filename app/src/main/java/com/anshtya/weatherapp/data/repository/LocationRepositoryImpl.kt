@@ -1,8 +1,10 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.dto.toDomainModel
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.remote.dto.toSearchLocation
+import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,9 +19,8 @@ class LocationRepositoryImpl @Inject constructor(
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
     }
 
-//    override fun savedLocations(): Flow<List<WeatherLocation>> {
-//        return weatherDao.getWeatherLocations().map { locationList ->
-//            locationList.map { it.toDomainModel() }
-//        }
-//    }
+    override fun getSavedLocations(): Flow<List<SavedLocation>> {
+        return weatherDao.getSavedWeatherLocations()
+            .map { it.map { savedLocation -> savedLocation.toDomainModel() } }
+    }
 }
