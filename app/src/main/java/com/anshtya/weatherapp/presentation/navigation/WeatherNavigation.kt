@@ -40,7 +40,7 @@ fun WeatherNavigation(
             SelectLocationScreen(
                 uiState = uiState,
                 onBackClick = {
-                    if (navController.previousBackStackEntry?.destination?.route != SelectLocation.route) {
+                    if (navController.previousBackStackEntry != null) {
                         navController.popBackStack()
                     } else {
                         context.finish()
