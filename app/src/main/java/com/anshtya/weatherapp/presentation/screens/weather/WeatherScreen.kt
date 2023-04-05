@@ -9,42 +9,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anshtya.weatherapp.core.common.Resource
-
-//@Composable
-//fun WeatherScreen(
-//    modifier: Modifier = Modifier,
-//    viewModel: WeatherViewModel = viewModel()
-//) {
-//
-//}
 
 @Composable
 fun WeatherScreen(
+    locationUrl: String?,
     modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = viewModel()
+    viewModel: WeatherViewModel = hiltViewModel()
 ) {
-    val weather by viewModel.weather.collectAsStateWithLifecycle()
-    val w = weather
+//    val weather by viewModel.weather.collectAsStateWithLifecycle()
+//    val w = weather
     Column(
         modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally
     ) {
-        Button(onClick = {}) {
-            Text("hi")
-        }
-        when (w) {
-            is Resource.Success -> {
-                Text(
-                    text = w.data.temp_c.toString(),
-//            modifier = Modifier.align(CenterHorizontally)
-                )
+        locationUrl?.let { locationUrl ->
+            Button(onClick = {}) {
+                Text(locationUrl)
             }
-            else -> {}
         }
+//        when (w) {
+//            is Resource.Success -> {
+//                Text(
+//                    text = w.data.last_updated,
+////            modifier = Modifier.align(CenterHorizontally)
+//                )
+//            }
+//            else -> {}
+//        }
 
     }
 }

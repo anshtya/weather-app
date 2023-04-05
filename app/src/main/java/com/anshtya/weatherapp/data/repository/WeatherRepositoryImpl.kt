@@ -25,4 +25,8 @@ class WeatherRepositoryImpl @Inject constructor(
         }
         return weatherDao.getWeatherById(locationId)!!.toDomainModel()
     }
+
+    override suspend fun getSavedWeatherCondition(locationId: String): Weather {
+        return weatherDao.getWeatherById(locationId)!!.toDomainModel()
+    }
 }

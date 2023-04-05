@@ -22,8 +22,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
@@ -31,11 +29,13 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SelectLocationScreen(
+    uiState: SearchLocationState,
+    onBackClick: () -> Unit,
+    onTextChange: (String) -> Unit,
+    onSubmit: (String) -> Unit,
+    onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LocationViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     Surface(
         color = MaterialTheme.colorScheme.background,
         modifier = modifier.fillMaxSize()
@@ -44,12 +44,14 @@ fun SelectLocationScreen(
             Spacer(Modifier.height(10.dp))
             SearchBar(
                 searchText = uiState.searchText,
-                onTextChange = { text -> viewModel.onSearchTextChange(text) },
-                onSubmit = { text -> viewModel.onSubmitSearch(text) }
+                onBackClick = onBackClick,
+                onTextChange = onTextChange,
+                onSubmit = onSubmit
             )
             Spacer(Modifier.height(10.dp))
             LocationList(
-                uiState = uiState
+                uiState = uiState,
+                onLocationClick = onLocationClick
             )
         }
     }
@@ -58,9 +60,10 @@ fun SelectLocationScreen(
 @Composable
 fun SearchBar(
     searchText: String,
-    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
     onTextChange: (String) -> Unit,
-    onSubmit: (String) -> Unit
+    onSubmit: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     Row(
@@ -68,23 +71,19 @@ fun SearchBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         var id by rememberSaveable { mutableStateOf(searchText) }
-        LaunchedEffect(
-            key1 = searchText
-        ) {
+        LaunchedEffect(searchText) {
             delay(700L)
             if (searchText.isNotEmpty() && id != searchText) {
                 id = searchText
                 onSubmit(id)
             }
         }
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            modifier = Modifier
-                .size(35.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .clickable(enabled = true) {}
-        )
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier.size(35.dp)
+        ) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }
         Spacer(modifier = Modifier.size(10.dp))
         TextField(
             value = searchText,
@@ -109,6 +108,7 @@ fun SearchBar(
 @Composable
 fun LocationList(
     uiState: SearchLocationState,
+    onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier.fillMaxSize()) {
@@ -133,7 +133,10 @@ fun LocationList(
                         modifier = Modifier.clip(RoundedCornerShape(20.dp))
                     ) {
                         items(items = locations) {
-                            Location(location = it)
+                            Location(
+                                location = it,
+                                modifier = Modifier.clickable { onLocationClick(it.url) }
+                            )
                         }
                     }
                 }
@@ -152,9 +155,9 @@ fun Location(
 ) {
     Column(
         modifier = modifier
-            .height(70.dp)
+            .height(IntrinsicSize.Max)
             .fillMaxWidth()
-            .clickable(enabled = true) {},
+            .padding(horizontal = 5.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Text(

@@ -3,8 +3,7 @@ package com.anshtya.weatherapp.presentation.screens.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.core.common.Resource
-import com.anshtya.weatherapp.domain.useCase.GetSavedLocationsUseCase
-import com.anshtya.weatherapp.domain.useCase.GetSearchLocationUseCase
+import com.anshtya.weatherapp.domain.useCase.GetLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,15 +11,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LocationViewModel @Inject constructor(
-    private val getSearchLocationUseCase: GetSearchLocationUseCase,
-    getSavedLocationsUseCase: GetSavedLocationsUseCase
+    private val getLocationUseCase: GetLocationUseCase
 ) : ViewModel() {
 
-//    val savedLocations = getSavedLocationsUseCase().stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5000L),
-//        initialValue = emptyList()
-//    )
+    val savedLocations = getLocationUseCase.getSavedLocations().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = emptyList()
+    )
 
     private val _uiState = MutableStateFlow(SearchLocationState())
     val uiState = _uiState.asStateFlow()
@@ -41,7 +39,7 @@ class LocationViewModel @Inject constructor(
     fun onSubmitSearch(text: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            when (val response = getSearchLocationUseCase(text)) {
+            when (val response = getLocationUseCase.getLocations(text)) {
                 is Resource.Success -> {
                     _uiState.update { it.copy(searchLocations = response.data.list) }
                 }

@@ -23,4 +23,8 @@ class LocationRepositoryImpl @Inject constructor(
         return weatherDao.getSavedWeatherLocations()
             .map { it.map { savedLocation -> savedLocation.toDomainModel() } }
     }
+
+    override suspend fun deleteWeatherLocation(locationId: String) {
+        weatherDao.deleteWeatherLocation(locationId)
+    }
 }

@@ -19,4 +19,7 @@ interface WeatherDao {
 
    @Update
    suspend fun updateCurrentWeather(currentWeather: WeatherEntity)
+
+   @Query("DELETE FROM weather where id =:locationId")
+   suspend fun deleteWeatherLocation(locationId: String)
 }

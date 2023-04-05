@@ -15,8 +15,7 @@ import com.anshtya.weatherapp.data.repository.LocationRepositoryImpl
 import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
-import com.anshtya.weatherapp.domain.useCase.GetSavedLocationsUseCase
-import com.anshtya.weatherapp.domain.useCase.GetSearchLocationUseCase
+import com.anshtya.weatherapp.domain.useCase.GetLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.Module
 import dagger.Provides
@@ -77,14 +76,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchLocationUseCase(repository: LocationRepository): GetSearchLocationUseCase {
-        return GetSearchLocationUseCase(repository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSavedLocationUseCase(repository: LocationRepository): GetSavedLocationsUseCase {
-        return GetSavedLocationsUseCase(repository)
+    fun provideLocationUseCase(repository: LocationRepository): GetLocationUseCase {
+        return GetLocationUseCase(repository)
     }
 
     @Provides
