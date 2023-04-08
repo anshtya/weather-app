@@ -8,11 +8,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeatherDao {
 
+   @Query("SELECT EXISTS(SELECT 1 FROM weather LIMIT 1)")
+   fun checkIfTableEmpty(): Flow<Boolean>
+
    @Query("SELECT name, region, country, last_updated, temp_c, condition FROM weather")
    fun getSavedWeatherLocations(): Flow<List<SavedLocationModel>>
 
    @Query("SELECT * FROM weather where id =:locationId")
    suspend fun getWeatherById(locationId: String): WeatherEntity?
+
+   @Query("SELECT EXISTS(SELECT 1 FROM weather where id =:locationId)")
+   suspend fun checkWeatherExist(locationId: String): Boolean
 
    @Insert(onConflict = OnConflictStrategy.REPLACE)
    suspend fun insertCurrentWeather(currentWeather: WeatherEntity)

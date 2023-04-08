@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.presentation.screens.location
+package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -48,6 +48,8 @@ fun SelectLocationScreen(
                 onTextChange = onTextChange,
                 onSubmit = onSubmit
             )
+            Spacer(Modifier.height(10.dp))
+//            AddCurrentLocationButton()
             Spacer(Modifier.height(10.dp))
             LocationList(
                 uiState = uiState,
@@ -116,14 +118,15 @@ fun LocationList(
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else if (uiState.searchText.isEmpty()) {
+        }
+        if (uiState.searchText.isEmpty()) {
             Text(
                 text = stringResource(id = R.string.enter_location),
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
             uiState.searchLocations?.let { locations ->
-                if (locations.isEmpty()) {
+                if (locations.isEmpty() && !uiState.isLoading ) {
                     Text(
                         text = stringResource(id = R.string.no_results),
                         modifier = Modifier.align(Alignment.Center)
@@ -170,3 +173,17 @@ fun Location(
         )
     }
 }
+
+//@Composable
+//fun AddCurrentLocationButton(modifier: Modifier = Modifier) {
+//    Surface(
+//        shape = RoundedCornerShape(10.dp),
+//        modifier = modifier.fillMaxWidth().clickable { }
+//    ) {
+//        Text(
+//            text = "Add Current Location",
+//            modifier = Modifier
+//                .padding(horizontal = 5.dp, vertical = 10.dp)
+//        )
+//    }
+//}

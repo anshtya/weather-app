@@ -17,12 +17,7 @@ class WeatherRepositoryImpl @Inject constructor(
         val currentWeather = response.current
         val location = response.location
         val entity = response.toEntity(locationId, currentWeather, location)
-
-        if (weatherDao.getWeatherById(locationId) != null) {
-            weatherDao.updateCurrentWeather(entity)
-        } else {
-            weatherDao.insertCurrentWeather(entity)
-        }
+        weatherDao.updateCurrentWeather(entity)
         return weatherDao.getWeatherById(locationId)!!.toDomainModel()
     }
 

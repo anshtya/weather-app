@@ -9,9 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anshtya.weatherapp.presentation.MainActivity
-import com.anshtya.weatherapp.presentation.screens.location.LocationViewModel
-import com.anshtya.weatherapp.presentation.screens.location.SavedLocationScreen
-import com.anshtya.weatherapp.presentation.screens.location.SelectLocationScreen
+import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewModel
+import com.anshtya.weatherapp.presentation.screens.weather.SavedLocationScreen
+import com.anshtya.weatherapp.presentation.screens.addLocation.SelectLocationScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
 
 @Composable
@@ -19,12 +19,11 @@ fun WeatherNavigation(
     navController: NavHostController = rememberNavController(),
 ) {
     val context = LocalContext.current as MainActivity
-    val locationViewModel = hiltViewModel<LocationViewModel>()
-    val savedLocations by locationViewModel.savedLocations.collectAsStateWithLifecycle()
-    val hasSavedLocation by remember { derivedStateOf { savedLocations.isNotEmpty() } }
+    val addLocationViewModel = hiltViewModel<AddLocationViewModel>()
+    val isTableEmpty by addLocationViewModel.isTableEmpty.collectAsStateWithLifecycle()
 
-    LaunchedEffect(hasSavedLocation) {
-        if (!hasSavedLocation) {
+    LaunchedEffect(isTableEmpty) {
+        if (!isTableEmpty) {
             navController.navigate(SelectLocation.route) {
                 popUpTo(Weather.routeWithArgs) { inclusive = true }
             }
@@ -36,7 +35,7 @@ fun WeatherNavigation(
         startDestination = Weather.routeWithArgs
     ) {
         composable(route = SelectLocation.route) {
-            val uiState by locationViewModel.uiState.collectAsStateWithLifecycle()
+            val uiState by addLocationViewModel.uiState.collectAsStateWithLifecycle()
             SelectLocationScreen(
                 uiState = uiState,
                 onBackClick = {
@@ -46,9 +45,10 @@ fun WeatherNavigation(
                         context.finish()
                     }
                 },
-                onTextChange = { text -> locationViewModel.onSearchTextChange(text) },
-                onSubmit = { text -> locationViewModel.onSubmitSearch(text) },
+                onTextChange = { text -> addLocationViewModel.onSearchTextChange(text) },
+                onSubmit = { text -> addLocationViewModel.onSubmitSearch(text) },
                 onLocationClick = { locationUrl ->
+                    addLocationViewModel.onLocationClick(locationUrl)
                     navController.navigate("${Weather.route}/$locationUrl") {
                         popUpTo(SelectLocation.route) { inclusive = true }
                     }

@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.common.Resource
+import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,12 +11,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase
+    getSavedLocationUseCase: GetSavedLocationUseCase,
+    getWeatherUseCase: GetWeatherUseCase,
 ): ViewModel() {
-    val weather = getWeatherUseCase().stateIn(
+    val savedWeatherLocation = getSavedLocationUseCase.getSavedLocations().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = Resource.Error(null)
+        initialValue = emptyList()
     )
 
 //    private val _weather = MutableStateFlow<Resource<CurrentWeather>>(Resource.Loading)
