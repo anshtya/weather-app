@@ -1,10 +1,13 @@
 package com.anshtya.weatherapp.di
 
+import android.content.Context
 import com.anshtya.weatherapp.core.common.Constants
 import com.anshtya.weatherapp.data.remote.WeatherApi
+import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -29,5 +32,11 @@ object NetworkModule {
             .client(client)
             .build()
             .create(WeatherApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCheckConnection(@ApplicationContext context: Context): CheckConnection {
+        return CheckConnection(context)
     }
 }

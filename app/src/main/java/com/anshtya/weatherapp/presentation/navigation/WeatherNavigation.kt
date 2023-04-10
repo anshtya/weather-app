@@ -52,7 +52,8 @@ fun WeatherNavigation(
                     navController.navigate("${Weather.route}/$locationUrl") {
                         popUpTo(SelectLocation.route) { inclusive = true }
                     }
-                }
+                },
+                onErrorShown = { addLocationViewModel.errorShown() }
             )
         }
         composable(route = Weather.routeWithArgs) { navBackStackEntry ->

@@ -6,6 +6,7 @@ import com.anshtya.weatherapp.core.common.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
+import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddLocationViewModel @Inject constructor(
     private val getSearchResultUseCase: GetSearchResultUseCase,
-    getSavedLocationUseCase: GetSavedLocationUseCase
+    getSavedLocationUseCase: GetSavedLocationUseCase,
+    private val checkConnection: CheckConnection
 ) : ViewModel() {
 
     val isTableEmpty = getSavedLocationUseCase.checkIfTableEmpty().stateIn(
@@ -41,6 +43,16 @@ class AddLocationViewModel @Inject constructor(
 
     fun onSubmitSearch(text: String) {
         viewModelScope.launch {
+            if (checkConnection.hasConnection()) {
+                executeSearch(text)
+            } else {
+                _uiState.update { it.copy(errorMessage = "Network unavailable") }
+            }
+        }
+    }
+
+    private fun executeSearch(text: String) {
+        viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             when (val response = getSearchResultUseCase.getLocations(text)) {
                 is Resource.Success -> {
@@ -56,6 +68,10 @@ class AddLocationViewModel @Inject constructor(
 
     fun onLocationClick(locationUrl: String) = viewModelScope.launch {
         getSearchResultUseCase.onLocationClick(locationUrl)
+    }
+
+    fun errorShown() {
+        _uiState.update { it.copy(errorMessage = null) }
     }
 }
 

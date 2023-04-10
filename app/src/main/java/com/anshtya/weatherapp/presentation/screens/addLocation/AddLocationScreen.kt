@@ -34,6 +34,7 @@ fun SelectLocationScreen(
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
     onLocationClick: (String) -> Unit,
+    onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -53,7 +54,8 @@ fun SelectLocationScreen(
             Spacer(Modifier.height(10.dp))
             LocationList(
                 uiState = uiState,
-                onLocationClick = onLocationClick
+                onLocationClick = onLocationClick,
+                onErrorShown = onErrorShown
             )
         }
     }
@@ -111,6 +113,7 @@ fun SearchBar(
 fun LocationList(
     uiState: SearchLocationState,
     onLocationClick: (String) -> Unit,
+    onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier.fillMaxSize()) {
@@ -126,7 +129,7 @@ fun LocationList(
             )
         } else {
             uiState.searchLocations?.let { locations ->
-                if (locations.isEmpty() && !uiState.isLoading ) {
+                if (locations.isEmpty() && !uiState.isLoading) {
                     Text(
                         text = stringResource(id = R.string.no_results),
                         modifier = Modifier.align(Alignment.Center)
@@ -146,6 +149,7 @@ fun LocationList(
             }
             uiState.errorMessage?.let { message ->
                 Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
+                onErrorShown()
             }
         }
     }
