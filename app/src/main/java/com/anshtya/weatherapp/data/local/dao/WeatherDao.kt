@@ -14,6 +14,9 @@ interface WeatherDao {
    @Query("SELECT name, region, country, last_updated, temp_c, condition FROM weather")
    fun getSavedWeatherLocations(): Flow<List<SavedLocationModel>>
 
+   @Query("SELECT * FROM weather")
+   fun getWeather(): Flow<List<WeatherEntity>>
+
    @Query("SELECT * FROM weather where id =:locationId")
    suspend fun getWeatherById(locationId: String): WeatherEntity?
 

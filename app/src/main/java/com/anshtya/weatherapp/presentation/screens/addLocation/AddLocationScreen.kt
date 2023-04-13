@@ -23,8 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.domain.model.SearchLocation
-import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.delay
 
 @Composable
@@ -139,7 +137,7 @@ fun LocationList(
                         modifier = Modifier.clip(RoundedCornerShape(20.dp))
                     ) {
                         items(items = locations) {
-                            Location(
+                            LocationItem(
                                 location = it,
                                 modifier = Modifier.clickable { onLocationClick(it.url) }
                             )
@@ -152,29 +150,6 @@ fun LocationList(
                 onErrorShown()
             }
         }
-    }
-}
-
-@Composable
-fun Location(
-    location: SearchLocation,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .height(IntrinsicSize.Max)
-            .fillMaxWidth()
-            .padding(horizontal = 5.dp, vertical = 10.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = location.name,
-            style = Typography.headlineSmall
-        )
-        Text(
-            text = "${location.region}, ${location.country}",
-            style = Typography.bodyMedium
-        )
     }
 }
 
