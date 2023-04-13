@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.presentation.navigation
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -13,6 +14,7 @@ import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewMo
 import com.anshtya.weatherapp.presentation.screens.weather.SavedLocationScreen
 import com.anshtya.weatherapp.presentation.screens.addLocation.SelectLocationScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun WeatherNavigation(
@@ -20,13 +22,18 @@ fun WeatherNavigation(
 ) {
     val context = LocalContext.current as MainActivity
     val addLocationViewModel = hiltViewModel<AddLocationViewModel>()
-    val isTableEmpty by addLocationViewModel.isTableEmpty.collectAsStateWithLifecycle()
-
-    LaunchedEffect(isTableEmpty) {
-        if (!isTableEmpty) {
-            navController.navigate(SelectLocation.route) {
-                popUpTo(Weather.routeWithArgs) { inclusive = true }
+    var appNotLoaded by rememberSaveable{ mutableStateOf(true) }
+    LaunchedEffect(appNotLoaded) {
+        if (appNotLoaded) {
+            addLocationViewModel.isTableNotEmpty.first {
+                if (!it) {
+                    navController.navigate(SelectLocation.route) {
+                        popUpTo(Weather.routeWithArgs) { inclusive = true }
+                    }
+                }
+                true
             }
+            appNotLoaded = false
         }
     }
 

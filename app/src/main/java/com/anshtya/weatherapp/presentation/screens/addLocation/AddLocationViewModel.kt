@@ -19,10 +19,10 @@ class AddLocationViewModel @Inject constructor(
     private val checkConnection: CheckConnection
 ) : ViewModel() {
 
-    val isTableEmpty = getSavedLocationUseCase.checkIfTableEmpty().stateIn(
+    val isTableNotEmpty = getSavedLocationUseCase.checkIfTableEmpty().shareIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = false
+        replay = 1
     )
 
     private val _uiState = MutableStateFlow(SearchLocationState())
