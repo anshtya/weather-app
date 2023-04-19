@@ -11,9 +11,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anshtya.weatherapp.presentation.MainActivity
 import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewModel
-import com.anshtya.weatherapp.presentation.screens.weather.SavedLocationScreen
 import com.anshtya.weatherapp.presentation.screens.addLocation.SelectLocationScreen
+import com.anshtya.weatherapp.presentation.screens.weather.SavedLocationScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
+import com.anshtya.weatherapp.presentation.screens.weather.WeatherViewModel
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -22,26 +23,26 @@ fun WeatherNavigation(
 ) {
     val context = LocalContext.current as MainActivity
     val addLocationViewModel = hiltViewModel<AddLocationViewModel>()
-    var appNotLoaded by rememberSaveable{ mutableStateOf(true) }
-    LaunchedEffect(appNotLoaded) {
-        if (appNotLoaded) {
+    var isInitialAppLoad by rememberSaveable { mutableStateOf(true) }
+    LaunchedEffect(isInitialAppLoad) {
+        if (isInitialAppLoad) {
             addLocationViewModel.isTableNotEmpty.first {
                 if (!it) {
-                    navController.navigate(SelectLocation.route) {
-                        popUpTo(Weather.routeWithArgs) { inclusive = true }
+                    navController.navigate(Destinations.SelectLocation.route) {
+                        popUpTo(Destinations.Weather.route) { inclusive = true }
                     }
                 }
                 true
             }
-            appNotLoaded = false
+            isInitialAppLoad = false
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = Weather.routeWithArgs
+        startDestination = Destinations.Weather.route
     ) {
-        composable(route = SelectLocation.route) {
+        composable(route = Destinations.SelectLocation.route) {
             val uiState by addLocationViewModel.uiState.collectAsStateWithLifecycle()
             SelectLocationScreen(
                 uiState = uiState,
@@ -56,19 +57,21 @@ fun WeatherNavigation(
                 onSubmit = { text -> addLocationViewModel.onSubmitSearch(text) },
                 onLocationClick = { locationUrl ->
                     addLocationViewModel.onLocationClick(locationUrl)
-                    navController.navigate("${Weather.route}/$locationUrl") {
-                        popUpTo(SelectLocation.route) { inclusive = true }
+                    navController.navigate(Destinations.Weather.route) {
+                        popUpTo(Destinations.SelectLocation.route) { inclusive = true }
                     }
                 },
                 onErrorShown = { addLocationViewModel.errorShown() }
             )
         }
-        composable(route = Weather.routeWithArgs) { navBackStackEntry ->
+        composable(route = Destinations.Weather.route) {
+            val weatherViewModel = hiltViewModel<WeatherViewModel>()
+            val uiState by weatherViewModel.uiState.collectAsStateWithLifecycle()
             WeatherScreen(
-                locationUrl = navBackStackEntry.arguments?.getString(Weather.locationUrl)
+                uiState = uiState
             )
         }
-        composable(route = SavedLocation.route) {
+        composable(route = Destinations.SavedLocation.route) {
             SavedLocationScreen()
         }
     }

@@ -4,6 +4,6 @@ import com.anshtya.weatherapp.domain.model.Weather
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
-    suspend fun updateWeather(locationId: String): Weather
+    suspend fun updateWeather()
     fun getWeather(): Flow<List<Weather>>
 }

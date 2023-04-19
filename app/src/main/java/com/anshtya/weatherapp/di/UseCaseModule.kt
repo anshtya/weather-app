@@ -5,6 +5,7 @@ import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
+import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +31,11 @@ object UseCaseModule {
     @Singleton
     fun provideWeatherUseCase(repository: WeatherRepository): GetWeatherUseCase {
         return GetWeatherUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateWeatherUseCase(repository: WeatherRepository): UpdateWeatherUseCase {
+        return UpdateWeatherUseCase(repository)
     }
 }
