@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.anshtya.weatherapp.presentation.MainActivity
 import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewModel
 import com.anshtya.weatherapp.presentation.screens.addLocation.SelectLocationScreen
-import com.anshtya.weatherapp.presentation.screens.weather.SavedLocationScreen
+import com.anshtya.weatherapp.presentation.screens.weather.ManageLocationScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherViewModel
 import kotlinx.coroutines.flow.first
@@ -68,11 +68,16 @@ fun WeatherNavigation(
             val weatherViewModel = hiltViewModel<WeatherViewModel>()
             val uiState by weatherViewModel.uiState.collectAsStateWithLifecycle()
             WeatherScreen(
-                uiState = uiState
+                uiState = uiState,
+                onManageLocationsClick = {
+                    navController.navigate(Destinations.ManageLocation.route)
+                },
+                onSettingsClick = {},
+                onErrorShown = { weatherViewModel.errorShown() },
             )
         }
-        composable(route = Destinations.SavedLocation.route) {
-            SavedLocationScreen()
+        composable(route = Destinations.ManageLocation.route) {
+            ManageLocationScreen()
         }
     }
 }

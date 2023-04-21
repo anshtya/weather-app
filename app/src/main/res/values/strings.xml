@@ -3,4 +3,6 @@
     <string name="search">Search</string>
     <string name="enter_location">Enter a location name</string>
     <string name="no_results">No Results</string>
+    <string name="temperature">%d°</string>
+    <string name="feels_like">Feels like %d°</string>
 </resources>

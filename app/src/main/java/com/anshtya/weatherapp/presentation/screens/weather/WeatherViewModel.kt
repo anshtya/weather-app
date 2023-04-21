@@ -27,27 +27,27 @@ class WeatherViewModel @Inject constructor(
 
     private fun getWeather() {
         viewModelScope.launch {
+//            updateWeather()
             getWeatherUseCase().collect { weatherList ->
                 _uiState.update { it.copy(weatherList = weatherList) }
             }
-            updateWeather()
         }
     }
 
-    fun updateWeather() {
+    private fun updateWeather() {
         viewModelScope.launch {
             if (checkConnection.hasConnection()) {
                 updateWeatherUseCase()
             }
-//            else {
-//                _uiState.update { it.copy(errorMessage = "No Internet Connection") }
-//            }
+            else {
+                _uiState.update { it.copy(errorMessage = "Update Failed. No Internet Connection") }
+            }
         }
     }
 
-//    fun errorShown() {
-//        _uiState.update { it.copy(errorMessage = null) }
-//    }
+    fun errorShown() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
 }
 
 data class WeatherState(
