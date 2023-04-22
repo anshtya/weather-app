@@ -9,20 +9,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.anshtya.weatherapp.domain.model.Weather
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDrawer(
-    weatherLocations: List<Weather>,
+    uiState: WeatherState,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
+    onErrorShown: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
+    val weatherLocations = uiState.weatherList
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -73,7 +75,11 @@ fun WeatherDrawer(
             if (selectedWeatherLocationId != "") {
                 WeatherDetails(
                     weather = weatherLocations.first { it.id == selectedWeatherLocationId },
-                    onMenuClicked = { scope.launch { drawerState.open() } }
+                    isLoading = uiState.isLoading,
+                    errorMessage = uiState.errorMessage,
+                    onErrorShown = onErrorShown,
+                    onMenuClicked = { scope.launch { drawerState.open() } },
+                    onRefresh = onRefresh
                 )
             }
         }

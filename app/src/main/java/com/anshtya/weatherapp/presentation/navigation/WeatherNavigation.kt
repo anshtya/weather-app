@@ -74,6 +74,7 @@ fun WeatherNavigation(
                 },
                 onSettingsClick = {},
                 onErrorShown = { weatherViewModel.errorShown() },
+                onRefresh = { weatherViewModel.refreshWeather() }
             )
         }
         composable(route = Destinations.ManageLocation.route) {

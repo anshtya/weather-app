@@ -2,6 +2,7 @@ package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.dto.toDomainModel
+import com.anshtya.weatherapp.data.local.entity.WeatherEntity
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.remote.dto.toEntity
 import com.anshtya.weatherapp.domain.model.Weather
@@ -17,6 +18,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherDao: WeatherDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
+        val updatedWeatherList: MutableList<WeatherEntity> = mutableListOf()
         weatherDao.getWeather().first {
             it.forEach { weather ->
                 val locationId = weather.id
@@ -24,10 +26,11 @@ class WeatherRepositoryImpl @Inject constructor(
                 val currentWeather = response.current
                 val location = response.location
                 val entity = response.toEntity(locationId, currentWeather, location)
-                weatherDao.updateCurrentWeather(entity)
+                updatedWeatherList.add(entity)
             }
             true
         }
+        weatherDao.updateCurrentWeather(updatedWeatherList)
     }
 
     override fun getWeather(): Flow<List<Weather>> {

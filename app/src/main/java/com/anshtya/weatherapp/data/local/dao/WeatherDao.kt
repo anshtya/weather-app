@@ -27,7 +27,7 @@ interface WeatherDao {
    suspend fun insertCurrentWeather(currentWeather: WeatherEntity)
 
    @Update
-   suspend fun updateCurrentWeather(currentWeather: WeatherEntity)
+   suspend fun updateCurrentWeather(currentWeather: List<WeatherEntity>)
 
    @Query("DELETE FROM weather where id =:locationId")
    suspend fun deleteWeatherLocation(locationId: String)
