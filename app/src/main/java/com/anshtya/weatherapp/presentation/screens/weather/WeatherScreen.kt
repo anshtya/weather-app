@@ -36,7 +36,7 @@ fun WeatherScreen(
             onSettingsClick = onSettingsClick,
             onManageLocationsClick = onManageLocationsClick,
         )
-        uiState.errorMessage?.let {message ->
+        uiState.errorMessage?.let { message ->
             Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
             onErrorShown()
         }
@@ -65,50 +65,48 @@ fun WeatherDetails(
         },
         modifier = modifier
     ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(paddingValues)
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .fillMaxWidth()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
+                Text(weather.condition.text.trim())
+
+                Spacer(modifier = Modifier.size(5.dp))
+
+                Text(weather.name)
+                Text(stringResource(R.string.feels_like, weather.feelslike_c.roundToInt()))
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(150.dp),
+                    contentPadding = PaddingValues(10.dp),
+                    userScrollEnabled = false
                 ) {
-                    Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
-                    Text(weather.condition.text.trim())
-
-                    Spacer(modifier = Modifier.size(5.dp))
-
-                    Text(weather.name)
-                    Text(stringResource(R.string.feels_like, weather.feelslike_c.roundToInt()))
-                }
-            }
-
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(150.dp),
-                contentPadding = PaddingValues(10.dp),
-                userScrollEnabled = false
-            ) {
-                item {
-                    GridItem(
-                        name = "UV",
-                        description = "${weather.uv}"
-                    )
-                }
-                item {
-                    GridItem(
-                        name = "Wind",
-                        description = "${weather.wind_kph}, ${weather.wind_dir}"
-                    )
-                }
-                item {
-                    GridItem(
-                        name = "Humidity",
-                        description = "${weather.humidity}"
-                    )
+                    item {
+                        GridItem(
+                            name = "UV",
+                            description = "${weather.uv}"
+                        )
+                    }
+                    item {
+                        GridItem(
+                            name = "Wind",
+                            description = "${weather.wind_kph}, ${weather.wind_dir}"
+                        )
+                    }
+                    item {
+                        GridItem(
+                            name = "Humidity",
+                            description = "${weather.humidity}"
+                        )
+                    }
                 }
             }
         }
