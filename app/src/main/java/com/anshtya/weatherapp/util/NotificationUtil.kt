@@ -20,7 +20,7 @@ class NotificationUtil @Inject constructor(
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        NotificationManagerCompat.from(context).notify(1,builder.build())
+//        NotificationManagerCompat.from(context).notify(1,builder.build())
     }
 
     private fun createNotificationChannel() {
