@@ -1,10 +1,10 @@
-package com.anshtya.weatherapp.presentation.screens.weather
+package com.anshtya.weatherapp.presentation.screens.manageLocation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SavedLocationScreen(
+fun ManageLocationScreen(
     modifier: Modifier = Modifier,
 ) {
 //    val savedLocations by viewModel.savedLocations.collectAsStateWithLifecycle()
