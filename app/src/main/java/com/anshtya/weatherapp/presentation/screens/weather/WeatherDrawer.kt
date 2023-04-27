@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,7 +37,7 @@ fun WeatherDrawer(
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Settings,
+                            imageVector = Icons.Outlined.Settings,
                             contentDescription = "Weather Settings"
                         )
                     }

@@ -2,9 +2,12 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,8 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.Weather
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.anshtya.weatherapp.presentation.components.WeatherGridItem
 import kotlin.math.roundToInt
 
 @Composable
@@ -52,7 +54,6 @@ fun WeatherDetails(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val swipeState = rememberSwipeRefreshState(isRefreshing = isLoading)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,111 +64,77 @@ fun WeatherDetails(
                         Icon(Icons.Default.Menu, contentDescription = "Show Navigation Menu")
                     }
                 },
+                actions = {
+                    IconButton(
+                        onClick = onRefresh
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh Weather")
+                    }
+                },
                 title = { Text(weather.name) }
             )
         },
         modifier = modifier
     ) { paddingValues ->
-        SwipeRefresh(
-            state = swipeState,
-            onRefresh = onRefresh,
-            modifier = Modifier.padding(paddingValues)
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
+            if (isLoading) {
+                CircularProgressIndicator(Modifier.align(Alignment.TopCenter))
+            }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(10.dp),
+                userScrollEnabled = true
             ) {
-                item {
-                    Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
-                    Text(weather.condition.text.trim())
+                item(span = { GridItemSpan(2) }) {
+                    Box {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
+                            Text(weather.condition.text.trim())
+
+                            Spacer(modifier = Modifier.size(5.dp))
+
+                            Text(weather.name)
+                            Text(
+                                stringResource(
+                                    R.string.feels_like,
+                                    weather.feelslike_c.roundToInt()
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.size(10.dp))
+                        }
+                    }
                 }
-
-                item {Spacer(modifier = Modifier.size(5.dp))}
-
                 item {
-                    Text(weather.name)
-                    Text(stringResource(R.string.feels_like, weather.feelslike_c.roundToInt()))
+                    WeatherGridItem(
+                        name = "UV",
+                        description = "${weather.uv}"
+                    )
                 }
-
-                item{Spacer(modifier = Modifier.size(10.dp))}
+                item {
+                    WeatherGridItem(
+                        name = "Wind",
+                        description = "${weather.wind_kph}, ${weather.wind_dir}"
+                    )
+                }
+                item {
+                    WeatherGridItem(
+                        name = "Humidity",
+                        description = "${weather.humidity}"
+                    )
+                }
             }
             errorMessage?.let { message ->
                 Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
                 onErrorShown()
             }
-        }
-    }
-}
-
-//        Box(
-//            modifier = Modifier
-//                .padding(paddingValues)
-//                .fillMaxSize()
-//                .
-//        ) {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
-//                Text(weather.condition.text.trim())
-//
-//                Spacer(modifier = Modifier.size(5.dp))
-//
-//                Text(weather.name)
-//                Text(stringResource(R.string.feels_like, weather.feelslike_c.roundToInt()))
-//
-//                Spacer(modifier = Modifier.size(10.dp))
-//
-//                LazyVerticalGrid(
-//                    columns = GridCells.Adaptive(150.dp),
-//                    contentPadding = PaddingValues(10.dp),
-//                    userScrollEnabled = false
-//                ) {
-//                    item {
-//                        GridItem(
-//                            name = "UV",
-//                            description = "${weather.uv}"
-//                        )
-//                    }
-//                    item {
-//                        GridItem(
-//                            name = "Wind",
-//                            description = "${weather.wind_kph}, ${weather.wind_dir}"
-//                        )
-//                    }
-//                    item {
-//                        GridItem(
-//                            name = "Humidity",
-//                            description = "${weather.humidity}"
-//                        )
-//                    }
-//                }
-//            }
-//
-//
-
-@Composable
-fun GridItem(
-    name: String,
-    description: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .height(150.dp)
-            .padding(5.dp)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .fillMaxHeight()
-        ) {
-            Text(name)
-            Text(description)
         }
     }
 }

@@ -23,7 +23,7 @@ class WeatherViewModel @Inject constructor(
     init {
         getWeather()
         refreshWeather()
-        updateWeather()
+//        updateWeather()
     }
 
     private fun getWeather() {
@@ -56,7 +56,7 @@ class WeatherViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    errorMessage = "Update failed"
+                                    errorMessage = "Failed to refresh weather"
                                 )
                             }
                         }
