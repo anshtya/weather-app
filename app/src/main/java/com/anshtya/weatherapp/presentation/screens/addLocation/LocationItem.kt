@@ -22,7 +22,7 @@ fun LocationItem(
     ) {
         Text(
             text = location.name,
-            style = Typography.headlineSmall
+            style = Typography.titleLarge
         )
         Text(
             text = "${location.region}, ${location.country}",

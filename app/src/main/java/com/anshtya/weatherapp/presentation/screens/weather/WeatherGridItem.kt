@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.presentation.components
+package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

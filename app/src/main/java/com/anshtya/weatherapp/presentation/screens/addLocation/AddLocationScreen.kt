@@ -73,12 +73,14 @@ fun SearchBar(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        var id by rememberSaveable { mutableStateOf(searchText) }
+        var id by rememberSaveable { mutableStateOf("") }
         LaunchedEffect(searchText) {
             delay(700L)
-            if (searchText.isNotEmpty() && id != searchText) {
+            if (id != searchText.trimEnd()) {
                 id = searchText
-                onSubmit(id)
+                if (id.isNotEmpty()) {
+                    onSubmit(id)
+                }
             }
         }
         IconButton(
