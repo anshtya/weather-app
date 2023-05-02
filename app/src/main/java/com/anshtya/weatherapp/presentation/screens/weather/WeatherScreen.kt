@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.Weather
-import com.anshtya.weatherapp.presentation.components.WeatherGridItem
 import kotlin.math.roundToInt
 
 @Composable

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectLocationScreen(
     uiState: SearchLocationState,
@@ -39,23 +40,27 @@ fun SelectLocationScreen(
         color = MaterialTheme.colorScheme.background,
         modifier = modifier.fillMaxSize()
     ) {
-        Column(modifier.padding(horizontal = 10.dp)) {
-            Spacer(Modifier.height(10.dp))
-            SearchBar(
-                searchText = uiState.searchText,
-                onBackClick = onBackClick,
-                onTextChange = onTextChange,
-                onSubmit = onSubmit
-            )
-            Spacer(Modifier.height(10.dp))
-//            AddCurrentLocationButton()
-            Spacer(Modifier.height(10.dp))
-            LocationList(
-                uiState = uiState,
-                onLocationClick = onLocationClick,
-                onErrorShown = onErrorShown
-            )
-        }
+        Scaffold(
+            topBar = {
+                SearchBar(
+                    searchText = uiState.searchText,
+                    onBackClick = onBackClick,
+                    onTextChange = onTextChange,
+                    onSubmit = onSubmit
+                )
+            },
+            content = { paddingValues ->
+                Column(
+                    modifier = modifier.padding(paddingValues)
+                ) {
+                    LocationList(
+                        uiState = uiState,
+                        onLocationClick = onLocationClick,
+                        onErrorShown = onErrorShown
+                    )
+                }
+            }
+        )
     }
 }
 
@@ -70,7 +75,9 @@ fun SearchBar(
 ) {
     val focusManager = LocalFocusManager.current
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         var id by rememberSaveable { mutableStateOf("") }
@@ -98,9 +105,7 @@ fun SearchBar(
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
-            placeholder = {
-                Text(stringResource(id = R.string.search))
-            },
+            placeholder = { Text(stringResource(id = R.string.search)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
             modifier = Modifier
@@ -136,12 +141,11 @@ fun LocationList(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                    ) {
+                    LazyColumn {
                         items(items = locations) {
                             LocationItem(
-                                location = it,
+                                locationName = it.name,
+                                locationRegionCountry = "${it.region}, ${it.country}",
                                 modifier = Modifier.clickable { onLocationClick(it.url) }
                             )
                         }

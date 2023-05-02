@@ -29,7 +29,7 @@ fun WeatherNavigation(
         if (isInitialAppLoad) {
             addLocationViewModel.isTableNotEmpty.first {
                 if (!it) {
-                    navController.navigate(Destinations.SelectLocation.route) {
+                    navController.navigate(Destinations.AddLocation.route) {
                         popUpTo(Destinations.Weather.route) { inclusive = true }
                     }
                 }
@@ -43,7 +43,7 @@ fun WeatherNavigation(
         navController = navController,
         startDestination = Destinations.Weather.route
     ) {
-        composable(route = Destinations.SelectLocation.route) {
+        composable(route = Destinations.AddLocation.route) {
             val uiState by addLocationViewModel.uiState.collectAsStateWithLifecycle()
             SelectLocationScreen(
                 uiState = uiState,
@@ -59,7 +59,7 @@ fun WeatherNavigation(
                 onLocationClick = { locationUrl ->
                     addLocationViewModel.onLocationClick(locationUrl)
                     navController.navigate(Destinations.Weather.route) {
-                        popUpTo(Destinations.SelectLocation.route) { inclusive = true }
+                        popUpTo(Destinations.AddLocation.route) { inclusive = true }
                     }
                 },
                 onErrorShown = { addLocationViewModel.errorShown() }
@@ -77,10 +77,16 @@ fun WeatherNavigation(
             )
         }
         composable(route = Destinations.ManageLocation.route) {
-            ManageLocationScreen()
+            ManageLocationScreen(
+                onAddLocationClick = {
+                    navController.navigate(Destinations.AddLocation.route)
+                }
+            )
         }
         composable(route = Destinations.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }
