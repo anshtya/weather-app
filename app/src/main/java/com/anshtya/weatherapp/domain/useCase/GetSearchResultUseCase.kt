@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetSearchResultUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
-    suspend fun getLocations(searchQuery: String): Resource<SearchLocationResponse> {
+    suspend operator fun invoke(searchQuery: String): Resource<SearchLocationResponse> {
         return try {
             val list = locationRepository.getLocations(searchQuery)
             Resource.Success(SearchLocationResponse(list))
@@ -16,6 +16,4 @@ class GetSearchResultUseCase @Inject constructor(
             Resource.Error(e.message)
         }
     }
-
-    suspend fun onLocationClick(locationUrl: String) = locationRepository.addWeatherLocation(locationUrl)
 }
