@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.di
 
 import com.anshtya.weatherapp.domain.repository.LocationRepository
+import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.AddLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
@@ -36,8 +37,8 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideWeatherUseCase(repository: WeatherRepository): GetWeatherUseCase {
-        return GetWeatherUseCase(repository)
+    fun provideWeatherUseCase(weatherRepository: WeatherRepository, userDataRepository: UserDataRepository): GetWeatherUseCase {
+        return GetWeatherUseCase(weatherRepository, userDataRepository)
     }
 
     @Provides

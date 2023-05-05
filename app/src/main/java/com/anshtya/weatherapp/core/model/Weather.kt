@@ -1,6 +1,4 @@
-package com.anshtya.weatherapp.domain.model
-
-import com.anshtya.weatherapp.core.model.WeatherCondition
+package com.anshtya.weatherapp.core.model
 
 data class Weather(
     val id: String,

@@ -16,30 +16,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.domain.model.Weather
+import com.anshtya.weatherapp.core.model.Weather
 import kotlin.math.roundToInt
 
 @Composable
 fun WeatherScreen(
-    uiState: WeatherState,
+    uiState: WeatherUiState,
     onManageLocationsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onErrorShown: () -> Unit,
-    onRefresh: () -> Unit,
-    modifier: Modifier = Modifier
+    onRefresh: () -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.background,
-        modifier = modifier.fillMaxSize()
-    ) {
-        WeatherDrawer(
-            uiState = uiState,
-            onSettingsClick = onSettingsClick,
-            onManageLocationsClick = onManageLocationsClick,
-            onErrorShown = onErrorShown,
-            onRefresh = onRefresh
-        )
-    }
+    WeatherDrawer(
+        uiState = uiState,
+        onSettingsClick = onSettingsClick,
+        onManageLocationsClick = onManageLocationsClick,
+        onErrorShown = onErrorShown,
+        onRefresh = onRefresh
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +42,7 @@ fun WeatherDetails(
     weather: Weather,
     isLoading: Boolean,
     errorMessage: String?,
+    showCelsius: Boolean,
     onErrorShown: () -> Unit,
     onMenuClicked: () -> Unit,
     onRefresh: () -> Unit,
@@ -94,17 +89,30 @@ fun WeatherDetails(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(stringResource(R.string.temperature, weather.temp_c.roundToInt()))
+                            Text(
+                                if (showCelsius) {
+                                    stringResource(
+                                        R.string.temperature,
+                                        weather.temp_c.roundToInt()
+                                    )
+                                } else {
+                                    stringResource(
+                                        R.string.temperature,
+                                        weather.temp_f.roundToInt()
+                                    )
+                                }
+                            )
                             Text(weather.condition.text.trim())
 
                             Spacer(modifier = Modifier.size(5.dp))
 
                             Text(weather.name)
                             Text(
-                                stringResource(
-                                    R.string.feels_like,
-                                    weather.feelslike_c.roundToInt()
-                                )
+                                if (showCelsius) {
+                                    stringResource(R.string.feels_like, weather.feelslike_c.roundToInt())
+                                } else {
+                                    stringResource(R.string.feels_like, weather.feelslike_f.roundToInt())
+                                }
                             )
 
                             Spacer(modifier = Modifier.size(10.dp))
@@ -120,7 +128,11 @@ fun WeatherDetails(
                 item {
                     WeatherGridItem(
                         name = "Wind",
-                        description = "${weather.wind_kph}, ${weather.wind_dir}"
+                        description = if (showCelsius) {
+                            stringResource(R.string.wind_kph, weather.wind_kph, weather.wind_dir)
+                        } else {
+                            stringResource(R.string.wind_mph, weather.wind_mph, weather.wind_dir)
+                        }
                     )
                 }
                 item {

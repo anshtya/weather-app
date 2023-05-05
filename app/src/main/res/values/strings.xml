@@ -5,4 +5,6 @@
     <string name="no_results">No Results</string>
     <string name="temperature">%d°</string>
     <string name="feels_like">Feels like %d°</string>
+    <string name="wind_kph">%s kph, %s</string>
+    <string name="wind_mph">%s mph, %s</string>
 </resources>

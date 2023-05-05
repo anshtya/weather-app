@@ -3,7 +3,7 @@ package com.anshtya.weatherapp.presentation.screens.weather
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo.State
-import com.anshtya.weatherapp.domain.model.Weather
+import com.anshtya.weatherapp.core.model.UserWeather
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import com.anshtya.weatherapp.worker.WeatherWorkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ class WeatherViewModel @Inject constructor(
     private val weatherWorkManager: WeatherWorkManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(WeatherState())
+    private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -28,8 +28,8 @@ class WeatherViewModel @Inject constructor(
 
     private fun getWeather() {
         viewModelScope.launch {
-            getWeatherUseCase().collect { weatherList ->
-                _uiState.update { it.copy(weatherList = weatherList) }
+            getWeatherUseCase().collect { userWeather ->
+                _uiState.update { it.copy(userWeather = userWeather) }
             }
         }
     }
@@ -71,8 +71,8 @@ class WeatherViewModel @Inject constructor(
     }
 }
 
-data class WeatherState(
-    val weatherList: List<Weather> = emptyList(),
+data class WeatherUiState(
+    val userWeather: UserWeather = UserWeather(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

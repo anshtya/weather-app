@@ -14,6 +14,7 @@ import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewMo
 import com.anshtya.weatherapp.presentation.screens.addLocation.SelectLocationScreen
 import com.anshtya.weatherapp.presentation.screens.manageLocation.ManageLocationScreen
 import com.anshtya.weatherapp.presentation.screens.settings.SettingsScreen
+import com.anshtya.weatherapp.presentation.screens.settings.SettingsViewModel
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherViewModel
 import kotlinx.coroutines.flow.first
@@ -84,8 +85,12 @@ fun WeatherNavigation(
             )
         }
         composable(route = Destinations.Settings.route) {
+            val settingsViewModel = hiltViewModel<SettingsViewModel>()
+            val settingsUiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
             SettingsScreen(
-                onBackClick = { navController.popBackStack() }
+                uiState = settingsUiState,
+                onBackClick = { navController.popBackStack() },
+                onUnitSelect = { settingsViewModel.showCelsius(it) }
             )
         }
     }

@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.anshtya.weatherapp.core.common.Constants
+import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import dagger.Module
@@ -35,7 +35,7 @@ object LocalModule {
     @Provides
     fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
-            produceFile = { appContext.preferencesDataStoreFile(Constants.USER_PREFERENCES) }
+            produceFile = { appContext.preferencesDataStoreFile(Constants.USER_SETTINGS) }
         )
     }
 }

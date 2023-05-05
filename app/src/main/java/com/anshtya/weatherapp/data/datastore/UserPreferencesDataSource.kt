@@ -4,25 +4,29 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.anshtya.weatherapp.core.model.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class PreferencesDataSource @Inject constructor(
+class UserPreferencesDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     companion object {
         val HAS_SAVED_LOCATION = booleanPreferencesKey("has_saved_location")
+        val SHOW_CELSIUS = booleanPreferencesKey("show_celsius")
     }
 
-    val userPreferences: Flow<UserPreferences> = dataStore.data.map { preferences ->
-        val hasSavedLocation = preferences[HAS_SAVED_LOCATION] ?: false
-        UserPreferences(hasSavedLocation)
+    val userData: Flow<UserData> = dataStore.data.map { preferences ->
+        UserData(
+            hasSavedLocation = preferences[HAS_SAVED_LOCATION] ?: false,
+            showCelsius = preferences[SHOW_CELSIUS] ?: true
+        )
     }
 
-    suspend fun updateUserPreferences(hasSavedLocation: Boolean) {
+    suspend fun setWeatherUnit(useCelsius: Boolean) {
         dataStore.edit { preferences ->
-            preferences[HAS_SAVED_LOCATION] = hasSavedLocation
+            preferences[SHOW_CELSIUS] = useCelsius
         }
     }
 }

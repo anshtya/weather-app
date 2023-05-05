@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDrawer(
-    uiState: WeatherState,
+    uiState: WeatherUiState,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -24,7 +24,7 @@ fun WeatherDrawer(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
-    val weatherLocations = uiState.weatherList
+    val weatherLocations = uiState.userWeather.weatherList
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -77,6 +77,7 @@ fun WeatherDrawer(
                     weather = weatherLocations.first { it.id == selectedWeatherLocationId },
                     isLoading = uiState.isLoading,
                     errorMessage = uiState.errorMessage,
+                    showCelsius = uiState.userWeather.showCelsius,
                     onErrorShown = onErrorShown,
                     onMenuClicked = { scope.launch { drawerState.open() } },
                     onRefresh = onRefresh

@@ -1,10 +1,13 @@
 package com.anshtya.weatherapp.di
 
+import com.anshtya.weatherapp.data.datastore.UserPreferencesDataSource
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.repository.LocationRepositoryImpl
+import com.anshtya.weatherapp.data.repository.UserDataRepositoryImpl
 import com.anshtya.weatherapp.data.repository.WeatherRepositoryImpl
 import com.anshtya.weatherapp.domain.repository.LocationRepository
+import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import dagger.Module
 import dagger.Provides
@@ -28,5 +31,11 @@ object RepositoryModule {
         currentWeatherDao: WeatherDao
     ): WeatherRepository {
         return WeatherRepositoryImpl(api, currentWeatherDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDataRepository(userPreferencesDataSource: UserPreferencesDataSource): UserDataRepository {
+        return UserDataRepositoryImpl(userPreferencesDataSource)
     }
 }
