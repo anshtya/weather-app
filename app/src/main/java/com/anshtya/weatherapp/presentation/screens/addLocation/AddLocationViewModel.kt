@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.common.Resource
+import com.anshtya.weatherapp.core.model.Result
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.useCase.AddLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
@@ -27,7 +27,7 @@ class AddLocationViewModel @Inject constructor(
         replay = 1
     )
 
-    private val _uiState = MutableStateFlow(SearchLocationState())
+    private val _uiState = MutableStateFlow(SearchLocationUiState())
     val uiState = _uiState.asStateFlow()
 
     fun onSearchTextChange(text: String) {
@@ -57,10 +57,10 @@ class AddLocationViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             when (val response = getSearchResultUseCase(text)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _uiState.update { it.copy(searchLocations = response.data.list) }
                 }
-                is Resource.Error -> {
+                is Result.Error -> {
                     _uiState.update { it.copy(errorMessage = response.message) }
                 }
             }
@@ -77,7 +77,7 @@ class AddLocationViewModel @Inject constructor(
     }
 }
 
-data class SearchLocationState(
+data class SearchLocationUiState(
     val searchText: String = "",
     val searchLocations: List<SearchLocation>? = null,
     val isLoading: Boolean = false,

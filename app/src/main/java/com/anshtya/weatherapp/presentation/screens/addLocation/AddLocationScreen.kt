@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectLocationScreen(
-    uiState: SearchLocationState,
+    uiState: SearchLocationUiState,
     onBackClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
@@ -36,32 +36,27 @@ fun SelectLocationScreen(
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.background,
-        modifier = modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            topBar = {
-                SearchBar(
-                    searchText = uiState.searchText,
-                    onBackClick = onBackClick,
-                    onTextChange = onTextChange,
-                    onSubmit = onSubmit
+    Scaffold(
+        topBar = {
+            SearchBar(
+                searchText = uiState.searchText,
+                onBackClick = onBackClick,
+                onTextChange = onTextChange,
+                onSubmit = onSubmit
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = modifier.padding(paddingValues)
+            ) {
+                LocationList(
+                    uiState = uiState,
+                    onLocationClick = onLocationClick,
+                    onErrorShown = onErrorShown
                 )
-            },
-            content = { paddingValues ->
-                Column(
-                    modifier = modifier.padding(paddingValues)
-                ) {
-                    LocationList(
-                        uiState = uiState,
-                        onLocationClick = onLocationClick,
-                        onErrorShown = onErrorShown
-                    )
-                }
             }
-        )
-    }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,7 +112,7 @@ fun SearchBar(
 
 @Composable
 fun LocationList(
-    uiState: SearchLocationState,
+    uiState: SearchLocationUiState,
     onLocationClick: (String) -> Unit,
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier

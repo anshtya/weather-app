@@ -5,7 +5,7 @@ import com.anshtya.weatherapp.data.local.dto.toDomainModel
 import com.anshtya.weatherapp.data.local.entity.WeatherEntity
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.remote.dto.toEntity
-import com.anshtya.weatherapp.domain.model.Weather
+import com.anshtya.weatherapp.core.model.Weather
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.data.local.dto
 
 import com.anshtya.weatherapp.data.local.entity.WeatherEntity
-import com.anshtya.weatherapp.domain.model.Weather
+import com.anshtya.weatherapp.core.model.Weather
 
 fun WeatherEntity.toDomainModel(): Weather {
     return Weather(

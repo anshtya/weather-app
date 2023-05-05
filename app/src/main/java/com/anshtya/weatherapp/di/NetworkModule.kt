@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.di
 
 import android.content.Context
-import com.anshtya.weatherapp.core.common.Constants
+import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
 import dagger.Module
