@@ -1,5 +1,6 @@
 package com.anshtya.weatherapp.presentation.screens.weather
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
@@ -26,6 +27,7 @@ fun WeatherDrawer(
     var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
     val weatherLocations = uiState.userWeather.weatherList
 
+    BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,

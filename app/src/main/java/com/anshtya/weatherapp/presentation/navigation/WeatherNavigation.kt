@@ -52,7 +52,7 @@ fun WeatherNavigation(
                     if (navController.previousBackStackEntry != null) {
                         navController.popBackStack()
                     } else {
-                        context.finish()
+                        context.onBackPressedDispatcher.onBackPressed()
                     }
                 },
                 onTextChange = { text -> addLocationViewModel.onSearchTextChange(text) },
