@@ -1,9 +1,13 @@
 package com.anshtya.weatherapp.data.remote.model
 
+import com.squareup.moshi.Json
+
 data class NetworkWeatherLocation(
     val country: String,
-    val localtime: String,
-    val localtime_epoch: Int,
+
+    @field:Json(name = "tz_id")
+    val timezoneId: String,
+
     val name: String,
     val region: String
 )
