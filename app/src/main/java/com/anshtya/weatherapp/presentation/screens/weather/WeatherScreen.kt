@@ -93,25 +93,25 @@ fun WeatherDetails(
                                 if (showCelsius) {
                                     stringResource(
                                         R.string.temperature,
-                                        weather.temp_c.roundToInt()
+                                        weather.currentWeather.tempC.roundToInt()
                                     )
                                 } else {
                                     stringResource(
                                         R.string.temperature,
-                                        weather.temp_f.roundToInt()
+                                        weather.currentWeather.tempF.roundToInt()
                                     )
                                 }
                             )
-                            Text(weather.condition.text.trim())
+                            Text(weather.currentWeather.condition.text.trim())
 
                             Spacer(modifier = Modifier.size(5.dp))
 
                             Text(weather.name)
                             Text(
                                 if (showCelsius) {
-                                    stringResource(R.string.feels_like, weather.feelslike_c.roundToInt())
+                                    stringResource(R.string.feels_like, weather.currentWeather.feelsLikeC.roundToInt())
                                 } else {
-                                    stringResource(R.string.feels_like, weather.feelslike_f.roundToInt())
+                                    stringResource(R.string.feels_like, weather.currentWeather.feelsLikeF.roundToInt())
                                 }
                             )
 
@@ -122,23 +122,23 @@ fun WeatherDetails(
                 item {
                     WeatherGridItem(
                         name = "UV",
-                        description = "${weather.uv}"
+                        description = "${weather.currentWeather.uv}"
                     )
                 }
                 item {
                     WeatherGridItem(
                         name = "Wind",
                         description = if (showCelsius) {
-                            stringResource(R.string.wind_kph, weather.wind_kph, weather.wind_dir)
+                            stringResource(R.string.wind_kph, weather.currentWeather.windKph, weather.currentWeather.windDir)
                         } else {
-                            stringResource(R.string.wind_mph, weather.wind_mph, weather.wind_dir)
+                            stringResource(R.string.wind_mph, weather.currentWeather.windMph, weather.currentWeather.windDir)
                         }
                     )
                 }
                 item {
                     WeatherGridItem(
                         name = "Humidity",
-                        description = "${weather.humidity}"
+                        description = "${weather.currentWeather.humidity}"
                     )
                 }
             }

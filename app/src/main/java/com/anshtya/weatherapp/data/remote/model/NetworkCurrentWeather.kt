@@ -18,12 +18,6 @@ data class NetworkCurrentWeather(
     @field:Json(name = "is_Day")
     val isDay: Int,
 
-    @field:Json(name = "last_updated")
-    val lastUpdated: String,
-
-    @field:Json(name = "last_updated_epoch")
-    val lastUpdatedEpoch: Int,
-
     @field:Json(name = "temp_c")
     val tempC: Double,
 

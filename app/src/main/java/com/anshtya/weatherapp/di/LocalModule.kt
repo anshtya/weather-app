@@ -22,13 +22,16 @@ object LocalModule {
     @Provides
     @Singleton
     fun provideWeatherDatabase(@ApplicationContext app: Context): WeatherDatabase {
-        return Room.databaseBuilder(app, WeatherDatabase::class.java, "weather.db").build()
+        return Room
+            .databaseBuilder(app, WeatherDatabase::class.java, "weather.db")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
     @Singleton
-    fun provideCurrentWeatherDao(db: WeatherDatabase): WeatherDao {
-        return db.getCurrentWeatherDao()
+    fun provideWeatherDao(db: WeatherDatabase): WeatherDao {
+        return db.weatherDao()
     }
 
     @Singleton

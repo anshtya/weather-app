@@ -1,11 +1,9 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
-import com.anshtya.weatherapp.data.local.dto.toDomainModel
-import com.anshtya.weatherapp.data.local.entity.WeatherEntity
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.data.remote.dto.toEntity
 import com.anshtya.weatherapp.core.model.Weather
+import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -18,24 +16,21 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherDao: WeatherDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
-        val updatedWeatherList: MutableList<WeatherEntity> = mutableListOf()
-        weatherDao.getWeather().first {
-            it.forEach { weather ->
-                val locationId = weather.id
-                val response = weatherApi.getCurrentWeather(locationId)
-                val currentWeather = response.current
+        weatherDao.getLocationIds().first {
+            it.forEach { locationId ->
+                val response = weatherApi.getWeatherForecast(locationId)
                 val location = response.location
-                val entity = response.toEntity(locationId, currentWeather, location)
-                updatedWeatherList.add(entity)
+                val currentWeather = response.current
+                val forecast = response.forecast.forecastDay.first()
+//                weatherDao.updateWeather(currentWeather, forecast)
             }
             true
         }
-        weatherDao.updateCurrentWeather(updatedWeatherList)
     }
 
     override fun getWeather(): Flow<List<Weather>> {
         return weatherDao.getWeather()
-            .map { it.map { weatherEntity -> weatherEntity.toDomainModel() } }
+            .map { it.map { weatherModel -> weatherModel.toExternalModel() } }
             .distinctUntilChanged()
     }
 }

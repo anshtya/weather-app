@@ -1,10 +1,10 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
-import com.anshtya.weatherapp.data.local.dto.toDomainModel
+import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.data.remote.dto.toEntity
-import com.anshtya.weatherapp.data.remote.dto.toSearchLocation
+import com.anshtya.weatherapp.data.mapper.toEntity
+import com.anshtya.weatherapp.data.mapper.toSearchLocation
 import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
@@ -26,7 +26,7 @@ class LocationRepositoryImpl @Inject constructor(
 
     override fun getSavedLocations(): Flow<List<SavedLocation>> {
         return weatherDao.getSavedWeatherLocations()
-            .map { it.map { savedLocation -> savedLocation.toDomainModel() } }
+            .map { it.map { savedLocation -> savedLocation.toExternalModel() } }
     }
 
     override suspend fun deleteWeatherLocation(locationId: String) {
@@ -34,13 +34,17 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addWeatherLocation(locationUrl: String) {
-        val response = weatherApi.getCurrentWeather(locationUrl)
-        val currentWeather = response.current
+        val response = weatherApi.getWeatherForecast(locationUrl)
         val location = response.location
-        val entity = response.toEntity(locationUrl, currentWeather, location)
+        val currentWeather = response.current
+        val weatherForecast = response.forecast.forecastDay.first()
 
         if (!weatherDao.checkWeatherExist(locationUrl)) {
-            weatherDao.insertCurrentWeather(entity)
+            weatherDao.insertWeather(
+                location.toEntity(),
+                currentWeather.toEntity(locationUrl),
+                weatherForecast.toEntity(locationUrl)
+            )
         }
     }
 }
