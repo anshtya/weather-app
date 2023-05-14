@@ -4,6 +4,7 @@ import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.core.model.Weather
 import com.anshtya.weatherapp.data.mapper.toExternalModel
+import com.anshtya.weatherapp.data.mapper.toUpdatedModel
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -18,10 +19,16 @@ class WeatherRepositoryImpl @Inject constructor(
         weatherDao.getLocationIds().first {
             it.forEach { locationId ->
                 val response = weatherApi.getWeatherForecast(locationId)
-                val location = response.location
-                val currentWeather = response.current
-                val forecast = response.forecast.forecastDay.first()
-//                weatherDao.updateWeather(currentWeather, forecast)
+                val location = response.location.toUpdatedModel(locationId)
+                val currentWeather = response.current.toUpdatedModel(
+                    locationId,
+                    id = weatherDao.getCurrentWeatherId(locationId)
+                )
+                val weatherForecast = response.forecast.forecastDay.first().toUpdatedModel(
+                    locationId,
+                    id = weatherDao.getWeatherForecastId(locationId)
+                )
+                weatherDao.updateWeather(location, currentWeather, weatherForecast)
             }
             true
         }

@@ -21,6 +21,14 @@ fun NetworkWeatherLocation.toEntity(locationUrl: String) = WeatherLocationEntity
     region = region
 )
 
+fun NetworkWeatherLocation.toUpdatedModel(locationUrl: String) = WeatherLocationEntity(
+    id = locationUrl,
+    country = country,
+    timezoneId = timezoneId,
+    name = name,
+    region = region
+)
+
 fun NetworkCurrentWeather.toEntity(locationId: String) = CurrentWeatherEntity(
     locationId = locationId,
     cloud = cloud,
@@ -39,7 +47,34 @@ fun NetworkCurrentWeather.toEntity(locationId: String) = CurrentWeatherEntity(
     windMph = windMph
 )
 
+fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = CurrentWeatherEntity(
+    id = id,
+    locationId = locationId,
+    cloud = cloud,
+    condition = condition,
+    feelsLikeC = feelsLikeC,
+    feelsLikeF = feelsLikeF,
+    humidity = humidity,
+    isDay = isDay,
+    tempC = tempC,
+    tempF = tempF,
+    uv = uv,
+    visKm = visKm,
+    visMiles = visMiles,
+    windDir = windDir,
+    windKph = windKph,
+    windMph = windMph
+)
+
 fun NetworkForecastDay.toEntity(locationId: String) = WeatherForecastEntity(
+    locationId = locationId,
+    astro =  astro.toExternalModel(),
+    day = day.toExternalModel(),
+    hour = hour.map { it.toExternalModel() }
+)
+
+fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long) = WeatherForecastEntity(
+    id = id,
     locationId = locationId,
     astro =  astro.toExternalModel(),
     day = day.toExternalModel(),

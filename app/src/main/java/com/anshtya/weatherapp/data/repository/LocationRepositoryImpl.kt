@@ -35,16 +35,12 @@ class LocationRepositoryImpl @Inject constructor(
 
     override suspend fun addWeatherLocation(locationUrl: String) {
         val response = weatherApi.getWeatherForecast(locationUrl)
-        val location = response.location
-        val currentWeather = response.current
-        val weatherForecast = response.forecast.forecastDay.first()
+        val location = response.location.toEntity(locationUrl)
+        val currentWeather = response.current.toEntity(locationUrl)
+        val weatherForecast = response.forecast.forecastDay.first().toEntity(locationUrl)
 
         if (!weatherDao.checkWeatherExist(locationUrl)) {
-            weatherDao.insertWeather(
-                location.toEntity(locationUrl),
-                currentWeather.toEntity(locationUrl),
-                weatherForecast.toEntity(locationUrl)
-            )
+            weatherDao.insertWeather(location, currentWeather, weatherForecast)
         }
     }
 }
