@@ -1,5 +1,6 @@
 package com.anshtya.weatherapp.data.local.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -21,7 +22,7 @@ data class CurrentWeatherEntity(
     val id: Long = 0,
     val locationId: String,
     val cloud: Int,
-    val condition: WeatherCondition,
+    @Embedded val condition: WeatherCondition,
     val feelsLikeC: Double,
     val feelsLikeF: Double,
     val humidity: Int,

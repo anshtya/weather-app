@@ -19,5 +19,4 @@ data class WeatherModel(
         entityColumn = "locationId"
     )
     val weatherForecast: WeatherForecastEntity
-
 )

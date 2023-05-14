@@ -1,7 +1,5 @@
 package com.anshtya.weatherapp.domain.model
 
-import com.anshtya.weatherapp.core.model.WeatherCondition
-
 data class SavedLocation(
     val name: String,
     val region: String,
@@ -12,5 +10,6 @@ data class SavedLocation(
     val maxTempF: Double,
     val minTempC: Double,
     val minTempF: Double,
-    val condition: WeatherCondition,
+    val code: Int,
+    val text: String
 )

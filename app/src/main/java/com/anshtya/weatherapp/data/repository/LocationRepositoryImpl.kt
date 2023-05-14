@@ -41,7 +41,7 @@ class LocationRepositoryImpl @Inject constructor(
 
         if (!weatherDao.checkWeatherExist(locationUrl)) {
             weatherDao.insertWeather(
-                location.toEntity(),
+                location.toEntity(locationUrl),
                 currentWeather.toEntity(locationUrl),
                 weatherForecast.toEntity(locationUrl)
             )

@@ -13,5 +13,6 @@ fun SavedLocationModel.toExternalModel() = SavedLocation(
     maxTempF = maxTempF,
     minTempC = minTempC,
     minTempF = minTempF,
-    condition = condition
+    code = code,
+    text = text
 )

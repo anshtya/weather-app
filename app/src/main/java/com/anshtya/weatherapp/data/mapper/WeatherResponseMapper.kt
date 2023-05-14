@@ -13,8 +13,8 @@ import com.anshtya.weatherapp.data.remote.model.NetworkForecastDay
 import com.anshtya.weatherapp.data.remote.model.NetworkHour
 import com.anshtya.weatherapp.data.remote.model.NetworkWeatherLocation
 
-fun NetworkWeatherLocation.toEntity() = WeatherLocationEntity(
-    id = "${this.name}-${this.region}-${this.country}",
+fun NetworkWeatherLocation.toEntity(locationUrl: String) = WeatherLocationEntity(
+    id = locationUrl,
     country = country,
     timezoneId = timezoneId,
     name = name,

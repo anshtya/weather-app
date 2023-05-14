@@ -6,7 +6,6 @@ import com.anshtya.weatherapp.core.model.Weather
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -31,6 +30,5 @@ class WeatherRepositoryImpl @Inject constructor(
     override fun getWeather(): Flow<List<Weather>> {
         return weatherDao.getWeather()
             .map { it.map { weatherModel -> weatherModel.toExternalModel() } }
-            .distinctUntilChanged()
     }
 }

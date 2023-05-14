@@ -16,7 +16,7 @@ interface WeatherDao {
 
     @Query(
         "SELECT name, region, country, tempC, tempF, maxTempC, maxTempF, minTempC, minTempF, " +
-                "condition FROM weather_location " +
+                "code, text FROM weather_location " +
                 "INNER JOIN current_weather ON current_weather.locationId = weather_location.id " +
                 "INNER JOIN weather_forecast ON weather_forecast.locationId = weather_location.id "
     )
@@ -26,11 +26,7 @@ interface WeatherDao {
     fun getLocationIds(): Flow<List<String>>
 
     @Transaction
-    @Query(
-        "SELECT weather_location.id, name, current_weather.*, weather_forecast.* FROM weather_location " +
-                "INNER JOIN current_weather ON weather_location.id = current_weather.locationId " +
-                "INNER JOIN weather_forecast ON weather_location.id = weather_forecast.locationId"
-    )
+    @Query("SELECT weather_location.id, name FROM weather_location")
     fun getWeather(): Flow<List<WeatherModel>>
 
 //    @Query("SELECT * FROM weather where id =:locationId")

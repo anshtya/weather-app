@@ -1,7 +1,6 @@
 package com.anshtya.weatherapp.data.local.model
 
 import androidx.room.ColumnInfo
-import com.anshtya.weatherapp.core.model.WeatherCondition
 
 data class SavedLocationModel(
     @ColumnInfo(name = "name") val name: String,
@@ -13,5 +12,6 @@ data class SavedLocationModel(
     @ColumnInfo(name = "maxTempF") val maxTempF: Double,
     @ColumnInfo(name = "minTempC") val minTempC: Double,
     @ColumnInfo(name = "minTempF") val minTempF: Double,
-    @ColumnInfo(name = "condition") val condition: WeatherCondition,
+    @ColumnInfo(name = "code") val code: Int,
+    @ColumnInfo(name = "text") val text: String,
 )
