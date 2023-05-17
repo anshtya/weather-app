@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.useCase
 
-import com.anshtya.weatherapp.core.model.UserWeather
+import com.anshtya.weatherapp.core.model.WeatherWithUnitPreference
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,12 +11,12 @@ class GetWeatherUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val userDataRepository: UserDataRepository
 ) {
-    operator fun invoke(): Flow<UserWeather> {
+    operator fun invoke(): Flow<WeatherWithUnitPreference> {
         return combine(
             weatherRepository.getWeather(),
             userDataRepository.userData
         ) { weatherList, userData ->
-            UserWeather(
+            WeatherWithUnitPreference(
                 weatherList = weatherList,
                 showCelsius = userData.showCelsius
             )

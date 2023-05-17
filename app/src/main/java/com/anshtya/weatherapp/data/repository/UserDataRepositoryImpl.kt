@@ -13,4 +13,8 @@ class UserDataRepositoryImpl @Inject constructor(
 
     override suspend fun setWeatherUnit(useCelsius: Boolean) =
         userPreferencesDataSource.setWeatherUnit(useCelsius)
+
+    override suspend fun setApiCallTime(time: Long) {
+        userPreferencesDataSource.setApiCallTime(time)
+    }
 }

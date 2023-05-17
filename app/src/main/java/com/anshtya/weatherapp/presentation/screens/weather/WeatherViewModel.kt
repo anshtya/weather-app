@@ -2,19 +2,24 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkInfo.State
-import com.anshtya.weatherapp.core.model.UserWeather
+import com.anshtya.weatherapp.core.model.Result
+import com.anshtya.weatherapp.core.model.WeatherWithUnitPreference
+import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
-import com.anshtya.weatherapp.worker.WeatherWorkManager
+import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
+import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
-    private val weatherWorkManager: WeatherWorkManager
+    private val updateWeatherUseCase: UpdateWeatherUseCase,
+    private val userDataRepository: UserDataRepository,
+    private val checkConnection: CheckConnection
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
@@ -22,8 +27,6 @@ class WeatherViewModel @Inject constructor(
 
     init {
         getWeather()
-        refreshWeather()
-//        updateWeather()
     }
 
     private fun getWeather() {
@@ -34,35 +37,45 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    private fun updateWeather() {
-        weatherWorkManager.updateWeather()
-    }
-
-    fun refreshWeather() {
+    fun sendUpdateWeatherOption(updateOption: UpdateOption) {
         viewModelScope.launch {
-            val workId = weatherWorkManager.refreshWeather()
-            weatherWorkManager.observeWork(workId).collect { workInfo ->
-                workInfo?.let {
-                    when (workInfo.state) {
-                        State.ENQUEUED, State.RUNNING, State.BLOCKED -> {
-                            _uiState.update { it.copy(isLoading = true) }
-                        }
+            if (checkConnection.hasConnection()) {
 
-                        State.SUCCEEDED, State.CANCELLED -> {
-                            _uiState.update { it.copy(isLoading = false) }
-                        }
+                when (updateOption) {
+                    UpdateOption.APPSTART -> {
+                        val currentTime = Calendar.getInstance().timeInMillis
+                        val apiCallTime = userDataRepository.userData.first().apiCallTime
+                        val isOneHourDifference = (currentTime - apiCallTime) / 3_600_000 >= 1
 
-                        State.FAILED -> {
-                            _uiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    errorMessage = "Failed to refresh weather"
-                                )
-                            }
+                        if (isOneHourDifference) {
+                            updateWeather()
                         }
                     }
+
+                    UpdateOption.CLICK -> {
+                        updateWeather()
+                    }
+                }
+
+            } else {
+                _uiState.update { it.copy(errorMessage = "Update Failed, Network unavailable") }
+            }
+        }
+    }
+
+    private fun updateWeather() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            when (updateWeatherUseCase()) {
+                is Result.Success -> {
+                    userDataRepository.setApiCallTime(Calendar.getInstance().timeInMillis)
+                }
+
+                is Result.Error -> {
+                    _uiState.update { it.copy(errorMessage = "Update Failed") }
                 }
             }
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -72,7 +85,11 @@ class WeatherViewModel @Inject constructor(
 }
 
 data class WeatherUiState(
-    val userWeather: UserWeather = UserWeather(),
+    val userWeather: WeatherWithUnitPreference = WeatherWithUnitPreference(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
+
+enum class UpdateOption {
+    APPSTART, CLICK
+}

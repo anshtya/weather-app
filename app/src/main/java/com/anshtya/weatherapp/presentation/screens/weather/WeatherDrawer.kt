@@ -19,7 +19,7 @@ fun WeatherDrawer(
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
-    onRefresh: () -> Unit,
+    onUpdate: (UpdateOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -82,7 +82,7 @@ fun WeatherDrawer(
                     showCelsius = uiState.userWeather.showCelsius,
                     onErrorShown = onErrorShown,
                     onMenuClicked = { scope.launch { drawerState.open() } },
-                    onRefresh = onRefresh
+                    onUpdate = onUpdate
                 )
             }
         }
