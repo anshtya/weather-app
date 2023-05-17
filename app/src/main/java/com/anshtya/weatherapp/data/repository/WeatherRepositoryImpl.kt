@@ -3,6 +3,7 @@ package com.anshtya.weatherapp.data.repository
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.core.model.Weather
+import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.mapper.toUpdatedModel
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
@@ -13,10 +14,11 @@ import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
-    private val weatherDao: WeatherDao
+    private val weatherDao: WeatherDao,
+    private val weatherLocationDao: WeatherLocationDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
-        weatherDao.getLocationIds().first {
+        weatherLocationDao.getLocationIds().first {
             it.forEach { locationId ->
                 val response = weatherApi.getWeatherForecast(locationId)
                 val location = response.location.toUpdatedModel(locationId)

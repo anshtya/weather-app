@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,12 @@ object LocalModule {
     @Singleton
     fun provideWeatherDao(db: WeatherDatabase): WeatherDao {
         return db.weatherDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherLocationDao(db: WeatherDatabase): WeatherLocationDao {
+        return db.weatherLocationDao()
     }
 
     @Singleton

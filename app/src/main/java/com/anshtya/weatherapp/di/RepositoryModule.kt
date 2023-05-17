@@ -2,6 +2,7 @@ package com.anshtya.weatherapp.di
 
 import com.anshtya.weatherapp.data.datastore.UserPreferencesDataSource
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.repository.LocationRepositoryImpl
 import com.anshtya.weatherapp.data.repository.UserDataRepositoryImpl
@@ -20,17 +21,22 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun provideLocationRepository(api: WeatherApi, dao: WeatherDao): LocationRepository {
-        return LocationRepositoryImpl(api, dao)
+    fun provideLocationRepository(
+        api: WeatherApi,
+        dao: WeatherDao,
+        weatherLocationDao: WeatherLocationDao
+    ): LocationRepository {
+        return LocationRepositoryImpl(api, dao, weatherLocationDao)
     }
 
     @Provides
     @Singleton
     fun provideWeatherRepository(
         api: WeatherApi,
-        currentWeatherDao: WeatherDao
+        currentWeatherDao: WeatherDao,
+        weatherLocationDao: WeatherLocationDao
     ): WeatherRepository {
-        return WeatherRepositoryImpl(api, currentWeatherDao)
+        return WeatherRepositoryImpl(api, currentWeatherDao, weatherLocationDao)
     }
 
     @Provides

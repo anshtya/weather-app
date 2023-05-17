@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
+import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.mapper.toEntity
@@ -15,22 +16,23 @@ import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
-    private val weatherDao: WeatherDao
+    private val weatherDao: WeatherDao,
+    private val weatherLocationDao: WeatherLocationDao
 ) : LocationRepository {
 
-    override fun checkIfTableEmpty(): Flow<Boolean> = weatherDao.checkIfTableEmpty().distinctUntilChanged()
+    override fun checkIfTableEmpty(): Flow<Boolean> = weatherLocationDao.checkIfTableEmpty().distinctUntilChanged()
 
     override suspend fun getLocations(searchQuery: String): List<SearchLocation> {
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
     }
 
     override fun getSavedLocations(): Flow<List<SavedLocation>> {
-        return weatherDao.getSavedWeatherLocations()
+        return weatherLocationDao.getSavedWeatherLocations()
             .map { it.map { savedLocation -> savedLocation.toExternalModel() } }
     }
 
     override suspend fun deleteWeatherLocation(locationId: String) {
-        weatherDao.deleteWeatherLocation(locationId)
+        weatherLocationDao.deleteWeatherLocation(locationId)
     }
 
     override suspend fun addWeatherLocation(locationUrl: String) {
