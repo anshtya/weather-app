@@ -24,7 +24,7 @@ object RepositoryModule {
     fun provideLocationRepository(
         api: WeatherApi,
         dao: WeatherDao,
-        weatherLocationDao: WeatherLocationDao
+        weatherLocationDao: WeatherLocationDao,
     ): LocationRepository {
         return LocationRepositoryImpl(api, dao, weatherLocationDao)
     }

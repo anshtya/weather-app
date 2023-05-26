@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,6 +15,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WeatherDrawer(
     uiState: WeatherUiState,
+    onChangeSelectedLocation: (String) -> Unit,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -24,7 +24,7 @@ fun WeatherDrawer(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
+    val selectedWeatherLocationId = uiState.userWeather.selectedLocationId
     val weatherLocations = uiState.userWeather.weatherList
 
     BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
@@ -48,14 +48,14 @@ fun WeatherDrawer(
 
                     weatherLocations.forEach {
                         if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
-                            selectedWeatherLocationId = weatherLocations.first().id
+                            onChangeSelectedLocation(weatherLocations.first().id)
                         }
                         NavigationDrawerItem(
                             label = { Text(it.name) },
                             selected = selectedWeatherLocationId == it.id,
                             onClick = {
+                                onChangeSelectedLocation(it.id)
                                 scope.launch { drawerState.close() }
-                                selectedWeatherLocationId = it.id
                             }
                         )
                     }

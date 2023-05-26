@@ -2,11 +2,13 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.model.Result
-import com.anshtya.weatherapp.core.model.WeatherWithUnitPreference
+import com.anshtya.weatherapp.core.model.Resource
+import com.anshtya.weatherapp.domain.model.TableState
+import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
+import com.anshtya.weatherapp.domain.useCase.WeatherLocationsEmptyUseCase
 import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -19,8 +21,15 @@ class WeatherViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
     private val updateWeatherUseCase: UpdateWeatherUseCase,
     private val userDataRepository: UserDataRepository,
+    weatherLocationsEmptyUseCase: WeatherLocationsEmptyUseCase,
     private val checkConnection: CheckConnection
 ) : ViewModel() {
+
+    val isTableEmpty = weatherLocationsEmptyUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = TableState.Loading
+    )
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState = _uiState.asStateFlow()
@@ -67,15 +76,21 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             when (updateWeatherUseCase()) {
-                is Result.Success -> {
+                is Resource.Success -> {
                     userDataRepository.setApiCallTime(Calendar.getInstance().timeInMillis)
                 }
 
-                is Result.Error -> {
+                is Resource.Error -> {
                     _uiState.update { it.copy(errorMessage = "Update Failed") }
                 }
             }
             _uiState.update { it.copy(isLoading = false) }
+        }
+    }
+
+    fun changeSelectedLocationId(locationId: String) {
+        viewModelScope.launch {
+            userDataRepository.setLocationId(locationId)
         }
     }
 
@@ -85,7 +100,7 @@ class WeatherViewModel @Inject constructor(
 }
 
 data class WeatherUiState(
-    val userWeather: WeatherWithUnitPreference = WeatherWithUnitPreference(),
+    val userWeather: WeatherWithPreferences = WeatherWithPreferences(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

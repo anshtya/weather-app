@@ -18,7 +18,6 @@ class SettingsViewModel @Inject constructor(
     val uiState = userDataRepository.userData
         .map{
             SettingsUiState(
-                hasSavedLocation = it.hasSavedLocation,
                 showCelsius = it.showCelsius
             )
         }.stateIn(
@@ -35,6 +34,5 @@ class SettingsViewModel @Inject constructor(
 }
 
 data class SettingsUiState(
-    val hasSavedLocation: Boolean = false,
     val showCelsius: Boolean = false
 )

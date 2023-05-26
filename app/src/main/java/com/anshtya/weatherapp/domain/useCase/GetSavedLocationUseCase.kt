@@ -9,6 +9,4 @@ class GetSavedLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
     operator fun invoke(): Flow<List<SavedLocation>> = locationRepository.getSavedLocations()
-
-    fun checkIfTableEmpty(): Flow<Boolean> = locationRepository.checkIfTableEmpty()
 }

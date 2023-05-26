@@ -27,15 +27,22 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectLocationScreen(
+fun AddLocationScreen(
     uiState: SearchLocationUiState,
     onBackClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
     onLocationClick: (String) -> Unit,
+    onNavigateToWeatherScreen: () -> Unit,
     onErrorShown: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
+    if (uiState.isLocationAdded) {
+        LaunchedEffect(Unit) {
+            onNavigateToWeatherScreen()
+        }
+    }
+
     Scaffold(
         topBar = {
             SearchBar(
@@ -117,6 +124,7 @@ fun LocationList(
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     Box(modifier.fillMaxSize()) {
         if (uiState.isLoading) {
             CircularProgressIndicator(
@@ -141,7 +149,11 @@ fun LocationList(
                             LocationItem(
                                 locationName = it.name,
                                 locationRegionCountry = "${it.region}, ${it.country}",
-                                modifier = Modifier.clickable { onLocationClick(it.url) }
+                                modifier = Modifier
+                                    .clickable {
+                                        focusManager.clearFocus()
+                                        onLocationClick(it.url)
+                                    }
                             )
                         }
                     }

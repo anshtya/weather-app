@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.useCase
 
-import com.anshtya.weatherapp.core.model.Result
+import com.anshtya.weatherapp.core.model.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocationResponse
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import javax.inject.Inject
@@ -8,12 +8,12 @@ import javax.inject.Inject
 class GetSearchResultUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
-    suspend operator fun invoke(searchQuery: String): Result<SearchLocationResponse> {
+    suspend operator fun invoke(searchQuery: String): Resource<SearchLocationResponse> {
         return try {
             val list = locationRepository.getLocations(searchQuery)
-            Result.Success(SearchLocationResponse(list))
+            Resource.Success(SearchLocationResponse(list))
         } catch (e: Exception) {
-            Result.Error(e.message)
+            Resource.Error(e.message)
         }
     }
 }

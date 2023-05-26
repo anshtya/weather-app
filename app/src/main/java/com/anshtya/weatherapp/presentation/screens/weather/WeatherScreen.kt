@@ -2,23 +2,55 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.anshtya.weatherapp.domain.model.TableState
 
 @Composable
 fun WeatherScreen(
     uiState: WeatherUiState,
+    tableState: TableState,
+    onNavigateToAddLocationScreen: () -> Unit,
+    onChangeSelectedLocation: (String) -> Unit,
+    onManageLocationsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onErrorShown: () -> Unit,
+    onUpdate: (UpdateOption) -> Unit,
+) {
+    when(tableState) {
+        is TableState.Empty -> {
+            LaunchedEffect(Unit) {
+                onNavigateToAddLocationScreen()
+            }
+        }
+        is TableState.NotEmpty -> {
+            WeatherScreenContent(
+                uiState = uiState,
+                onChangeSelectedLocation = onChangeSelectedLocation,
+                onManageLocationsClick = onManageLocationsClick,
+                onSettingsClick = onSettingsClick,
+                onErrorShown = onErrorShown,
+                onUpdate = onUpdate
+            )
+        }
+        is TableState.Loading -> {}
+    }
+}
+
+@Composable
+fun WeatherScreenContent(
+    uiState: WeatherUiState,
+    onChangeSelectedLocation: (String) -> Unit,
     onManageLocationsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onErrorShown: () -> Unit,
     onUpdate: (UpdateOption) -> Unit,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
-
     DisposableEffect(lifecycleOwner) {
-
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 onUpdate(UpdateOption.APPSTART)
@@ -34,6 +66,7 @@ fun WeatherScreen(
 
     WeatherDrawer(
         uiState = uiState,
+        onChangeSelectedLocation = onChangeSelectedLocation,
         onSettingsClick = onSettingsClick,
         onManageLocationsClick = onManageLocationsClick,
         onErrorShown = onErrorShown,

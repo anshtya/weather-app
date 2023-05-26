@@ -11,7 +11,7 @@ interface WeatherLocationDao {
     @Query("SELECT id FROM weather_location")
     fun getLocationIds(): Flow<List<String>>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM weather_location LIMIT 1)")
+    @Query("SELECT EXISTS(SELECT 1 FROM weather_location)")
     fun checkIfTableEmpty(): Flow<Boolean>
 
     @Query(
