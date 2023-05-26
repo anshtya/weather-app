@@ -1,10 +1,12 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
-import com.anshtya.weatherapp.data.local.dto.toDomainModel
+import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
+import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.data.remote.dto.toEntity
-import com.anshtya.weatherapp.data.remote.dto.toSearchLocation
+import com.anshtya.weatherapp.data.mapper.toEntity
+import com.anshtya.weatherapp.data.mapper.toSearchLocation
+import com.anshtya.weatherapp.core.model.Resource
 import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
@@ -15,32 +17,37 @@ import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
-    private val weatherDao: WeatherDao
+    private val weatherDao: WeatherDao,
+    private val weatherLocationDao: WeatherLocationDao,
 ) : LocationRepository {
-
-    override fun checkIfTableEmpty(): Flow<Boolean> = weatherDao.checkIfTableEmpty().distinctUntilChanged()
+    override fun checkIfTableEmpty(): Flow<Boolean> {
+        return weatherLocationDao.checkIfTableEmpty().distinctUntilChanged()
+    }
 
     override suspend fun getLocations(searchQuery: String): List<SearchLocation> {
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
     }
 
     override fun getSavedLocations(): Flow<List<SavedLocation>> {
-        return weatherDao.getSavedWeatherLocations()
-            .map { it.map { savedLocation -> savedLocation.toDomainModel() } }
+        return weatherLocationDao.getSavedWeatherLocations()
+            .map { it.map { savedLocation -> savedLocation.toExternalModel() } }
     }
 
     override suspend fun deleteWeatherLocation(locationId: String) {
-        weatherDao.deleteWeatherLocation(locationId)
+        weatherLocationDao.deleteWeatherLocation(locationId)
     }
 
-    override suspend fun addWeatherLocation(locationUrl: String) {
-        val response = weatherApi.getCurrentWeather(locationUrl)
-        val currentWeather = response.current
-        val location = response.location
-        val entity = response.toEntity(locationUrl, currentWeather, location)
+    override suspend fun addWeatherLocation(locationUrl: String): Resource<Unit> {
+        val response = weatherApi.getWeatherForecast(locationUrl)
+        val location = response.location.toEntity(locationUrl)
+        val currentWeather = response.current.toEntity(locationUrl)
+        val weatherForecast = response.forecast.forecastDay.first().toEntity(locationUrl)
 
-        if (!weatherDao.checkWeatherExist(locationUrl)) {
-            weatherDao.insertCurrentWeather(entity)
+        return if (!weatherDao.checkWeatherExist(locationUrl)) {
+            weatherDao.insertWeather(location, currentWeather, weatherForecast)
+            Resource.Success(Unit)
+        } else {
+            Resource.Error("Location Already Exists")
         }
     }
 }

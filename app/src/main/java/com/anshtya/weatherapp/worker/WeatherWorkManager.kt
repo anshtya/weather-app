@@ -3,9 +3,7 @@ package com.anshtya.weatherapp.worker
 import androidx.lifecycle.asFlow
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkInfo.State
@@ -37,21 +35,6 @@ class WeatherWorkManager @Inject constructor(
             updateWeatherWorkRequest
         )
         return updateWeatherWorkRequest.id
-    }
-
-    /*
-    * Function to refresh weather by user
-    */
-    fun refreshWeather(): UUID {
-        val refreshWeatherWorkRequest = OneTimeWorkRequestBuilder<UpdateWeatherWorker>()
-            .setConstraints(constraints)
-            .build()
-        workManager.enqueueUniqueWork(
-            REFRESH_WORK,
-            ExistingWorkPolicy.REPLACE,
-            refreshWeatherWorkRequest
-        )
-        return refreshWeatherWorkRequest.id
     }
 
     /*

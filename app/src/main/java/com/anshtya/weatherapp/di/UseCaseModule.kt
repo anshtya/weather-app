@@ -4,6 +4,7 @@ import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.AddLocationUseCase
+import com.anshtya.weatherapp.domain.useCase.WeatherLocationsEmptyUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSavedLocationUseCase
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
@@ -17,6 +18,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
+
+    @Provides
+    @Singleton
+    fun provideCheckWeatherEmptyUseCase(repository: LocationRepository): WeatherLocationsEmptyUseCase {
+        return WeatherLocationsEmptyUseCase(repository)
+    }
+
     @Provides
     @Singleton
     fun provideSearchResultUseCase(repository: LocationRepository): GetSearchResultUseCase {

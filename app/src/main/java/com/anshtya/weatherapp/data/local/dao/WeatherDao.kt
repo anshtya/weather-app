@@ -1,34 +1,65 @@
 package com.anshtya.weatherapp.data.local.dao
 
 import androidx.room.*
-import com.anshtya.weatherapp.data.local.entity.WeatherEntity
-import com.anshtya.weatherapp.data.local.model.SavedLocationModel
+import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
+import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
+import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
+import com.anshtya.weatherapp.data.local.model.WeatherModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
 
-   @Query("SELECT EXISTS(SELECT 1 FROM weather LIMIT 1)")
-   fun checkIfTableEmpty(): Flow<Boolean>
+    @Query("SELECT id FROM current_weather WHERE locationId = :locationId")
+    suspend fun getCurrentWeatherId(locationId: String): Long
 
-   @Query("SELECT name, region, country, last_updated, temp_c, condition FROM weather")
-   fun getSavedWeatherLocations(): Flow<List<SavedLocationModel>>
+    @Query("SELECT id FROM weather_forecast WHERE locationId = :locationId")
+    suspend fun getWeatherForecastId(locationId: String): Long
 
-   @Query("SELECT * FROM weather")
-   fun getWeather(): Flow<List<WeatherEntity>>
+    @Transaction
+    @Query("SELECT weather_location.id, name FROM weather_location")
+    fun getWeather(): Flow<List<WeatherModel>>
 
-   @Query("SELECT * FROM weather where id =:locationId")
-   suspend fun getWeatherById(locationId: String): WeatherEntity?
+    @Query("SELECT EXISTS(SELECT 1 FROM weather_location where id =:locationId)")
+    suspend fun checkWeatherExist(locationId: String): Boolean
 
-   @Query("SELECT EXISTS(SELECT 1 FROM weather where id =:locationId)")
-   suspend fun checkWeatherExist(locationId: String): Boolean
+    @Insert
+    suspend fun insertWeatherLocation(weatherLocation: WeatherLocationEntity)
 
-   @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun insertCurrentWeather(currentWeather: WeatherEntity)
+    @Insert
+    suspend fun insertCurrentWeather(currentWeather: CurrentWeatherEntity)
 
-   @Update
-   suspend fun updateCurrentWeather(currentWeather: List<WeatherEntity>)
+    @Insert
+    suspend fun insertWeatherForecast(weatherForecast: WeatherForecastEntity)
 
-   @Query("DELETE FROM weather where id =:locationId")
-   suspend fun deleteWeatherLocation(locationId: String)
+    @Update
+    suspend fun updateWeatherLocation(weatherLocation: WeatherLocationEntity)
+
+    @Update
+    suspend fun updateCurrentWeather(currentWeather: CurrentWeatherEntity)
+
+    @Update
+    suspend fun updateWeatherForecast(weatherForecast: WeatherForecastEntity)
+
+    @Transaction
+    suspend fun insertWeather(
+        weatherLocation: WeatherLocationEntity,
+        currentWeather: CurrentWeatherEntity,
+        weatherForecast: WeatherForecastEntity
+    ) {
+        insertWeatherLocation(weatherLocation)
+        insertCurrentWeather(currentWeather)
+        insertWeatherForecast(weatherForecast)
+    }
+
+    @Transaction
+    suspend fun updateWeather(
+        weatherLocation: WeatherLocationEntity,
+        currentWeather: CurrentWeatherEntity,
+        weatherForecast: WeatherForecastEntity
+    ) {
+        updateWeatherLocation(weatherLocation)
+        updateCurrentWeather(currentWeather)
+        updateWeatherForecast(weatherForecast)
+    }
 }
