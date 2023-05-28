@@ -68,7 +68,6 @@ fun SettingsScreen(
                         }
                     }
                 )
-//                    SettingsItem(mainText = "Auto-Refresh", subText = "Select")
             }
         }
     )
