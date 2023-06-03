@@ -11,7 +11,8 @@ import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
 
 @Database(
     entities = [WeatherLocationEntity::class, CurrentWeatherEntity::class, WeatherForecastEntity::class],
-    version = 2
+    version = 2,
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
