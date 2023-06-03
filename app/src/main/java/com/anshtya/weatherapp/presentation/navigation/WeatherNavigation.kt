@@ -1,21 +1,16 @@
 package com.anshtya.weatherapp.presentation.navigation
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anshtya.weatherapp.presentation.MainActivity
-import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationViewModel
-import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationScreen
+import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationRoute
 import com.anshtya.weatherapp.presentation.screens.manageLocation.ManageLocationScreen
-import com.anshtya.weatherapp.presentation.screens.settings.SettingsScreen
-import com.anshtya.weatherapp.presentation.screens.settings.SettingsViewModel
-import com.anshtya.weatherapp.presentation.screens.weather.WeatherScreen
-import com.anshtya.weatherapp.presentation.screens.weather.WeatherViewModel
+import com.anshtya.weatherapp.presentation.screens.settings.SettingsRoute
+import com.anshtya.weatherapp.presentation.screens.weather.WeatherRoute
 
 @Composable
 fun WeatherNavigation(
@@ -27,10 +22,7 @@ fun WeatherNavigation(
     ) {
         composable(route = Destinations.AddLocation.route) {
             val context = LocalContext.current as MainActivity
-            val addLocationViewModel = hiltViewModel<AddLocationViewModel>()
-            val uiState by addLocationViewModel.uiState.collectAsStateWithLifecycle()
-            AddLocationScreen(
-                uiState = uiState,
+            AddLocationRoute(
                 onBackClick = {
                     if (navController.previousBackStackEntry != null) {
                         navController.popBackStack()
@@ -38,36 +30,28 @@ fun WeatherNavigation(
                         context.onBackPressedDispatcher.onBackPressed()
                     }
                 },
-                onTextChange = { text -> addLocationViewModel.onSearchTextChange(text) },
-                onSubmit = { text -> addLocationViewModel.onSubmitSearch(text) },
-                onLocationClick = { locationUrl -> addLocationViewModel.onLocationClick(locationUrl) },
                 onNavigateToWeatherScreen = {
-                    navController.navigate(Destinations.Weather.route) {
-                        popUpTo(Destinations.Weather.route) { inclusive = true }
+                    if (navController.previousBackStackEntry != null) {
+                        navController.navigate(Destinations.Weather.route) {
+                            popUpTo(Destinations.Weather.route) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Destinations.Weather.route) {
+                            popUpTo(Destinations.AddLocation.route) { inclusive = true }
+                        }
                     }
                 },
-                onErrorShown = { addLocationViewModel.errorShown() }
             )
         }
         composable(route = Destinations.Weather.route) {
-            val weatherViewModel = hiltViewModel<WeatherViewModel>()
-            val uiState by weatherViewModel.uiState.collectAsStateWithLifecycle()
-            val isTableEmpty by weatherViewModel.isTableEmpty.collectAsStateWithLifecycle()
-            WeatherScreen(
-                uiState = uiState,
-                tableState = isTableEmpty,
+            WeatherRoute(
                 onNavigateToAddLocationScreen = {
                     navController.navigate(Destinations.AddLocation.route) {
                         popUpTo(Destinations.Weather.route) { inclusive = true }
                     }
                 },
-                onChangeSelectedLocation = { locationId ->
-                    weatherViewModel.changeSelectedLocationId(locationId)
-                },
                 onManageLocationsClick = { navController.navigate(Destinations.ManageLocation.route) },
                 onSettingsClick = { navController.navigate(Destinations.Settings.route) },
-                onErrorShown = { weatherViewModel.errorShown() },
-                onUpdate = { updateOption -> weatherViewModel.sendUpdateWeatherOption(updateOption) }
             )
         }
         composable(route = Destinations.ManageLocation.route) {
@@ -78,12 +62,8 @@ fun WeatherNavigation(
             )
         }
         composable(route = Destinations.Settings.route) {
-            val settingsViewModel = hiltViewModel<SettingsViewModel>()
-            val settingsUiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
-            SettingsScreen(
-                uiState = settingsUiState,
-                onBackClick = { navController.popBackStack() },
-                onUnitSelect = { settingsViewModel.showCelsius(it) }
+            SettingsRoute(
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
