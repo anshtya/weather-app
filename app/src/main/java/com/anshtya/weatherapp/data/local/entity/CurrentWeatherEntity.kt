@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.anshtya.weatherapp.core.model.WeatherCondition
+import com.anshtya.weatherapp.domain.model.WeatherCondition
 
 @Entity(
     tableName = "current_weather",

@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.repository
 
-import com.anshtya.weatherapp.core.model.Resource
+import com.anshtya.weatherapp.domain.util.Resource
 import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import kotlinx.coroutines.flow.Flow

@@ -1,8 +1,8 @@
 package com.anshtya.weatherapp.data.mapper
 
-import com.anshtya.weatherapp.core.model.Astro
-import com.anshtya.weatherapp.core.model.Day
-import com.anshtya.weatherapp.core.model.Hour
+import com.anshtya.weatherapp.domain.model.Astro
+import com.anshtya.weatherapp.domain.model.Day
+import com.anshtya.weatherapp.data.local.model.HourModel
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
@@ -12,6 +12,8 @@ import com.anshtya.weatherapp.data.remote.model.NetworkDay
 import com.anshtya.weatherapp.data.remote.model.NetworkForecastDay
 import com.anshtya.weatherapp.data.remote.model.NetworkHour
 import com.anshtya.weatherapp.data.remote.model.NetworkWeatherLocation
+import com.anshtya.weatherapp.domain.model.Hour
+import com.anshtya.weatherapp.domain.model.WeatherType
 
 fun NetworkWeatherLocation.toEntity(locationUrl: String) = WeatherLocationEntity(
     id = locationUrl,
@@ -68,17 +70,17 @@ fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = Current
 
 fun NetworkForecastDay.toEntity(locationId: String) = WeatherForecastEntity(
     locationId = locationId,
-    astro =  astro.toExternalModel(),
+    astro = astro.toExternalModel(),
     day = day.toExternalModel(),
-    hour = hour.map { it.toExternalModel() }
+    hour = hour.map { it.toModel() }
 )
 
 fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long) = WeatherForecastEntity(
     id = id,
     locationId = locationId,
-    astro =  astro.toExternalModel(),
+    astro = astro.toExternalModel(),
     day = day.toExternalModel(),
-    hour = hour.map { it.toExternalModel() }
+    hour = hour.map { it.toModel() }
 )
 
 fun NetworkAstro.toExternalModel() = Astro(
@@ -99,10 +101,20 @@ fun NetworkDay.toExternalModel() = Day(
     minTempF = minTempF,
 )
 
-fun NetworkHour.toExternalModel() = Hour(
+fun NetworkHour.toModel() = HourModel(
     chanceOfRain = chanceOfRain,
     chanceOfSnow = chanceOfSnow,
     condition = condition,
+    isDay = isDay,
+    tempC = tempC,
+    tempF = tempF,
+    time = time
+)
+
+fun HourModel.toExternalModel() = Hour(
+    chanceOfRain = chanceOfRain,
+    chanceOfSnow = chanceOfSnow,
+    weatherType = WeatherType.fromWeatherCondition(condition.code),
     isDay = isDay,
     tempC = tempC,
     tempF = tempF,

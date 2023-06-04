@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.repository
 
-import com.anshtya.weatherapp.core.model.UserData
+import com.anshtya.weatherapp.domain.model.UserData
 import kotlinx.coroutines.flow.Flow
 
 interface UserDataRepository {

@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.core.model.Resource
+import com.anshtya.weatherapp.domain.util.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
@@ -53,7 +53,7 @@ class AddLocationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             when (val response = getSearchResultUseCase(text)) {
                 is Resource.Success -> {
-                    _uiState.update { it.copy(searchLocations = response.data.list) }
+                    _uiState.update { it.copy(searchLocations = response.data) }
                 }
                 is Resource.Error -> {
                     _uiState.update { it.copy(errorMessage = response.message) }

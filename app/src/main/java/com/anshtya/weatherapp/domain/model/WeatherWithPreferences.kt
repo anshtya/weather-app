@@ -1,7 +1,5 @@
 package com.anshtya.weatherapp.domain.model
 
-import com.anshtya.weatherapp.core.model.Weather
-
 /*
 * data class for storing list of weather and preference
 */
