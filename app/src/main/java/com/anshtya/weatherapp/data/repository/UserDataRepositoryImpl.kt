@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.data.repository
 
-import com.anshtya.weatherapp.core.model.UserData
+import com.anshtya.weatherapp.domain.model.UserData
 import com.anshtya.weatherapp.data.datastore.UserPreferencesDataSource
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import kotlinx.coroutines.flow.Flow

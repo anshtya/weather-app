@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.core.model.Weather
+import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.mapper.toUpdatedModel

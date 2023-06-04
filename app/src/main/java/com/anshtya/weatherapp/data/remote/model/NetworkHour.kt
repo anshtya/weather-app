@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.data.remote.model
 
-import com.anshtya.weatherapp.core.model.WeatherCondition
+import com.anshtya.weatherapp.domain.model.WeatherCondition
 import com.squareup.moshi.Json
 
 data class NetworkHour(

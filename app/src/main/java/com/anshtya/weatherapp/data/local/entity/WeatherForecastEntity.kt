@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.anshtya.weatherapp.core.model.Astro
-import com.anshtya.weatherapp.core.model.Day
-import com.anshtya.weatherapp.core.model.Hour
+import com.anshtya.weatherapp.domain.model.Astro
+import com.anshtya.weatherapp.domain.model.Day
+import com.anshtya.weatherapp.data.local.model.HourModel
 
 @Entity(
     tableName = "weather_forecast",
@@ -25,5 +25,5 @@ data class WeatherForecastEntity(
     val locationId: String,
     val astro: Astro,
     @Embedded val day: Day,
-    val hour: List<Hour>
+    val hour: List<HourModel>
 )

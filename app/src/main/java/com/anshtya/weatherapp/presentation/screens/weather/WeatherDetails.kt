@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.presentation.screens.weather
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,10 +27,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.core.model.Weather
+import com.anshtya.weatherapp.domain.model.Weather
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +46,8 @@ fun WeatherDetails(
     onUpdate: (UpdateOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val currentWeather = weather.currentWeather
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,20 +89,33 @@ fun WeatherDetails(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
+
+                            if (currentWeather.isDay == 1) {
+                                Image(
+                                    painterResource(id = currentWeather.weatherType.nightIconRes),
+                                    contentDescription = null
+                                )
+                            } else {
+                                Image(
+                                    painterResource(id = currentWeather.weatherType.dayIconRes),
+                                    contentDescription = null
+                                )
+                            }
+
                             Text(
                                 if (showCelsius) {
                                     stringResource(
                                         R.string.temperature,
-                                        weather.currentWeather.tempC.roundToInt()
+                                        currentWeather.tempC.roundToInt()
                                     )
                                 } else {
                                     stringResource(
                                         R.string.temperature,
-                                        weather.currentWeather.tempF.roundToInt()
+                                        currentWeather.tempF.roundToInt()
                                     )
                                 }
                             )
-                            Text(weather.currentWeather.condition.text.trim())
+                            Text(currentWeather.weatherType.weatherDescription.trim())
 
                             Spacer(modifier = Modifier.size(5.dp))
 
@@ -107,12 +124,12 @@ fun WeatherDetails(
                                 if (showCelsius) {
                                     stringResource(
                                         R.string.feels_like,
-                                        weather.currentWeather.feelsLikeC.roundToInt()
+                                        currentWeather.feelsLikeC.roundToInt()
                                     )
                                 } else {
                                     stringResource(
                                         R.string.feels_like,
-                                        weather.currentWeather.feelsLikeF.roundToInt()
+                                        currentWeather.feelsLikeF.roundToInt()
                                     )
                                 }
                             )
@@ -124,7 +141,7 @@ fun WeatherDetails(
                 item {
                     WeatherGridItem(
                         name = "UV",
-                        description = "${weather.currentWeather.uv}"
+                        description = "${currentWeather.uv}"
                     )
                 }
                 item {
@@ -133,14 +150,14 @@ fun WeatherDetails(
                         description = if (showCelsius) {
                             stringResource(
                                 R.string.wind_kph,
-                                weather.currentWeather.windKph,
-                                weather.currentWeather.windDir
+                                currentWeather.windKph,
+                                currentWeather.windDir
                             )
                         } else {
                             stringResource(
                                 R.string.wind_mph,
-                                weather.currentWeather.windMph,
-                                weather.currentWeather.windDir
+                                currentWeather.windMph,
+                                currentWeather.windDir
                             )
                         }
                     )
@@ -148,7 +165,7 @@ fun WeatherDetails(
                 item {
                     WeatherGridItem(
                         name = "Humidity",
-                        description = "${weather.currentWeather.humidity}"
+                        description = "${currentWeather.humidity}"
                     )
                 }
             }
