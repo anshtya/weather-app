@@ -53,7 +53,7 @@ class AddLocationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             when (val response = getSearchResultUseCase(text)) {
                 is Resource.Success -> {
-                    _uiState.update { it.copy(searchLocations = response.data.list) }
+                    _uiState.update { it.copy(searchLocations = response.data) }
                 }
                 is Resource.Error -> {
                     _uiState.update { it.copy(errorMessage = response.message) }
