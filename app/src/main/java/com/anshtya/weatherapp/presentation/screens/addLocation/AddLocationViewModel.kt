@@ -2,6 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.anshtya.weatherapp.domain.location.LocationTracker
 import com.anshtya.weatherapp.domain.util.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
@@ -19,6 +20,7 @@ class AddLocationViewModel @Inject constructor(
     private val getSearchResultUseCase: GetSearchResultUseCase,
     private val locationRepository: LocationRepository,
     private val userDataRepository: UserDataRepository,
+    private val locationTracker: LocationTracker,
     private val checkConnection: CheckConnection
 ) : ViewModel() {
 
@@ -41,36 +43,46 @@ class AddLocationViewModel @Inject constructor(
     fun onSubmitSearch(text: String) {
         viewModelScope.launch {
             if (checkConnection.hasConnection()) {
-                executeSearch(text)
+                _uiState.update { it.copy(isLoading = true) }
+                when (val response = getSearchResultUseCase(text)) {
+                    is Resource.Success -> {
+                        _uiState.update { it.copy(searchLocations = response.data) }
+                    }
+
+                    is Resource.Error -> {
+                        _uiState.update { it.copy(errorMessage = response.message) }
+                    }
+                }
+                _uiState.update { it.copy(isLoading = false) }
             } else {
                 _uiState.update { it.copy(errorMessage = "Network unavailable") }
             }
         }
     }
 
-    private fun executeSearch(text: String) {
+    fun getUserCurrentLocation() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            when (val response = getSearchResultUseCase(text)) {
-                is Resource.Success -> {
-                    _uiState.update { it.copy(searchLocations = response.data) }
-                }
-                is Resource.Error -> {
-                    _uiState.update { it.copy(errorMessage = response.message) }
-                }
+            locationTracker.getCurrentLocation()?.let { location ->
+                val response =
+                    locationRepository.getLocations("${location.latitude},${location.longitude}")
+                val locationUrl = response.first().url
+                onLocationClick(locationUrl)
+            } ?: _uiState.update {
+                it.copy(isLoading = false, errorMessage = "Can't retrieve current location")
             }
-            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun onLocationClick(locationUrl: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            when(val response = locationRepository.addWeatherLocation(locationUrl)) {
+            when (val response = locationRepository.addWeatherLocation(locationUrl)) {
                 is Resource.Success -> {
                     userDataRepository.setApiCallTime(Calendar.getInstance().timeInMillis)
                     _uiState.update { it.copy(isLocationAdded = true) }
                 }
+
                 is Resource.Error -> {
                     _uiState.update { it.copy(errorMessage = response.message) }
                 }
