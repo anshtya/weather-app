@@ -75,9 +75,12 @@ fun AddLocationScreen(
                 LocationList(
                     uiState = uiState,
                     onLocationClick = onLocationClick,
-                    onAddCurrentLocationClick = onAddCurrentLocationClick,
-                    onErrorShown = onErrorShown
+                    onAddCurrentLocationClick = onAddCurrentLocationClick
                 )
+                uiState.errorMessage?.let { message ->
+                    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
+                    onErrorShown()
+                }
             }
         }
     )
@@ -139,7 +142,6 @@ fun LocationList(
     uiState: SearchLocationUiState,
     onLocationClick: (String) -> Unit,
     onAddCurrentLocationClick: () -> Unit,
-    onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -221,10 +223,6 @@ fun LocationList(
                         }
                     }
                 }
-            }
-            uiState.errorMessage?.let { message ->
-                Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
-                onErrorShown()
             }
         }
     }

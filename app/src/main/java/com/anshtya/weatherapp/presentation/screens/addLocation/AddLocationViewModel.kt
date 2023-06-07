@@ -62,14 +62,18 @@ class AddLocationViewModel @Inject constructor(
 
     fun getUserCurrentLocation() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            locationTracker.getCurrentLocation()?.let { location ->
-                val response =
-                    locationRepository.getLocations("${location.latitude},${location.longitude}")
-                val locationUrl = response.first().url
-                onLocationClick(locationUrl)
-            } ?: _uiState.update {
-                it.copy(isLoading = false, errorMessage = "Can't retrieve current location")
+            if (checkConnection.hasConnection()) {
+                _uiState.update { it.copy(isLoading = true) }
+                locationTracker.getCurrentLocation()?.let { location ->
+                    val response =
+                        locationRepository.getLocations("${location.latitude},${location.longitude}")
+                    val locationUrl = response.first().url
+                    onLocationClick(locationUrl)
+                } ?: _uiState.update {
+                    it.copy(isLoading = false, errorMessage = "Can't retrieve current location")
+                }
+            } else {
+                _uiState.update { it.copy(errorMessage = "Network unavailable") }
             }
         }
     }
