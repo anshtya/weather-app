@@ -20,6 +20,7 @@ fun AddLocationRoute(
         onTextChange = { viewModel.onSearchTextChange(it) },
         onSubmit = { viewModel.onSubmitSearch(it) },
         onLocationClick = { viewModel.onLocationClick(it) },
+        onAddCurrentLocationClick = { viewModel.getUserCurrentLocation() },
         onErrorShown = { viewModel.errorShown() }
     )
 }

@@ -1,6 +1,13 @@
 package com.anshtya.weatherapp.presentation.screens.addLocation
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.content.Context
+import android.content.IntentSender
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +48,7 @@ fun AddLocationScreen(
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
     onLocationClick: (String) -> Unit,
+    onAddCurrentLocationClick: () -> Unit,
     onNavigateToWeatherScreen: () -> Unit,
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
@@ -59,8 +75,12 @@ fun AddLocationScreen(
                 LocationList(
                     uiState = uiState,
                     onLocationClick = onLocationClick,
-                    onErrorShown = onErrorShown
+                    onAddCurrentLocationClick = onAddCurrentLocationClick
                 )
+                uiState.errorMessage?.let { message ->
+                    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
+                    onErrorShown()
+                }
             }
         }
     )
@@ -121,10 +141,35 @@ fun SearchBar(
 fun LocationList(
     uiState: SearchLocationUiState,
     onLocationClick: (String) -> Unit,
-    onErrorShown: () -> Unit,
+    onAddCurrentLocationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)
+            || permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
+        ) {
+            onAddCurrentLocationClick()
+        }
+    }
+
+    val settingResultRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == RESULT_OK) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
     Box(modifier.fillMaxSize()) {
         if (uiState.isLoading) {
             CircularProgressIndicator(
@@ -132,6 +177,26 @@ fun LocationList(
             )
         }
         if (uiState.searchText.isEmpty()) {
+            AddCurrentLocationButton(
+                onClick = {
+                    //call gps
+                    getLocationSetting(
+                        context,
+                        onEnabled = {
+                            permissionLauncher.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+                        },
+                        onDisabled = { intentSenderRequest ->
+                            settingResultRequest.launch(intentSenderRequest)
+                        }
+                    )
+
+                }
+            )
             Text(
                 text = stringResource(id = R.string.enter_location),
                 modifier = Modifier.align(Alignment.Center)
@@ -159,24 +224,52 @@ fun LocationList(
                     }
                 }
             }
-            uiState.errorMessage?.let { message ->
-                Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
-                onErrorShown()
-            }
         }
     }
 }
 
-//@Composable
-//fun AddCurrentLocationButton(modifier: Modifier = Modifier) {
-//    Surface(
-//        shape = RoundedCornerShape(10.dp),
-//        modifier = modifier.fillMaxWidth().clickable { }
-//    ) {
-//        Text(
-//            text = "Add Current Location",
-//            modifier = Modifier
-//                .padding(horizontal = 5.dp, vertical = 10.dp)
-//        )
-//    }
-//}
+@Composable
+fun AddCurrentLocationButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        Text(
+            text = "Add Current Location",
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+        )
+    }
+}
+
+fun getLocationSetting(
+    context: Context,
+    onEnabled: () -> Unit,
+    onDisabled: (IntentSenderRequest) -> Unit
+) {
+    val locationRequest = LocationRequest
+        .Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 0)
+        .build()
+    val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+    val client: SettingsClient = LocationServices.getSettingsClient(context)
+    val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+    task.apply {
+        addOnSuccessListener { onEnabled() }
+        addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest
+                        .Builder(exception.resolution)
+                        .build()
+                    onDisabled(intentSenderRequest)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    // Ignore the error.
+                }
+            }
+        }
+    }
+}
