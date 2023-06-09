@@ -48,13 +48,13 @@ fun WeatherDrawer(
 
                     weatherLocations.forEach {
                         if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
-                            onChangeSelectedLocation(weatherLocations.first().id)
+                            onChangeSelectedLocation(weatherLocations.first().weatherLocation.id)
                         }
                         NavigationDrawerItem(
-                            label = { Text(it.name) },
-                            selected = selectedWeatherLocationId == it.id,
+                            label = { Text(it.weatherLocation.name) },
+                            selected = selectedWeatherLocationId == it.weatherLocation.id,
                             onClick = {
-                                onChangeSelectedLocation(it.id)
+                                onChangeSelectedLocation(it.weatherLocation.id)
                                 scope.launch { drawerState.close() }
                             }
                         )
@@ -76,7 +76,7 @@ fun WeatherDrawer(
         content = {
             if (selectedWeatherLocationId != "") {
                 WeatherDetails(
-                    weather = weatherLocations.first { it.id == selectedWeatherLocationId },
+                    weather = weatherLocations.first { it.weatherLocation.id == selectedWeatherLocationId },
                     isLoading = uiState.isLoading,
                     errorMessage = uiState.errorMessage,
                     showCelsius = uiState.userWeather.showCelsius,

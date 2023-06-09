@@ -2,8 +2,10 @@ package com.anshtya.weatherapp.data.mapper
 
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
+import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
 import com.anshtya.weatherapp.domain.model.CurrentWeather
 import com.anshtya.weatherapp.domain.model.WeatherForecast
+import com.anshtya.weatherapp.domain.model.WeatherLocation
 import com.anshtya.weatherapp.domain.model.WeatherType
 
 fun CurrentWeatherEntity.toExternalModel() = CurrentWeather(
@@ -29,4 +31,12 @@ fun WeatherForecastEntity.toExternalModel() = WeatherForecast(
     astro =  astro,
     day = day,
     hour = hour.map { it.toExternalModel() }
+)
+
+fun WeatherLocationEntity.toExternalModel() = WeatherLocation(
+    id = id,
+    country = country,
+    timezoneId = timezoneId,
+    name = name,
+    region = region
 )

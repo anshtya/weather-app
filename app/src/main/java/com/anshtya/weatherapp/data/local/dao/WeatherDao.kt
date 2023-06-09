@@ -17,7 +17,7 @@ interface WeatherDao {
     suspend fun getWeatherForecastId(locationId: String): Long
 
     @Transaction
-    @Query("SELECT weather_location.id, name FROM weather_location")
+    @Query("SELECT * FROM weather_location")
     fun getWeather(): Flow<List<WeatherModel>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM weather_location where id =:locationId)")

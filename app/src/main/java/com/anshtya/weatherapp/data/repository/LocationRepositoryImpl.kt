@@ -2,17 +2,14 @@ package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
-import com.anshtya.weatherapp.data.mapper.toExternalModel
-import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.mapper.toEntity
 import com.anshtya.weatherapp.data.mapper.toSearchLocation
-import com.anshtya.weatherapp.domain.util.Resource
-import com.anshtya.weatherapp.domain.model.SavedLocation
+import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
+import com.anshtya.weatherapp.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
@@ -26,11 +23,6 @@ class LocationRepositoryImpl @Inject constructor(
 
     override suspend fun getLocations(searchQuery: String): List<SearchLocation> {
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
-    }
-
-    override fun getSavedLocations(): Flow<List<SavedLocation>> {
-        return weatherLocationDao.getSavedWeatherLocations()
-            .map { it.map { savedLocation -> savedLocation.toExternalModel() } }
     }
 
     override suspend fun deleteWeatherLocation(locationId: String) {
