@@ -46,10 +46,11 @@ fun WeatherDrawer(
 
                     Spacer(Modifier.size(10.dp))
 
+                    if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
+                        onChangeSelectedLocation(weatherLocations.first().weatherLocation.id)
+                    }
+
                     weatherLocations.forEach {
-                        if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
-                            onChangeSelectedLocation(weatherLocations.first().weatherLocation.id)
-                        }
                         NavigationDrawerItem(
                             label = { Text(it.weatherLocation.name) },
                             selected = selectedWeatherLocationId == it.weatherLocation.id,

@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anshtya.weatherapp.presentation.MainActivity
 import com.anshtya.weatherapp.presentation.screens.addLocation.AddLocationRoute
-import com.anshtya.weatherapp.presentation.screens.manageLocation.ManageLocationScreen
+import com.anshtya.weatherapp.presentation.screens.manageLocation.ManageLocationRoute
 import com.anshtya.weatherapp.presentation.screens.settings.SettingsRoute
 import com.anshtya.weatherapp.presentation.screens.weather.WeatherRoute
 
@@ -32,9 +32,7 @@ fun WeatherNavigation(
                 },
                 onNavigateToWeatherScreen = {
                     if (navController.previousBackStackEntry != null) {
-                        navController.navigate(Destinations.Weather.route) {
-                            popUpTo(Destinations.Weather.route) { inclusive = true }
-                        }
+                        navController.popBackStack()
                     } else {
                         navController.navigate(Destinations.Weather.route) {
                             popUpTo(Destinations.AddLocation.route) { inclusive = true }
@@ -55,7 +53,8 @@ fun WeatherNavigation(
             )
         }
         composable(route = Destinations.ManageLocation.route) {
-            ManageLocationScreen(
+            ManageLocationRoute(
+                onBackClick = { navController.popBackStack() },
                 onAddLocationClick = {
                     navController.navigate(Destinations.AddLocation.route)
                 }
