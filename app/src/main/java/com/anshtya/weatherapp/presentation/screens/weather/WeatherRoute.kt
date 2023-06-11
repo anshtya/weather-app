@@ -25,7 +25,6 @@ fun WeatherRoute(
 
     WeatherScreen(
         uiState = uiState,
-        onChangeSelectedLocation = { viewModel.changeSelectedLocationId(it) },
         onManageLocationsClick = onManageLocationsClick,
         onSettingsClick = onSettingsClick,
         onErrorShown = { viewModel.errorShown() },

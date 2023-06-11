@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.presentation.screens.manageLocation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -9,14 +10,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun ManageLocationRoute(
     onBackClick: () -> Unit,
     onAddLocationClick: () -> Unit,
-//    onNavigateToAddLocationScreen: () -> Unit,
+    onNavigateToAddLocationScreen: () -> Unit,
     viewModel: ManageLocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isTableNotEmpty = uiState.isTableNotEmpty
+
+    LaunchedEffect(isTableNotEmpty) {
+        isTableNotEmpty?.let {
+            if(!it) {
+                onNavigateToAddLocationScreen()
+            }
+        }
+    }
+
     ManageLocationScreen(
-        uiState = uiState,
+        savedLocations = uiState.savedLocations,
+        isLoading = uiState.isLoading,
         onBackClick = onBackClick,
+        selectLocation =  { viewModel.selectLocation(it) },
         onAddLocationClick = onAddLocationClick,
-        onDeleteLocation = { viewModel.deleteLocation(it) }
+        onDeleteLocation = { viewModel.deleteLocation() }
     )
 }

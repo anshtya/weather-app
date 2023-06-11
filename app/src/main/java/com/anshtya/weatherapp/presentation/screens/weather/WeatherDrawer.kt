@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun WeatherDrawer(
     uiState: WeatherUiState,
-    onChangeSelectedLocation: (String) -> Unit,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -24,7 +23,7 @@ fun WeatherDrawer(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val selectedWeatherLocationId = uiState.userWeather.selectedLocationId
+    var selectedWeatherLocationId by remember { mutableStateOf("") }
     val weatherLocations = uiState.userWeather.weatherList
 
     BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
@@ -46,16 +45,16 @@ fun WeatherDrawer(
 
                     Spacer(Modifier.size(10.dp))
 
-                    if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
-                        onChangeSelectedLocation(weatherLocations.first().weatherLocation.id)
+                    if (selectedWeatherLocationId == "" && weatherLocations.isNotEmpty()) {
+                        selectedWeatherLocationId = weatherLocations.first().weatherLocation.id
                     }
 
                     weatherLocations.forEach {
                         NavigationDrawerItem(
                             label = { Text(it.weatherLocation.name) },
-                            selected = selectedWeatherLocationId == it.weatherLocation.id,
+                            selected = false,
                             onClick = {
-                                onChangeSelectedLocation(it.weatherLocation.id)
+                                selectedWeatherLocationId = it.weatherLocation.id
                                 scope.launch { drawerState.close() }
                             }
                         )

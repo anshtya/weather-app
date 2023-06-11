@@ -18,19 +18,22 @@ class ManageLocationViewModel @Inject constructor(
     private val locationRepository: LocationRepository
 ) : ViewModel() {
 
-//    val shouldNavigate = locationRepository.getSavedLocations().map {
-//        it.isEmpty()
-//    }.shareIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5000L),
-//        replay = 1
-//    )
-
     private val _uiState = MutableStateFlow(ManageLocationUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _selectedItems = mutableListOf<String>()
+
     init {
+        checkTableEmpty()
         getSavedLocations()
+    }
+
+    private fun checkTableEmpty() {
+        viewModelScope.launch {
+            locationRepository.checkIfTableEmpty().collect { isEmpty ->
+                _uiState.update { it.copy(isTableNotEmpty = isEmpty) }
+            }
+        }
     }
 
     private fun getSavedLocations() {
@@ -41,11 +44,28 @@ class ManageLocationViewModel @Inject constructor(
         }
     }
 
-    fun deleteLocation(locationId: String) {
-        viewModelScope.launch { locationRepository.deleteWeatherLocation(locationId) }
+    fun selectLocation(id: String) {
+        if(_selectedItems.contains(id)) {
+            _selectedItems.remove(id)
+        } else {
+            _selectedItems.add(id)
+        }
+    }
+
+    fun deleteLocation() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            _selectedItems.forEach {
+                locationRepository.deleteWeatherLocation(it)
+                _selectedItems.remove(it)
+            }
+            _uiState.update { it.copy(isLoading = false) }
+        }
     }
 }
 
 data class ManageLocationUiState(
     val savedLocations: WeatherWithPreferences = WeatherWithPreferences(),
+    val isLoading: Boolean = false,
+    val isTableNotEmpty: Boolean? = null
 )

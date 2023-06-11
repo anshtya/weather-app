@@ -87,12 +87,6 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun changeSelectedLocationId(locationId: String) {
-        viewModelScope.launch {
-            userDataRepository.setLocationId(locationId)
-        }
-    }
-
     fun errorShown() {
         _uiState.update { it.copy(errorMessage = null) }
     }

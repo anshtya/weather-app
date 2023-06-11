@@ -6,9 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,11 +28,14 @@ import kotlin.math.roundToInt
 fun SavedLocationItem(
     savedLocation: Weather,
     showCelsius: Boolean,
+    onCheck: (String) -> Unit,
+    isCheckEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     val weatherLocation = remember { savedLocation.weatherLocation }
     val currentWeather = remember { savedLocation.currentWeather }
     val weatherForecast = remember { savedLocation.weatherForecast.day }
+    var checkedState by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -40,17 +47,28 @@ fun SavedLocationItem(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                Text(
-                    savedLocation.weatherLocation.name,
-                    style = Typography.titleMedium,
-                    fontSize = 18.sp
-                )
-                Text(
-                    "${weatherLocation.region}, ${weatherLocation.country}",
-                    style = Typography.bodyMedium,
-                    color = Color.Gray
-                )
+            Row {
+                if (isCheckEnabled) {
+                    Checkbox(
+                        checked = checkedState,
+                        onCheckedChange = {
+                            checkedState = it
+                            onCheck(weatherLocation.id)
+                        }
+                    )
+                }
+                Column {
+                    Text(
+                        savedLocation.weatherLocation.name,
+                        style = Typography.titleMedium,
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        "${weatherLocation.region}, ${weatherLocation.country}",
+                        style = Typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
             }
             Column {
                 Row {

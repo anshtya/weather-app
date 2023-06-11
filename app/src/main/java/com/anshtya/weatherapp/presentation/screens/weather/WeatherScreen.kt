@@ -10,7 +10,6 @@ import androidx.lifecycle.LifecycleOwner
 @Composable
 fun WeatherScreen(
     uiState: WeatherUiState,
-    onChangeSelectedLocation: (String) -> Unit,
     onManageLocationsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -33,7 +32,6 @@ fun WeatherScreen(
 
     WeatherDrawer(
         uiState = uiState,
-        onChangeSelectedLocation = onChangeSelectedLocation,
         onSettingsClick = onSettingsClick,
         onManageLocationsClick = onManageLocationsClick,
         onErrorShown = onErrorShown,
