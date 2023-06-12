@@ -54,18 +54,29 @@ class ManageLocationViewModel @Inject constructor(
 
     fun deleteLocation() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            _selectedItems.forEach {
-                locationRepository.deleteWeatherLocation(it)
-                _selectedItems.remove(it)
+            _uiState.update { it.copy(isItemDeleted = false) }
+            if(_selectedItems.isEmpty()) {
+                _uiState.update { it.copy(errorMessage = "Select atleast one location") }
+            } else {
+                val itemIterator = _selectedItems.iterator()
+                while(itemIterator.hasNext()) {
+                    val item = itemIterator.next()
+                    locationRepository.deleteWeatherLocation(item)
+                    itemIterator.remove()
+                }
+                _uiState.update { it.copy(isItemDeleted = true) }
             }
-            _uiState.update { it.copy(isLoading = false) }
         }
+    }
+
+    fun errorShown() {
+        _uiState.update { it.copy(errorMessage = null) }
     }
 }
 
 data class ManageLocationUiState(
     val savedLocations: WeatherWithPreferences = WeatherWithPreferences(),
-    val isLoading: Boolean = false,
-    val isTableNotEmpty: Boolean? = null
+    val isTableNotEmpty: Boolean? = null,
+    val isItemDeleted: Boolean = false,
+    val errorMessage: String? = null
 )

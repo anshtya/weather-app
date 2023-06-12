@@ -26,10 +26,12 @@ fun ManageLocationRoute(
 
     ManageLocationScreen(
         savedLocations = uiState.savedLocations,
-        isLoading = uiState.isLoading,
+        isItemDeleted = uiState.isItemDeleted,
+        errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
         selectLocation =  { viewModel.selectLocation(it) },
         onAddLocationClick = onAddLocationClick,
-        onDeleteLocation = { viewModel.deleteLocation() }
+        onDeleteLocation = { viewModel.deleteLocation() },
+        onErrorShown = { viewModel.errorShown() }
     )
 }

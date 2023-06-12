@@ -1,6 +1,8 @@
 package com.anshtya.weatherapp.presentation.screens.manageLocation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,23 +26,38 @@ import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SavedLocationItem(
     savedLocation: Weather,
     showCelsius: Boolean,
     onCheck: (String) -> Unit,
+    onLongClick: () -> Unit,
     isCheckEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val weatherLocation = remember { savedLocation.weatherLocation }
-    val currentWeather = remember { savedLocation.currentWeather }
-    val weatherForecast = remember { savedLocation.weatherForecast.day }
+    val weatherLocation = savedLocation.weatherLocation
+    val currentWeather = savedLocation.currentWeather
+    val weatherForecast = savedLocation.weatherForecast.day
     var checkedState by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 10.dp),
+            .padding(horizontal = 15.dp, vertical = 10.dp)
+            .combinedClickable(
+                onClick = {
+                    if (isCheckEnabled) {
+                        checkedState = !checkedState
+                        onCheck(weatherLocation.id)
+                    }
+                },
+                onLongClick = {
+                    onLongClick()
+                    checkedState = true
+                    onCheck(weatherLocation.id)
+                }
+            ),
         verticalArrangement = Arrangement.Center
     ) {
         Row(
