@@ -33,6 +33,7 @@ fun SavedLocationItem(
     showCelsius: Boolean,
     onCheck: (String) -> Unit,
     onLongClick: () -> Unit,
+    onLocationClick: (String) -> Unit,
     isCheckEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -50,6 +51,8 @@ fun SavedLocationItem(
                     if (isCheckEnabled) {
                         checkedState = !checkedState
                         onCheck(weatherLocation.id)
+                    } else {
+                        onLocationClick(weatherLocation.id)
                     }
                 },
                 onLongClick = {

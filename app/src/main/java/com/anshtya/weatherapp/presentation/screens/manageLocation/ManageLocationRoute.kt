@@ -10,17 +10,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun ManageLocationRoute(
     onBackClick: () -> Unit,
     onAddLocationClick: () -> Unit,
+    onLocationClick: (String) -> Unit,
     onNavigateToAddLocationScreen: () -> Unit,
     viewModel: ManageLocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isTableNotEmpty = uiState.isTableNotEmpty
 
+    val isTableNotEmpty = uiState.isTableNotEmpty
     LaunchedEffect(isTableNotEmpty) {
-        isTableNotEmpty?.let {
-            if(!it) {
-                onNavigateToAddLocationScreen()
-            }
+        if (isTableNotEmpty == false) {
+            onNavigateToAddLocationScreen()
         }
     }
 
@@ -29,8 +28,9 @@ fun ManageLocationRoute(
         isItemDeleted = uiState.isItemDeleted,
         errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
-        selectLocation =  { viewModel.selectLocation(it) },
+        selectLocation = { viewModel.selectLocation(it) },
         onAddLocationClick = onAddLocationClick,
+        onLocationClick = onLocationClick,
         onDeleteLocation = { viewModel.deleteLocation() },
         onErrorShown = { viewModel.errorShown() }
     )

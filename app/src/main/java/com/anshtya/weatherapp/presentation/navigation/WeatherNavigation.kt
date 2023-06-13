@@ -19,7 +19,7 @@ fun WeatherNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destinations.Weather.route
+        startDestination = Destinations.Weather.routeWithArg
     ) {
         composable(route = Destinations.AddLocation.route) {
             val context = LocalContext.current as MainActivity
@@ -40,8 +40,12 @@ fun WeatherNavigation(
                 },
             )
         }
-        composable(route = Destinations.Weather.route) {
+        composable(
+            route = Destinations.Weather.routeWithArg,
+            arguments = Destinations.Weather.argument
+        ) {
             WeatherRoute(
+                weatherId = it.arguments?.getString(Destinations.Weather.argumentType),
                 onNavigateToAddLocationScreen = { navController.navigateToAddLocationScreen() },
                 onManageLocationsClick = { navController.navigate(Destinations.ManageLocation.route) },
                 onSettingsClick = { navController.navigate(Destinations.Settings.route) },
@@ -51,7 +55,8 @@ fun WeatherNavigation(
             ManageLocationRoute(
                 onBackClick = { navController.popBackStack() },
                 onNavigateToAddLocationScreen = { navController.navigateToAddLocationScreen() },
-                onAddLocationClick = { navController.navigate(Destinations.AddLocation.route) }
+                onAddLocationClick = { navController.navigate(Destinations.AddLocation.route) },
+                onLocationClick = { navController.navigateToLocationWeather(it) }
             )
         }
         composable(route = Destinations.Settings.route) {
@@ -64,12 +69,19 @@ fun WeatherNavigation(
 
 fun NavController.navigateToAddLocationScreen() {
     navigate(Destinations.AddLocation.route) {
-        popUpTo(Destinations.Weather.route) { inclusive = true }
+        popUpTo(Destinations.Weather.routeWithArg) { inclusive = true }
     }
 }
 
 fun NavController.navigateToWeatherScreen() {
-    navigate(Destinations.Weather.route) {
+    navigate(Destinations.Weather.routeWithArg) {
         popUpTo(Destinations.AddLocation.route) { inclusive = true }
+    }
+}
+
+fun NavController.navigateToLocationWeather(id: String) {
+    navigate(Destinations.Weather.passId(id)) {
+        popUpTo(Destinations.ManageLocation.route) { inclusive = true }
+        launchSingleTop = true
     }
 }

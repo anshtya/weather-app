@@ -20,21 +20,24 @@ class WeatherViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
     private val updateWeatherUseCase: UpdateWeatherUseCase,
     private val userDataRepository: UserDataRepository,
-    locationRepository: LocationRepository,
+    private val locationRepository: LocationRepository,
     private val checkConnection: CheckConnection
 ) : ViewModel() {
-
-    val isTableEmpty = locationRepository.checkIfTableEmpty().shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        replay = 1
-    )
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
+        checkTableNotEmpty()
         getWeather()
+    }
+
+    private fun checkTableNotEmpty() {
+        viewModelScope.launch {
+            locationRepository.checkIfTableEmpty().collect { isTableNotEmpty ->
+                _uiState.update { it.copy(isTableNotEmpty = isTableNotEmpty) }
+            }
+        }
     }
 
     private fun getWeather() {
@@ -95,6 +98,7 @@ class WeatherViewModel @Inject constructor(
 data class WeatherUiState(
     val userWeather: WeatherWithPreferences = WeatherWithPreferences(),
     val isLoading: Boolean = false,
+    val isTableNotEmpty: Boolean? = null,
     val errorMessage: String? = null
 )
 

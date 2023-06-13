@@ -36,6 +36,7 @@ fun ManageLocationScreen(
     onBackClick: () -> Unit,
     selectLocation: (String) -> Unit,
     onAddLocationClick: () -> Unit,
+    onLocationClick: (String) -> Unit,
     onDeleteLocation: () -> Unit,
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
@@ -102,6 +103,7 @@ fun ManageLocationScreen(
                         showCelsius = savedLocations.showCelsius,
                         onCheck = selectLocation,
                         onLongClick = { deleteClicked = true },
+                        onLocationClick = onLocationClick,
                         isCheckEnabled = deleteClicked
                     )
                 }

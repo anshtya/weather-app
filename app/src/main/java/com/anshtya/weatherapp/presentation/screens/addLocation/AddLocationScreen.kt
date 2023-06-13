@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.anshtya.weatherapp.R
+import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -43,26 +44,22 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddLocationScreen(
-    uiState: SearchLocationUiState,
+    searchText: String,
+    searchLocations: List<SearchLocation>?,
+    isLoading: Boolean,
+    errorMessage: String?,
     onBackClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
     onLocationClick: (String) -> Unit,
     onAddCurrentLocationClick: () -> Unit,
-    onNavigateToWeatherScreen: () -> Unit,
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (uiState.isLocationAdded) {
-        LaunchedEffect(Unit) {
-            onNavigateToWeatherScreen()
-        }
-    }
-
     Scaffold(
         topBar = {
             SearchBar(
-                searchText = uiState.searchText,
+                searchText = searchText,
                 onBackClick = onBackClick,
                 onTextChange = onTextChange,
                 onSubmit = onSubmit
@@ -73,11 +70,13 @@ fun AddLocationScreen(
                 modifier = modifier.padding(paddingValues)
             ) {
                 LocationList(
-                    uiState = uiState,
+                    searchLocations = searchLocations,
+                    searchText = searchText,
+                    isLoading = isLoading,
                     onLocationClick = onLocationClick,
                     onAddCurrentLocationClick = onAddCurrentLocationClick
                 )
-                uiState.errorMessage?.let { message ->
+                errorMessage?.let { message ->
                     Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
                     onErrorShown()
                 }
@@ -139,7 +138,9 @@ fun SearchBar(
 
 @Composable
 fun LocationList(
-    uiState: SearchLocationUiState,
+    searchLocations: List<SearchLocation>?,
+    searchText: String,
+    isLoading: Boolean,
     onLocationClick: (String) -> Unit,
     onAddCurrentLocationClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -171,12 +172,12 @@ fun LocationList(
     }
 
     Box(modifier.fillMaxSize()) {
-        if (uiState.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        if (uiState.searchText.isEmpty()) {
+        if (searchText.isEmpty()) {
             AddCurrentLocationButton(
                 onClick = {
                     //call gps
@@ -202,8 +203,8 @@ fun LocationList(
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
-            uiState.searchLocations?.let { locations ->
-                if (locations.isEmpty() && !uiState.isLoading) {
+            searchLocations?.let { locations ->
+                if (locations.isEmpty() && !isLoading) {
                     Text(
                         text = stringResource(id = R.string.no_results),
                         modifier = Modifier.align(Alignment.Center)
