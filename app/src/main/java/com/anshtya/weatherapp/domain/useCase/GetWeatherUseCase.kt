@@ -18,8 +18,7 @@ class GetWeatherUseCase @Inject constructor(
         ) { weatherList, userData ->
             WeatherWithPreferences(
                 weatherList = weatherList,
-                showCelsius = userData.showCelsius,
-                selectedLocationId = userData.selectedLocation
+                showCelsius = userData.showCelsius
             )
         }
     }

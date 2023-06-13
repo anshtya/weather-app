@@ -4,8 +4,7 @@ import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.data.local.model.WeatherModel
 
 fun WeatherModel.toExternalModel() = Weather(
-    id = id,
-    name = name,
+    weatherLocation = weatherLocation.toExternalModel(),
     currentWeather = currentWeather.toExternalModel(),
     weatherForecast = weatherForecast.toExternalModel()
 )

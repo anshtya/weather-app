@@ -17,8 +17,4 @@ class UserDataRepositoryImpl @Inject constructor(
     override suspend fun setApiCallTime(time: Long) {
         userPreferencesDataSource.setApiCallTime(time)
     }
-
-    override suspend fun setLocationId(locationId: String) {
-        userPreferencesDataSource.setLocationId(locationId)
-    }
 }

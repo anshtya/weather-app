@@ -8,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun WeatherRoute(
+    weatherId: String?,
     onNavigateToAddLocationScreen: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -15,17 +16,18 @@ fun WeatherRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.isTableEmpty.collect { isNotEmpty ->
-            if (!isNotEmpty) {
-                onNavigateToAddLocationScreen()
-            }
+    val isTableNotEmpty = uiState.isTableNotEmpty
+    LaunchedEffect(isTableNotEmpty) {
+        if(isTableNotEmpty == false) {
+            onNavigateToAddLocationScreen()
         }
     }
 
     WeatherScreen(
-        uiState = uiState,
-        onChangeSelectedLocation = { viewModel.changeSelectedLocationId(it) },
+        userWeather = uiState.userWeather,
+        isLoading = uiState.isLoading,
+        errorMessage = uiState.errorMessage,
+        weatherId = weatherId,
         onManageLocationsClick = onManageLocationsClick,
         onSettingsClick = onSettingsClick,
         onErrorShown = { viewModel.errorShown() },

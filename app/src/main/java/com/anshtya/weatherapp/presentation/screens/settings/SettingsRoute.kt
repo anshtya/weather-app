@@ -13,7 +13,7 @@ fun SettingsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SettingsScreen(
-        uiState = uiState,
+        showCelsius = uiState.showCelsius,
         onBackClick = onBackClick,
         onUnitSelect = { viewModel.showCelsius(it) }
     )

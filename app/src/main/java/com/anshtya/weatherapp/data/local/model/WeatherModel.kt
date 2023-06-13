@@ -1,12 +1,13 @@
 package com.anshtya.weatherapp.data.local.model
 
+import androidx.room.Embedded
 import androidx.room.Relation
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
+import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
 
 data class WeatherModel(
-    val id: String,
-    val name: String,
+    @Embedded val weatherLocation: WeatherLocationEntity,
 
     @Relation(
         parentColumn = "id",

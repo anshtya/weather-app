@@ -104,6 +104,6 @@ data class SearchLocationUiState(
     val searchText: String = "",
     val searchLocations: List<SearchLocation>? = null,
     val isLoading: Boolean = false,
-    val isLocationAdded: Boolean = false,
+    val isLocationAdded: Boolean? = null,
     val errorMessage: String? = null
 )

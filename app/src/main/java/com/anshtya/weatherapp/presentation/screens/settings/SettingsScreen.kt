@@ -33,7 +33,7 @@ import com.anshtya.weatherapp.presentation.ui.theme.Typography
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    uiState: SettingsUiState,
+    showCelsius: Boolean,
     onBackClick: () -> Unit,
     onUnitSelect: (Boolean) -> Unit
 ) {
@@ -58,7 +58,7 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 SettingsItem(
-                    mainText = "Unit", subText = if (uiState.showCelsius) "°C" else "°F",
+                    mainText = "Unit", subText = if (showCelsius) "°C" else "°F",
                     optionsList = listOf("°C", "°F"),
                     onOptionClick = {
                         if (it == "°C") {

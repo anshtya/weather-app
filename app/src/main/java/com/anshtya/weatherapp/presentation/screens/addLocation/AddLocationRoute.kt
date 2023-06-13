@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -13,10 +14,19 @@ fun AddLocationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val isLocationAdded = uiState.isLocationAdded
+    LaunchedEffect(isLocationAdded) {
+        if(isLocationAdded == true) {
+            onNavigateToWeatherScreen()
+        }
+    }
+
     AddLocationScreen(
-        uiState = uiState,
+        searchText = uiState.searchText,
+        searchLocations = uiState.searchLocations,
+        isLoading = uiState.isLoading,
+        errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
-        onNavigateToWeatherScreen = onNavigateToWeatherScreen,
         onTextChange = { viewModel.onSearchTextChange(it) },
         onSubmit = { viewModel.onSubmitSearch(it) },
         onLocationClick = { viewModel.onLocationClick(it) },

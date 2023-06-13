@@ -46,6 +46,7 @@ fun WeatherDetails(
     onUpdate: (UpdateOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val weatherLocation = weather.weatherLocation
     val currentWeather = weather.currentWeather
 
     Scaffold(
@@ -65,7 +66,7 @@ fun WeatherDetails(
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh Weather")
                     }
                 },
-                title = { Text(weather.name) }
+                title = { Text(weatherLocation.name) }
             )
         },
         modifier = modifier
@@ -119,7 +120,7 @@ fun WeatherDetails(
 
                             Spacer(modifier = Modifier.size(5.dp))
 
-                            Text(weather.name)
+                            Text(weatherLocation.name)
                             Text(
                                 if (showCelsius) {
                                     stringResource(

@@ -6,16 +6,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDrawer(
-    uiState: WeatherUiState,
-    onChangeSelectedLocation: (String) -> Unit,
+    userWeather: WeatherWithPreferences,
+    isLoading: Boolean,
+    errorMessage: String?,
+    weatherId: String?,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -24,8 +28,9 @@ fun WeatherDrawer(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val selectedWeatherLocationId = uiState.userWeather.selectedLocationId
-    val weatherLocations = uiState.userWeather.weatherList
+    var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
+    var previousVisitedWeatherId by rememberSaveable { mutableStateOf("") }
+    val weatherLocations = userWeather.weatherList
 
     BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
     ModalNavigationDrawer(
@@ -46,15 +51,19 @@ fun WeatherDrawer(
 
                     Spacer(Modifier.size(10.dp))
 
+                    if (previousVisitedWeatherId != weatherId && weatherId != null) {
+                        selectedWeatherLocationId = weatherId
+                        previousVisitedWeatherId = weatherId
+                    } else if (selectedWeatherLocationId == "" && weatherLocations.isNotEmpty()) {
+                        selectedWeatherLocationId = weatherLocations.first().weatherLocation.id
+                    }
+
                     weatherLocations.forEach {
-                        if (weatherLocations.isNotEmpty() && selectedWeatherLocationId == "") {
-                            onChangeSelectedLocation(weatherLocations.first().id)
-                        }
                         NavigationDrawerItem(
-                            label = { Text(it.name) },
-                            selected = selectedWeatherLocationId == it.id,
+                            label = { Text(it.weatherLocation.name) },
+                            selected = false,
                             onClick = {
-                                onChangeSelectedLocation(it.id)
+                                selectedWeatherLocationId = it.weatherLocation.id
                                 scope.launch { drawerState.close() }
                             }
                         )
@@ -75,15 +84,19 @@ fun WeatherDrawer(
         },
         content = {
             if (selectedWeatherLocationId != "") {
-                WeatherDetails(
-                    weather = weatherLocations.first { it.id == selectedWeatherLocationId },
-                    isLoading = uiState.isLoading,
-                    errorMessage = uiState.errorMessage,
-                    showCelsius = uiState.userWeather.showCelsius,
-                    onErrorShown = onErrorShown,
-                    onMenuClicked = { scope.launch { drawerState.open() } },
-                    onUpdate = onUpdate
-                )
+                if (weatherLocations.find { it.weatherLocation.id == selectedWeatherLocationId } != null) {
+                    WeatherDetails(
+                        weather = weatherLocations.first { it.weatherLocation.id == selectedWeatherLocationId },
+                        isLoading = isLoading,
+                        errorMessage = errorMessage,
+                        showCelsius = userWeather.showCelsius,
+                        onErrorShown = onErrorShown,
+                        onMenuClicked = { scope.launch { drawerState.open() } },
+                        onUpdate = onUpdate
+                    )
+                } else {
+                    selectedWeatherLocationId = ""
+                }
             }
         }
     )
