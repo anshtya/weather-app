@@ -1,6 +1,8 @@
 # weather-app
 Displays weather fetched from WeatherAPI
 
+This app was made to practice Jetpack Compose with Clean Architecture.
+
 ## 🖥️Installation
 
 To clone the project, run
