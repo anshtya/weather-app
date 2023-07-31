@@ -1,11 +1,13 @@
-package com.anshtya.weatherapp.presentation.screens.weather
+package com.anshtya.weatherapp.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +20,9 @@ fun WeatherGridItem(
     description: String,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
             .height(150.dp)
             .padding(5.dp)
@@ -26,10 +30,7 @@ fun WeatherGridItem(
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .fillMaxHeight()
+            modifier = Modifier.fillMaxHeight()
         ) {
             Text(name)
             Text(description)

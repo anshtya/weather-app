@@ -30,6 +30,6 @@ fun WeatherRoute(
         onManageLocationsClick = onManageLocationsClick,
         onSettingsClick = onSettingsClick,
         onErrorShown = { viewModel.errorShown() },
-        onUpdate = { viewModel.sendUpdateWeatherOption(it) }
+        onUpdateClick = { viewModel.updateWeather() }
     )
 }

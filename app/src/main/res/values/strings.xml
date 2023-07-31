@@ -8,4 +8,6 @@
     <string name="feels_like">Feels like %d°</string>
     <string name="wind_kph">%s kph, %s</string>
     <string name="wind_mph">%s mph, %s</string>
+    <string name="show_navigation_menu">Show navigation menu</string>
+    <string name="refresh_weather">Refresh Weather</string>
 </resources>

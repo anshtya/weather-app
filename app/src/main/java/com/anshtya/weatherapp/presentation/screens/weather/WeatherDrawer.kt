@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDrawer(
     uiState: WeatherUiState,
@@ -20,7 +19,7 @@ fun WeatherDrawer(
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
     onErrorShown: () -> Unit,
-    onUpdate: (UpdateOption) -> Unit,
+    onUpdateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -88,8 +87,8 @@ fun WeatherDrawer(
                         errorMessage = uiState.errorMessage,
                         showCelsius = uiState.userWeather.showCelsius,
                         onErrorShown = onErrorShown,
-                        onMenuClicked = { scope.launch { drawerState.open() } },
-                        onUpdate = onUpdate
+                        onMenuClick = { scope.launch { drawerState.open() } },
+                        onUpdateClick = onUpdateClick
                     )
                 } else {
                     selectedWeatherLocationId = ""
