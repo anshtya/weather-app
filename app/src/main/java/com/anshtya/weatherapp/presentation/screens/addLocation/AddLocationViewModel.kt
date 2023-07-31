@@ -3,23 +3,22 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.location.LocationTracker
-import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
-import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
 import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
+import com.anshtya.weatherapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class AddLocationViewModel @Inject constructor(
     private val getSearchResultUseCase: GetSearchResultUseCase,
     private val locationRepository: LocationRepository,
-    private val userDataRepository: UserDataRepository,
     private val locationTracker: LocationTracker,
     private val checkConnection: CheckConnection
 ) : ViewModel() {
@@ -83,7 +82,6 @@ class AddLocationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             when (val response = locationRepository.addWeatherLocation(locationUrl)) {
                 is Resource.Success -> {
-                    userDataRepository.setApiCallTime(Calendar.getInstance().timeInMillis)
                     _uiState.update { it.copy(isLocationAdded = true) }
                 }
 
