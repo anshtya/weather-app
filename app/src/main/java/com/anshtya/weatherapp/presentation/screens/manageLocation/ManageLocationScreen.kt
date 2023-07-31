@@ -25,14 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageLocationScreen(
-    savedLocations: WeatherWithPreferences,
-    isItemDeleted: Boolean,
-    errorMessage: String?,
+    uiState: ManageLocationUiState,
     onBackClick: () -> Unit,
     selectLocation: (String) -> Unit,
     onAddLocationClick: () -> Unit,
@@ -45,7 +42,7 @@ fun ManageLocationScreen(
     BackHandler(deleteClicked) {
         deleteClicked = false
     }
-    if(isItemDeleted) {
+    if(uiState.isItemDeleted) {
         deleteClicked = false
     }
     Scaffold(
@@ -97,10 +94,10 @@ fun ManageLocationScreen(
                 .fillMaxSize()
         ) {
             LazyColumn {
-                items(savedLocations.weatherList) { location ->
+                items(uiState.savedLocations.weatherList) { location ->
                     SavedLocationItem(
                         savedLocation = location,
-                        showCelsius = savedLocations.showCelsius,
+                        showCelsius = uiState.savedLocations.showCelsius,
                         onCheck = selectLocation,
                         onLongClick = { deleteClicked = true },
                         onLocationClick = onLocationClick,
@@ -108,7 +105,7 @@ fun ManageLocationScreen(
                     )
                 }
             }
-            errorMessage?.let { message ->
+            uiState.errorMessage?.let { message ->
                 Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
                 onErrorShown()
             }

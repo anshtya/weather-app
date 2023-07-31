@@ -1,6 +1,6 @@
 package com.anshtya.weatherapp.domain.useCase
 
-import com.anshtya.weatherapp.domain.util.Resource
+import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import javax.inject.Inject
 

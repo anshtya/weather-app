@@ -16,17 +16,16 @@ fun WeatherRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isTableNotEmpty = uiState.isTableNotEmpty
-    LaunchedEffect(isTableNotEmpty) {
-        if(isTableNotEmpty == false) {
-            onNavigateToAddLocationScreen()
+    LaunchedEffect(Unit) {
+        viewModel.hasLocations.collect {
+            if (!it) {
+                onNavigateToAddLocationScreen()
+            }
         }
     }
 
     WeatherScreen(
-        userWeather = uiState.userWeather,
-        isLoading = uiState.isLoading,
-        errorMessage = uiState.errorMessage,
+        uiState = uiState,
         weatherId = weatherId,
         onManageLocationsClick = onManageLocationsClick,
         onSettingsClick = onSettingsClick,

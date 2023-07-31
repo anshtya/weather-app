@@ -10,15 +10,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDrawer(
-    userWeather: WeatherWithPreferences,
-    isLoading: Boolean,
-    errorMessage: String?,
+    uiState: WeatherUiState,
     weatherId: String?,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
@@ -30,7 +27,7 @@ fun WeatherDrawer(
     val scope = rememberCoroutineScope()
     var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
     var previousVisitedWeatherId by rememberSaveable { mutableStateOf("") }
-    val weatherLocations = userWeather.weatherList
+    val weatherLocations = uiState.userWeather.weatherList
 
     BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
     ModalNavigationDrawer(
@@ -87,9 +84,9 @@ fun WeatherDrawer(
                 if (weatherLocations.find { it.weatherLocation.id == selectedWeatherLocationId } != null) {
                     WeatherDetails(
                         weather = weatherLocations.first { it.weatherLocation.id == selectedWeatherLocationId },
-                        isLoading = isLoading,
-                        errorMessage = errorMessage,
-                        showCelsius = userWeather.showCelsius,
+                        isLoading = uiState.isLoading,
+                        errorMessage = uiState.errorMessage,
+                        showCelsius = uiState.userWeather.showCelsius,
                         onErrorShown = onErrorShown,
                         onMenuClicked = { scope.launch { drawerState.open() } },
                         onUpdate = onUpdate

@@ -11,7 +11,7 @@ interface WeatherLocationDao {
     fun getLocationIds(): Flow<List<String>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM weather_location)")
-    fun checkIfTableEmpty(): Flow<Boolean>
+    fun checkTableNotEmpty(): Flow<Boolean>
 
     @Query("DELETE FROM weather_location where id =:locationId")
     suspend fun deleteWeatherLocation(locationId: String)

@@ -3,7 +3,7 @@ package com.anshtya.weatherapp.data.remote
 import com.anshtya.weatherapp.BuildConfig
 import com.anshtya.weatherapp.data.remote.model.NetworkSearchLocation
 import com.anshtya.weatherapp.data.remote.model.NetworkWeatherResponse
-import com.anshtya.weatherapp.domain.util.Constants.Companion.FORECAST_DAYS
+import com.anshtya.weatherapp.util.Constants.Companion.FORECAST_DAYS
 import retrofit2.http.GET
 import retrofit2.http.Query
 

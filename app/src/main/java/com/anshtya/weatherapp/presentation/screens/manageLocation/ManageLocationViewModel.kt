@@ -7,7 +7,9 @@ import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,17 +25,14 @@ class ManageLocationViewModel @Inject constructor(
 
     private val _selectedItems = mutableListOf<String>()
 
-    init {
-        checkTableEmpty()
-        getSavedLocations()
-    }
+    val hasLocations = locationRepository.isLocationTableNotEmpty.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        replay = 1
+    )
 
-    private fun checkTableEmpty() {
-        viewModelScope.launch {
-            locationRepository.checkIfTableEmpty().collect { isEmpty ->
-                _uiState.update { it.copy(isTableNotEmpty = isEmpty) }
-            }
-        }
+    init {
+        getSavedLocations()
     }
 
     private fun getSavedLocations() {
@@ -76,7 +75,6 @@ class ManageLocationViewModel @Inject constructor(
 
 data class ManageLocationUiState(
     val savedLocations: WeatherWithPreferences = WeatherWithPreferences(),
-    val isTableNotEmpty: Boolean? = null,
     val isItemDeleted: Boolean = false,
     val errorMessage: String? = null
 )

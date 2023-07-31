@@ -2,7 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anshtya.weatherapp.domain.util.Resource
+import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
@@ -20,24 +20,21 @@ class WeatherViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
     private val updateWeatherUseCase: UpdateWeatherUseCase,
     private val userDataRepository: UserDataRepository,
-    private val locationRepository: LocationRepository,
-    private val checkConnection: CheckConnection
+    private val checkConnection: CheckConnection,
+    locationRepository: LocationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        checkTableNotEmpty()
-        getWeather()
-    }
+    val hasLocations = locationRepository.isLocationTableNotEmpty.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        replay = 1
+    )
 
-    private fun checkTableNotEmpty() {
-        viewModelScope.launch {
-            locationRepository.checkIfTableEmpty().collect { isTableNotEmpty ->
-                _uiState.update { it.copy(isTableNotEmpty = isTableNotEmpty) }
-            }
-        }
+    init {
+        getWeather()
     }
 
     private fun getWeather() {
@@ -98,7 +95,6 @@ class WeatherViewModel @Inject constructor(
 data class WeatherUiState(
     val userWeather: WeatherWithPreferences = WeatherWithPreferences(),
     val isLoading: Boolean = false,
-    val isTableNotEmpty: Boolean? = null,
     val errorMessage: String? = null
 )
 

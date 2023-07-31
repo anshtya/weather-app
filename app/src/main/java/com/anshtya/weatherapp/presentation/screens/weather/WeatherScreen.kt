@@ -6,13 +6,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 
 @Composable
 fun WeatherScreen(
-    userWeather: WeatherWithPreferences,
-    isLoading: Boolean,
-    errorMessage: String?,
+    uiState: WeatherUiState,
     weatherId: String?,
     onManageLocationsClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -35,9 +32,7 @@ fun WeatherScreen(
     }
 
     WeatherDrawer(
-        userWeather = userWeather,
-        isLoading = isLoading,
-        errorMessage = errorMessage,
+        uiState = uiState,
         weatherId = weatherId,
         onSettingsClick = onSettingsClick,
         onManageLocationsClick = onManageLocationsClick,

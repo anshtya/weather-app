@@ -16,17 +16,16 @@ fun ManageLocationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isTableNotEmpty = uiState.isTableNotEmpty
-    LaunchedEffect(isTableNotEmpty) {
-        if (isTableNotEmpty == false) {
-            onNavigateToAddLocationScreen()
+    LaunchedEffect(uiState) {
+        viewModel.hasLocations.collect {
+            if (!it) {
+                onNavigateToAddLocationScreen()
+            }
         }
     }
 
     ManageLocationScreen(
-        savedLocations = uiState.savedLocations,
-        isItemDeleted = uiState.isItemDeleted,
-        errorMessage = uiState.errorMessage,
+        uiState = uiState,
         onBackClick = onBackClick,
         selectLocation = { viewModel.selectLocation(it) },
         onAddLocationClick = onAddLocationClick,

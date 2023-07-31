@@ -7,8 +7,7 @@ import com.anshtya.weatherapp.data.mapper.toSearchLocation
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
-import com.anshtya.weatherapp.domain.util.Resource
-import kotlinx.coroutines.flow.Flow
+import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
@@ -17,9 +16,7 @@ class LocationRepositoryImpl @Inject constructor(
     private val weatherDao: WeatherDao,
     private val weatherLocationDao: WeatherLocationDao,
 ) : LocationRepository {
-    override fun checkIfTableEmpty(): Flow<Boolean> {
-        return weatherLocationDao.checkIfTableEmpty().distinctUntilChanged()
-    }
+    override val isLocationTableNotEmpty = weatherLocationDao.checkTableNotEmpty().distinctUntilChanged()
 
     override suspend fun getLocations(searchQuery: String): List<SearchLocation> {
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
