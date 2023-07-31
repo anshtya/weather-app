@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -91,16 +92,20 @@ fun WeatherDetails(
                             modifier = Modifier.fillMaxWidth()
                         ) {
 
-                            if (currentWeather.isDay == 1) {
-                                Image(
-                                    painterResource(id = currentWeather.weatherType.nightIconRes),
-                                    contentDescription = null
-                                )
-                            } else {
-                                Image(
-                                    painterResource(id = currentWeather.weatherType.dayIconRes),
-                                    contentDescription = null
-                                )
+                            Surface(
+                                modifier = Modifier.size(150.dp)
+                            ) {
+                                if (currentWeather.isDay == 1) {
+                                    Image(
+                                        painterResource(id = currentWeather.weatherType.dayIconRes),
+                                        contentDescription = null
+                                    )
+                                } else {
+                                    Image(
+                                        painterResource(id = currentWeather.weatherType.nightIconRes),
+                                        contentDescription = null
+                                    )
+                                }
                             }
 
                             Text(

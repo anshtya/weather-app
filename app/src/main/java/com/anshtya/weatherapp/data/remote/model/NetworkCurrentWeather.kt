@@ -15,7 +15,7 @@ data class NetworkCurrentWeather(
 
     val humidity: Int,
 
-    @field:Json(name = "is_Day")
+    @field:Json(name = "is_day")
     val isDay: Int,
 
     @field:Json(name = "temp_c")
