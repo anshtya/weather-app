@@ -81,8 +81,11 @@ fun ManageLocationTopAppBar(
             }
             IconButton(
                 onClick = {
-                    onDeleteClick()
-                    onDeleteLocation()
+                    if (deleteClicked) {
+                        onDeleteLocation()
+                    } else {
+                        onDeleteClick()
+                    }
                 }
             ) {
                 Icon(

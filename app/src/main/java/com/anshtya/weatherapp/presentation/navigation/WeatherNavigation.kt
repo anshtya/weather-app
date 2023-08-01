@@ -82,5 +82,6 @@ fun NavController.navigateToWeatherScreen() {
 fun NavController.navigateToWeatherLocation(id: String) {
     navigate(Destinations.Weather.passId(id)) {
         popUpTo(Destinations.ManageLocation.route) { inclusive = true }
+        launchSingleTop = true
     }
 }
