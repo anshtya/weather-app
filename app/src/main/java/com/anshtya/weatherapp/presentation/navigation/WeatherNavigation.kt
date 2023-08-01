@@ -56,7 +56,7 @@ fun WeatherNavigation(
                 onBackClick = { navController.popBackStack() },
                 onNavigateToAddLocationScreen = { navController.navigateToAddLocationScreen() },
                 onAddLocationClick = { navController.navigate(Destinations.AddLocation.route) },
-                onLocationClick = { navController.navigateToLocationWeather(it) }
+                onLocationClick = { navController.navigateToWeatherLocation(it) }
             )
         }
         composable(route = Destinations.Settings.route) {
@@ -79,9 +79,8 @@ fun NavController.navigateToWeatherScreen() {
     }
 }
 
-fun NavController.navigateToLocationWeather(id: String) {
+fun NavController.navigateToWeatherLocation(id: String) {
     navigate(Destinations.Weather.passId(id)) {
         popUpTo(Destinations.ManageLocation.route) { inclusive = true }
-        launchSingleTop = true
     }
 }

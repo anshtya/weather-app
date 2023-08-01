@@ -10,4 +10,6 @@
     <string name="wind_mph">%s mph, %s</string>
     <string name="show_navigation_menu">Show navigation menu</string>
     <string name="refresh_weather">Refresh Weather</string>
+    <string name="settings">Settings</string>
+    <string name="manage_locations">Manage Locations</string>
 </resources>
