@@ -23,7 +23,8 @@ class ManageLocationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ManageLocationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _selectedItems = mutableListOf<String>()
+    private val _selectedLocations = MutableStateFlow<Set<String>>(emptySet())
+    val selectedLocations = _selectedLocations.asStateFlow()
 
     val hasLocations = locationRepository.isLocationTableNotEmpty.shareIn(
         scope = viewModelScope,
@@ -44,27 +45,31 @@ class ManageLocationViewModel @Inject constructor(
     }
 
     fun selectLocation(id: String) {
-        if(_selectedItems.contains(id)) {
-            _selectedItems.remove(id)
+        val selected = _selectedLocations.value.toMutableSet()
+
+        if(selected.contains(id)) {
+            selected.remove(id)
         } else {
-            _selectedItems.add(id)
+            selected.add(id)
         }
+
+        _selectedLocations.value = selected.toSet()
     }
 
     fun deleteLocation() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isItemDeleted = false) }
-            if(_selectedItems.isEmpty()) {
+            val selected = _selectedLocations.value.toMutableSet()
+            if(selected.isEmpty()) {
                 _uiState.update { it.copy(errorMessage = "Select atleast one location") }
             } else {
-                val itemIterator = _selectedItems.iterator()
+                val itemIterator = selected.iterator()
                 while(itemIterator.hasNext()) {
                     val item = itemIterator.next()
                     locationRepository.deleteWeatherLocation(item)
                     itemIterator.remove()
                 }
-                _uiState.update { it.copy(isItemDeleted = true) }
             }
+            _selectedLocations.value = selected
         }
     }
 
@@ -75,6 +80,5 @@ class ManageLocationViewModel @Inject constructor(
 
 data class ManageLocationUiState(
     val savedLocations: WeatherWithPreferences = WeatherWithPreferences(),
-    val isItemDeleted: Boolean = false,
     val errorMessage: String? = null
 )

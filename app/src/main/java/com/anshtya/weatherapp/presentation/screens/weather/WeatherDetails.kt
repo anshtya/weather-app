@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -59,7 +58,7 @@ fun WeatherDetails(
                 .verticalScroll(scrollState)
         ) {
             if (isLoading) {
-                CircularProgressIndicator(Modifier.align(CenterHorizontally))
+                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
             }
 
             Row(
@@ -79,7 +78,7 @@ fun WeatherDetails(
                 }
 
                 Column(
-                    horizontalAlignment = CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {

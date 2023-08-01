@@ -15,6 +15,7 @@ fun ManageLocationRoute(
     viewModel: ManageLocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedLocations by viewModel.selectedLocations.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         viewModel.hasLocations.collect {
@@ -26,8 +27,9 @@ fun ManageLocationRoute(
 
     ManageLocationScreen(
         uiState = uiState,
+        selectedLocations = selectedLocations,
         onBackClick = onBackClick,
-        selectLocation = { viewModel.selectLocation(it) },
+        onLocationCheck = { viewModel.selectLocation(it) },
         onAddLocationClick = onAddLocationClick,
         onLocationClick = onLocationClick,
         onDeleteLocation = { viewModel.deleteLocation() },
