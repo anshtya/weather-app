@@ -6,12 +6,16 @@ import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
 import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
-import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
+import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
 import com.anshtya.weatherapp.util.Resource
+import com.anshtya.weatherapp.util.network.NetworkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,7 +25,7 @@ import javax.inject.Inject
 class WeatherViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
     private val updateWeatherUseCase: UpdateWeatherUseCase,
-    private val checkConnection: CheckConnection,
+    private val connectionTracker: NetworkConnectionTracker,
     locationRepository: LocationRepository
 ) : ViewModel() {
 
@@ -34,8 +38,22 @@ class WeatherViewModel @Inject constructor(
         replay = 1
     )
 
+    private var isNetworkAvailable: Boolean = false
+
     init {
         getWeather()
+        observeNetworkStatus()
+    }
+
+    private fun observeNetworkStatus() {
+        connectionTracker.networkStatus
+            .map {
+                it == NetworkStatus.Available
+            }
+            .onEach {
+                isNetworkAvailable = it
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun getWeather() {
@@ -48,7 +66,7 @@ class WeatherViewModel @Inject constructor(
 
     fun updateWeather() {
         viewModelScope.launch {
-            if (checkConnection.hasConnection()) {
+            if (isNetworkAvailable) {
                 _uiState.update { it.copy(isLoading = true) }
                 when (updateWeatherUseCase()) {
                     is Resource.Success -> {

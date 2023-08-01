@@ -6,11 +6,15 @@ import com.anshtya.weatherapp.domain.location.LocationTracker
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
-import com.anshtya.weatherapp.presentation.connectionTracker.CheckConnection
+import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
+import com.anshtya.weatherapp.util.network.NetworkStatus
 import com.anshtya.weatherapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,11 +24,28 @@ class AddLocationViewModel @Inject constructor(
     private val getSearchResultUseCase: GetSearchResultUseCase,
     private val locationRepository: LocationRepository,
     private val locationTracker: LocationTracker,
-    private val checkConnection: CheckConnection
+    private val connectionTracker: NetworkConnectionTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchLocationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private var isNetworkAvailable: Boolean = false
+
+    init {
+        observeNetworkStatus()
+    }
+
+    private fun observeNetworkStatus() {
+        connectionTracker.networkStatus
+            .map {
+                it == NetworkStatus.Available
+            }
+            .onEach {
+                isNetworkAvailable = it
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onSearchTextChange(text: String) {
         if (text.isEmpty()) {
@@ -41,7 +62,7 @@ class AddLocationViewModel @Inject constructor(
 
     fun onSubmitSearch(text: String) {
         viewModelScope.launch {
-            if (checkConnection.hasConnection()) {
+            if (isNetworkAvailable) {
                 _uiState.update { it.copy(isLoading = true) }
                 when (val response = getSearchResultUseCase(text)) {
                     is Resource.Success -> {
@@ -61,7 +82,7 @@ class AddLocationViewModel @Inject constructor(
 
     fun getUserCurrentLocation() {
         viewModelScope.launch {
-            if (checkConnection.hasConnection()) {
+            if (isNetworkAvailable) {
                 _uiState.update { it.copy(isLoading = true) }
                 locationTracker.getCurrentLocation()?.let { location ->
                     val response =
