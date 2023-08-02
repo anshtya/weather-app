@@ -42,7 +42,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import com.anshtya.weatherapp.util.locationRequest
 
@@ -56,6 +55,32 @@ fun AddLocationScreen(
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)
+            || permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
+        ) {
+            onAddCurrentLocationClick()
+        }
+    }
+
+    val settingResultRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == RESULT_OK) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             SearchBar(
@@ -65,21 +90,68 @@ fun AddLocationScreen(
             )
         },
         content = { paddingValues ->
-            Column(
-                modifier = modifier.padding(paddingValues)
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                LocationScreenContent(
-                    searchLocations = uiState.searchLocations,
-                    searchText = uiState.searchText,
-                    isLoading = uiState.isLoading,
-                    isSearching = uiState.isSearching,
-                    onLocationClick = onLocationClick,
-                    onAddCurrentLocationClick = onAddCurrentLocationClick
-                )
-                uiState.errorMessage?.let { message ->
-                    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
-                    onErrorShown()
+                if (uiState.isLoading || uiState.searchText.isNotEmpty() && uiState.isSearching) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else if (uiState.searchText.isEmpty()) {
+                    AddCurrentLocationButton(
+                        onClick = {
+                            //call gps
+                            locationRequest(
+                                context,
+                                onEnabled = {
+                                    permissionLauncher.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        )
+                                    )
+                                },
+                                onDisabled = { intentSenderRequest ->
+                                    settingResultRequest.launch(intentSenderRequest)
+                                }
+                            )
+
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.enter_location),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
+
+                if (!uiState.isSearching) {
+                    if (uiState.searchLocations.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.no_results),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    } else {
+                        LazyColumn {
+                            items(items = uiState.searchLocations) {
+                                LocationItem(
+                                    locationName = it.name,
+                                    locationRegionCountry = "${it.region}, ${it.country}",
+                                    modifier = Modifier
+                                        .clickable {
+                                            focusManager.clearFocus()
+                                            onLocationClick(it.url)
+                                        }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            uiState.errorMessage?.let { message ->
+                Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
+                onErrorShown()
             }
         }
     )
@@ -121,99 +193,6 @@ fun SearchBar(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
         )
-    }
-}
-
-@Composable
-fun LocationScreenContent(
-    searchLocations: List<SearchLocation>,
-    searchText: String,
-    isLoading: Boolean,
-    isSearching: Boolean,
-    onLocationClick: (String) -> Unit,
-    onAddCurrentLocationClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)
-            || permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
-        ) {
-            onAddCurrentLocationClick()
-        }
-    }
-
-    val settingResultRequest = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { activityResult ->
-        if (activityResult.resultCode == RESULT_OK) {
-            permissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-    }
-
-    Box(modifier.fillMaxSize()) {
-        if (isLoading || searchText.isNotEmpty() && isSearching) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
-        } else if (searchText.isEmpty()) {
-            AddCurrentLocationButton(
-                onClick = {
-                    //call gps
-                    locationRequest(
-                        context,
-                        onEnabled = {
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-                        },
-                        onDisabled = { intentSenderRequest ->
-                            settingResultRequest.launch(intentSenderRequest)
-                        }
-                    )
-
-                }
-            )
-            Text(
-                text = stringResource(id = R.string.enter_location),
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
-        if (!isSearching) {
-            if (searchLocations.isEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.no_results),
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            } else {
-                LazyColumn {
-                    items(items = searchLocations) {
-                        LocationItem(
-                            locationName = it.name,
-                            locationRegionCountry = "${it.region}, ${it.country}",
-                            modifier = Modifier
-                                .clickable {
-                                    focusManager.clearFocus()
-                                    onLocationClick(it.url)
-                                }
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
