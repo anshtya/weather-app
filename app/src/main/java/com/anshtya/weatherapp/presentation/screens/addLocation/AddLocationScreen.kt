@@ -2,14 +2,19 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.content.IntentSender
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,8 +22,15 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,14 +44,7 @@ import androidx.compose.ui.unit.sp
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsResponse
-import com.google.android.gms.location.Priority
-import com.google.android.gms.location.SettingsClient
-import com.google.android.gms.tasks.Task
+import com.anshtya.weatherapp.util.locationRequest
 
 @Composable
 fun AddLocationScreen(
@@ -164,7 +169,7 @@ fun LocationScreenContent(
             AddCurrentLocationButton(
                 onClick = {
                     //call gps
-                    getLocationSetting(
+                    locationRequest(
                         context,
                         onEnabled = {
                             permissionLauncher.launch(
@@ -244,33 +249,5 @@ fun LocationItem(
     ) {
         Text(locationName, style = Typography.titleMedium, fontSize = 18.sp)
         Text(locationRegionCountry, style = Typography.bodyMedium, color = Color.Gray)
-    }
-}
-
-fun getLocationSetting(
-    context: Context,
-    onEnabled: () -> Unit,
-    onDisabled: (IntentSenderRequest) -> Unit
-) {
-    val locationRequest = LocationRequest
-        .Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 0)
-        .build()
-    val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-    val client: SettingsClient = LocationServices.getSettingsClient(context)
-    val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-    task.apply {
-        addOnSuccessListener { onEnabled() }
-        addOnFailureListener { exception ->
-            if (exception is ResolvableApiException) {
-                try {
-                    val intentSenderRequest = IntentSenderRequest
-                        .Builder(exception.resolution)
-                        .build()
-                    onDisabled(intentSenderRequest)
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    // Ignore the error.
-                }
-            }
-        }
     }
 }
