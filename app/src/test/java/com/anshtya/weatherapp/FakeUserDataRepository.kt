@@ -7,16 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeUserDataRepository: UserDataRepository {
 
-    private val _data = MutableStateFlow(UserData(true, 0L))
+    private val _data = MutableStateFlow(UserData(true))
 
     override val userData: Flow<UserData>
         get() = _data
 
     override suspend fun setWeatherUnit(useCelsius: Boolean) {
-        _data.emit(UserData(useCelsius, 0L))
-    }
-
-    override suspend fun setApiCallTime(time: Long) {
-        _data.emit(UserData(true, time))
+        _data.emit(UserData(useCelsius))
     }
 }
