@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,8 +28,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.SearchLocation
+import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -39,18 +40,12 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddLocationScreen(
-    searchText: String,
-    searchLocations: List<SearchLocation>?,
-    isLoading: Boolean,
-    errorMessage: String?,
+    uiState: AddLocationUiState,
     onBackClick: () -> Unit,
-    onTextChange: (String) -> Unit,
-    onSubmit: (String) -> Unit,
+    onSearchTextChange: (String) -> Unit,
     onLocationClick: (String) -> Unit,
     onAddCurrentLocationClick: () -> Unit,
     onErrorShown: () -> Unit,
@@ -59,24 +54,24 @@ fun AddLocationScreen(
     Scaffold(
         topBar = {
             SearchBar(
-                searchText = searchText,
+                searchText = uiState.searchText,
                 onBackClick = onBackClick,
-                onTextChange = onTextChange,
-                onSubmit = onSubmit
+                onSearchTextChange = onSearchTextChange,
             )
         },
         content = { paddingValues ->
             Column(
                 modifier = modifier.padding(paddingValues)
             ) {
-                LocationList(
-                    searchLocations = searchLocations,
-                    searchText = searchText,
-                    isLoading = isLoading,
+                LocationScreenContent(
+                    searchLocations = uiState.searchLocations,
+                    searchText = uiState.searchText,
+                    isLoading = uiState.isLoading,
+                    isSearching = uiState.isSearching,
                     onLocationClick = onLocationClick,
                     onAddCurrentLocationClick = onAddCurrentLocationClick
                 )
-                errorMessage?.let { message ->
+                uiState.errorMessage?.let { message ->
                     Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
                     onErrorShown()
                 }
@@ -85,32 +80,20 @@ fun AddLocationScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     searchText: String,
     onBackClick: () -> Unit,
-    onTextChange: (String) -> Unit,
-    onSubmit: (String) -> Unit,
+    onSearchTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 10.dp),
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        var id by rememberSaveable { mutableStateOf("") }
-        LaunchedEffect(searchText) {
-            delay(700L)
-            if (id != searchText.trimEnd()) {
-                id = searchText
-                if (id.isNotEmpty()) {
-                    onSubmit(id)
-                }
-            }
-        }
         IconButton(
             onClick = onBackClick,
             modifier = Modifier.size(35.dp)
@@ -120,8 +103,8 @@ fun SearchBar(
         Spacer(modifier = Modifier.size(10.dp))
         TextField(
             value = searchText,
-            onValueChange = { onTextChange(it) },
-            colors = TextFieldDefaults.textFieldColors(
+            onValueChange = { onSearchTextChange(it) },
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
@@ -137,10 +120,11 @@ fun SearchBar(
 }
 
 @Composable
-fun LocationList(
-    searchLocations: List<SearchLocation>?,
+fun LocationScreenContent(
+    searchLocations: List<SearchLocation>,
     searchText: String,
     isLoading: Boolean,
+    isSearching: Boolean,
     onLocationClick: (String) -> Unit,
     onAddCurrentLocationClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -172,12 +156,11 @@ fun LocationList(
     }
 
     Box(modifier.fillMaxSize()) {
-        if (isLoading) {
+        if (isLoading || searchText.isNotEmpty() && isSearching) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
-        }
-        if (searchText.isEmpty()) {
+        } else if (searchText.isEmpty()) {
             AddCurrentLocationButton(
                 onClick = {
                     //call gps
@@ -202,26 +185,26 @@ fun LocationList(
                 text = stringResource(id = R.string.enter_location),
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else {
-            searchLocations?.let { locations ->
-                if (locations.isEmpty() && !isLoading) {
-                    Text(
-                        text = stringResource(id = R.string.no_results),
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                } else {
-                    LazyColumn {
-                        items(items = locations) {
-                            LocationItem(
-                                locationName = it.name,
-                                locationRegionCountry = "${it.region}, ${it.country}",
-                                modifier = Modifier
-                                    .clickable {
-                                        focusManager.clearFocus()
-                                        onLocationClick(it.url)
-                                    }
-                            )
-                        }
+        }
+
+        if (!isSearching) {
+            if (searchLocations.isEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.no_results),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else {
+                LazyColumn {
+                    items(items = searchLocations) {
+                        LocationItem(
+                            locationName = it.name,
+                            locationRegionCountry = "${it.region}, ${it.country}",
+                            modifier = Modifier
+                                .clickable {
+                                    focusManager.clearFocus()
+                                    onLocationClick(it.url)
+                                }
+                        )
                     }
                 }
             }
@@ -240,10 +223,27 @@ fun AddCurrentLocationButton(
             .clickable { onClick() }
     ) {
         Text(
-            text = "Add Current Location",
+            text = stringResource(R.string.add_current_location),
             modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 10.dp)
         )
+    }
+}
+
+@Composable
+fun LocationItem(
+    locationName: String,
+    locationRegionCountry: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(locationName, style = Typography.titleMedium, fontSize = 18.sp)
+        Text(locationRegionCountry, style = Typography.bodyMedium, color = Color.Gray)
     }
 }
 

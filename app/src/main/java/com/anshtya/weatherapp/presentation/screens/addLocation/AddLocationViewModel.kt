@@ -6,12 +6,16 @@ import com.anshtya.weatherapp.domain.location.LocationTracker
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.LocationRepository
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
+import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
 import com.anshtya.weatherapp.util.network.NetworkStatus
-import com.anshtya.weatherapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -27,13 +31,19 @@ class AddLocationViewModel @Inject constructor(
     private val connectionTracker: NetworkConnectionTracker
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SearchLocationUiState())
+    private val _uiState = MutableStateFlow(AddLocationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _isLocationAdded = MutableSharedFlow<Boolean>()
+    val isLocationAdded = _isLocationAdded.asSharedFlow()
+
+    private val searchText = MutableStateFlow("")
 
     private var isNetworkAvailable: Boolean = false
 
     init {
         observeNetworkStatus()
+        updateSearch()
     }
 
     private fun observeNetworkStatus() {
@@ -47,23 +57,33 @@ class AddLocationViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onSearchTextChange(text: String) {
-        if (text.isEmpty()) {
-            _uiState.update {
-                it.copy(
-                    searchText = text,
-                    searchLocations = null
-                )
+    @OptIn(FlowPreview::class)
+    private fun updateSearch() {
+        searchText
+            .onEach { text ->
+                _uiState.update {
+                    it.copy(
+                        searchText = text,
+                        isSearching = true
+                    )
+                }
             }
-        } else {
-            _uiState.update { it.copy(searchText = text) }
-        }
+            .debounce(500L)
+            .onEach {
+                if (it.isNotEmpty()) {
+                    executeSearch(it)
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun onSubmitSearch(text: String) {
+    fun onSearchTextChange(text: String) {
+        searchText.value = text
+    }
+
+    private fun executeSearch(text: String) {
         viewModelScope.launch {
             if (isNetworkAvailable) {
-                _uiState.update { it.copy(isLoading = true) }
                 when (val response = getSearchResultUseCase(text)) {
                     is Resource.Success -> {
                         _uiState.update { it.copy(searchLocations = response.data) }
@@ -73,7 +93,7 @@ class AddLocationViewModel @Inject constructor(
                         _uiState.update { it.copy(errorMessage = response.message) }
                     }
                 }
-                _uiState.update { it.copy(isLoading = false) }
+                _uiState.update { it.copy(isSearching = false) }
             } else {
                 _uiState.update { it.copy(errorMessage = "Network unavailable") }
             }
@@ -103,7 +123,7 @@ class AddLocationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             when (val response = locationRepository.addWeatherLocation(locationUrl)) {
                 is Resource.Success -> {
-                    _uiState.update { it.copy(isLocationAdded = true) }
+                    _isLocationAdded.emit(true)
                 }
 
                 is Resource.Error -> {
@@ -119,10 +139,10 @@ class AddLocationViewModel @Inject constructor(
     }
 }
 
-data class SearchLocationUiState(
+data class AddLocationUiState(
     val searchText: String = "",
-    val searchLocations: List<SearchLocation>? = null,
+    val isSearching: Boolean = false,
+    val searchLocations: List<SearchLocation> = emptyList(),
     val isLoading: Boolean = false,
-    val isLocationAdded: Boolean? = null,
     val errorMessage: String? = null
 )

@@ -14,21 +14,18 @@ fun AddLocationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isLocationAdded = uiState.isLocationAdded
-    LaunchedEffect(isLocationAdded) {
-        if(isLocationAdded == true) {
-            onNavigateToWeatherScreen()
+    LaunchedEffect(Unit) {
+        viewModel.isLocationAdded.collect{
+            if(it) {
+                onNavigateToWeatherScreen()
+            }
         }
     }
 
     AddLocationScreen(
-        searchText = uiState.searchText,
-        searchLocations = uiState.searchLocations,
-        isLoading = uiState.isLoading,
-        errorMessage = uiState.errorMessage,
+        uiState = uiState,
         onBackClick = onBackClick,
-        onTextChange = { viewModel.onSearchTextChange(it) },
-        onSubmit = { viewModel.onSubmitSearch(it) },
+        onSearchTextChange = { viewModel.onSearchTextChange(it) },
         onLocationClick = { viewModel.onLocationClick(it) },
         onAddCurrentLocationClick = { viewModel.getUserCurrentLocation() },
         onErrorShown = { viewModel.errorShown() }

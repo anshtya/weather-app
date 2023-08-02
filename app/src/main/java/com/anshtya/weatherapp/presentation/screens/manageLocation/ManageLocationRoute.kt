@@ -17,7 +17,7 @@ fun ManageLocationRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedLocations by viewModel.selectedLocations.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(Unit) {
         viewModel.hasLocations.collect {
             if (!it) {
                 onNavigateToAddLocationScreen()
