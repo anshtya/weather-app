@@ -108,15 +108,9 @@ fun SavedLocationItem(
     onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val weatherLocation = remember(savedLocation) {
-        savedLocation.weatherLocation
-    }
-    val currentWeather = remember(savedLocation) {
-        savedLocation.currentWeather
-    }
-    val weatherForecast = remember(savedLocation) {
-        savedLocation.weatherForecast.first().day
-    }
+    val weatherLocation = savedLocation.weatherLocation
+    val currentWeather = savedLocation.currentWeather
+    val weatherForecast = savedLocation.weatherForecast.first().day
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
