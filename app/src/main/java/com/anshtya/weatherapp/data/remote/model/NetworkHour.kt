@@ -21,5 +21,8 @@ data class NetworkHour(
     @field:Json(name = "temp_f")
     val tempF: Double,
 
-    val time: String
+    val time: String,
+
+    @field:Json(name = "time_epoch")
+    val timeEpoch: Int
 )

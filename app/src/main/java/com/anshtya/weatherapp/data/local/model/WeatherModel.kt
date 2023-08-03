@@ -19,5 +19,5 @@ data class WeatherModel(
         parentColumn = "id",
         entityColumn = "locationId"
     )
-    val weatherForecast: WeatherForecastEntity
+    val weatherForecast: List<WeatherForecastEntity>
 )

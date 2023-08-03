@@ -14,7 +14,7 @@ interface WeatherDao {
     suspend fun getCurrentWeatherId(locationId: String): Long
 
     @Query("SELECT id FROM weather_forecast WHERE locationId = :locationId")
-    suspend fun getWeatherForecastId(locationId: String): Long
+    suspend fun getWeatherForecastIds(locationId: String): List<Long>
 
     @Transaction
     @Query("SELECT * FROM weather_location")
@@ -23,43 +23,23 @@ interface WeatherDao {
     @Query("SELECT EXISTS(SELECT 1 FROM weather_location where id =:locationId)")
     suspend fun checkWeatherExist(locationId: String): Boolean
 
-    @Insert
-    suspend fun insertWeatherLocation(weatherLocation: WeatherLocationEntity)
+    @Upsert
+    suspend fun upsertWeatherLocation(weatherLocation: WeatherLocationEntity)
 
-    @Insert
-    suspend fun insertCurrentWeather(currentWeather: CurrentWeatherEntity)
+    @Upsert
+    suspend fun upsertCurrentWeather(currentWeather: CurrentWeatherEntity)
 
-    @Insert
-    suspend fun insertWeatherForecast(weatherForecast: WeatherForecastEntity)
-
-    @Update
-    suspend fun updateWeatherLocation(weatherLocation: WeatherLocationEntity)
-
-    @Update
-    suspend fun updateCurrentWeather(currentWeather: CurrentWeatherEntity)
-
-    @Update
-    suspend fun updateWeatherForecast(weatherForecast: WeatherForecastEntity)
+    @Upsert
+    suspend fun upsertWeatherForecast(weatherForecast: List<WeatherForecastEntity>)
 
     @Transaction
-    suspend fun insertWeather(
+    suspend fun upsertWeather(
         weatherLocation: WeatherLocationEntity,
         currentWeather: CurrentWeatherEntity,
-        weatherForecast: WeatherForecastEntity
+        weatherForecast: List<WeatherForecastEntity>
     ) {
-        insertWeatherLocation(weatherLocation)
-        insertCurrentWeather(currentWeather)
-        insertWeatherForecast(weatherForecast)
-    }
-
-    @Transaction
-    suspend fun updateWeather(
-        weatherLocation: WeatherLocationEntity,
-        currentWeather: CurrentWeatherEntity,
-        weatherForecast: WeatherForecastEntity
-    ) {
-        updateWeatherLocation(weatherLocation)
-        updateCurrentWeather(currentWeather)
-        updateWeatherForecast(weatherForecast)
+        upsertWeatherLocation(weatherLocation)
+        upsertCurrentWeather(currentWeather)
+        upsertWeatherForecast(weatherForecast)
     }
 }

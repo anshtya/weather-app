@@ -68,19 +68,23 @@ fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = Current
     windMph = windMph
 )
 
-fun NetworkForecastDay.toEntity(locationId: String) = WeatherForecastEntity(
+fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Long) = WeatherForecastEntity(
     locationId = locationId,
     astro = astro.toExternalModel(),
     day = day.toExternalModel(),
-    hour = hour.map { it.toModel() }
+    hour = hour
+        .filter { it.timeEpoch >= currentEpochTime }
+        .map { it.toModel() }
 )
 
-fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long) = WeatherForecastEntity(
+fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long, currentEpochTime: Long) = WeatherForecastEntity(
     id = id,
     locationId = locationId,
     astro = astro.toExternalModel(),
     day = day.toExternalModel(),
-    hour = hour.map { it.toModel() }
+    hour = hour
+        .filter { it.timeEpoch >= currentEpochTime }
+        .map { it.toModel() }
 )
 
 fun NetworkAstro.toExternalModel() = Astro(
@@ -108,7 +112,8 @@ fun NetworkHour.toModel() = HourModel(
     isDay = isDay,
     tempC = tempC,
     tempF = tempF,
-    time = time
+    time = time,
+    timeEpoch = timeEpoch
 )
 
 fun HourModel.toExternalModel() = Hour(

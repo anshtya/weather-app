@@ -6,5 +6,5 @@ import com.anshtya.weatherapp.data.local.model.WeatherModel
 fun WeatherModel.toExternalModel() = Weather(
     weatherLocation = weatherLocation.toExternalModel(),
     currentWeather = currentWeather.toExternalModel(),
-    weatherForecast = weatherForecast.toExternalModel()
+    weatherForecast = weatherForecast.map { it.toExternalModel() }
 )

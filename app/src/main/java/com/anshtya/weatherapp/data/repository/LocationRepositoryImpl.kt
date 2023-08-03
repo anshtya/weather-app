@@ -16,7 +16,8 @@ class LocationRepositoryImpl @Inject constructor(
     private val weatherDao: WeatherDao,
     private val weatherLocationDao: WeatherLocationDao,
 ) : LocationRepository {
-    override val isLocationTableNotEmpty = weatherLocationDao.checkTableNotEmpty().distinctUntilChanged()
+    override val isLocationTableNotEmpty =
+        weatherLocationDao.checkTableNotEmpty().distinctUntilChanged()
 
     override suspend fun getLocations(searchQuery: String): List<SearchLocation> {
         return weatherApi.searchLocation(searchQuery).map { it.toSearchLocation() }
@@ -27,13 +28,17 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addWeatherLocation(locationUrl: String): Resource<Unit> {
+        val currentEpochTime = System.currentTimeMillis() / 1000
         val response = weatherApi.getWeatherForecast(locationUrl)
         val location = response.location.toEntity(locationUrl)
         val currentWeather = response.current.toEntity(locationUrl)
-        val weatherForecast = response.forecast.forecastDay.first().toEntity(locationUrl)
+        val weatherForecast = response.forecast.forecastDay
+            .map {
+                it.toEntity(locationUrl, currentEpochTime)
+            }
 
         return if (!weatherDao.checkWeatherExist(locationUrl)) {
-            weatherDao.insertWeather(location, currentWeather, weatherForecast)
+            weatherDao.upsertWeather(location, currentWeather, weatherForecast)
             Resource.Success(Unit)
         } else {
             Resource.Error("Location Already Exists")

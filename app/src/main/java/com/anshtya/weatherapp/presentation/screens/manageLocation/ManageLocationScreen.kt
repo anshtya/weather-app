@@ -115,7 +115,7 @@ fun SavedLocationItem(
         savedLocation.currentWeather
     }
     val weatherForecast = remember(savedLocation) {
-        savedLocation.weatherForecast.day
+        savedLocation.weatherForecast.first().day
     }
 
     Row(

@@ -4,6 +4,7 @@ import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
+import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.mapper.toUpdatedModel
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
@@ -18,21 +19,32 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherLocationDao: WeatherLocationDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
-        weatherLocationDao.getLocationIds().first {
-            it.forEach { locationId ->
-                val response = weatherApi.getWeatherForecast(locationId)
-                val location = response.location.toUpdatedModel(locationId)
-                val currentWeather = response.current.toUpdatedModel(
+        val currentEpochTime = System.currentTimeMillis() / 1000
+        val weatherLocations = weatherLocationDao.getLocationIds().first()
+
+        weatherLocations.forEach { locationId ->
+            val response = weatherApi.getWeatherForecast(locationId)
+            val location = response.location.toUpdatedModel(locationId)
+            val currentWeather = response.current.toUpdatedModel(
+                locationId,
+                id = weatherDao.getCurrentWeatherId(locationId)
+            )
+            val weatherForecast = response.forecast.forecastDay
+
+            var index = 0
+            val weatherIds = weatherDao.getWeatherForecastIds(locationId)
+            val updatedForecast = mutableListOf<WeatherForecastEntity>()
+            weatherForecast.forEach {
+                val forecast = it.toUpdatedModel(
                     locationId,
-                    id = weatherDao.getCurrentWeatherId(locationId)
+                    id = weatherIds[index],
+                    currentEpochTime = currentEpochTime
                 )
-                val weatherForecast = response.forecast.forecastDay.first().toUpdatedModel(
-                    locationId,
-                    id = weatherDao.getWeatherForecastId(locationId)
-                )
-                weatherDao.updateWeather(location, currentWeather, weatherForecast)
+                updatedForecast.add(forecast)
+                index++
             }
-            true
+
+            weatherDao.upsertWeather(location, currentWeather, updatedForecast)
         }
     }
 
