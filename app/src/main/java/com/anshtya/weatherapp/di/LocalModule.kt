@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.local.WeatherDatabase
+import com.anshtya.weatherapp.data.local.WeatherDatabase.Companion.MIGRATION_2_3
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import dagger.Module
@@ -25,7 +26,7 @@ object LocalModule {
     fun provideWeatherDatabase(@ApplicationContext app: Context): WeatherDatabase {
         return Room
             .databaseBuilder(app, WeatherDatabase::class.java, "weather.db")
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 

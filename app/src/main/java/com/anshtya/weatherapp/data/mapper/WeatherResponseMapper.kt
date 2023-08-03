@@ -70,6 +70,7 @@ fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = Current
 
 fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Long) = WeatherForecastEntity(
     locationId = locationId,
+    dateEpoch = dateEpoch,
     astro = astro.toExternalModel(),
     day = day.toExternalModel(),
     hour = hour
@@ -80,6 +81,7 @@ fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Long) = We
 fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long, currentEpochTime: Long) = WeatherForecastEntity(
     id = id,
     locationId = locationId,
+    dateEpoch = dateEpoch,
     astro = astro.toExternalModel(),
     day = day.toExternalModel(),
     hour = hour
@@ -123,5 +125,6 @@ fun HourModel.toExternalModel() = Hour(
     isDay = isDay,
     tempC = tempC,
     tempF = tempF,
-    time = time
+    time = time,
+    timeEpoch = timeEpoch
 )

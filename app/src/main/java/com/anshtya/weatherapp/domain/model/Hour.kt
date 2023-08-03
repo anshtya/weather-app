@@ -7,5 +7,6 @@ data class Hour(
     val isDay: Int,
     val tempC: Double,
     val tempF: Double,
-    val time: String
+    val time: String,
+    val timeEpoch: Int
 )

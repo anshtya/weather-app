@@ -23,6 +23,7 @@ data class WeatherForecastEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val locationId: String,
+    val dateEpoch: Int,
     val astro: Astro,
     @Embedded val day: Day,
     val hour: List<HourModel>

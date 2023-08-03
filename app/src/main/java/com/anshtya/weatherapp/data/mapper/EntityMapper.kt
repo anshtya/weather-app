@@ -28,6 +28,7 @@ fun CurrentWeatherEntity.toExternalModel() = CurrentWeather(
 
 fun WeatherForecastEntity.toExternalModel() = WeatherForecast(
     locationId = locationId,
+    dateEpoch = dateEpoch,
     astro =  astro,
     day = day,
     hour = hour.map { it.toExternalModel() }
