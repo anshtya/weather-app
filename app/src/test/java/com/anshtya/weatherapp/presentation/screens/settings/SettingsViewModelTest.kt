@@ -1,10 +1,11 @@
 package com.anshtya.weatherapp.presentation.screens.settings
 
-import com.anshtya.weatherapp.FakeUserDataRepository
 import com.anshtya.weatherapp.MainDispatcherRule
+import com.anshtya.weatherapp.TestUserDataRepository
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -13,6 +14,7 @@ import org.junit.Test
 class SettingsViewModelTest {
 
     private lateinit var viewModel: SettingsViewModel
+    private val userDataRepository = TestUserDataRepository()
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -20,21 +22,31 @@ class SettingsViewModelTest {
     @Before
     fun setUp() {
         viewModel = SettingsViewModel(
-            userDataRepository = FakeUserDataRepository()
+            userDataRepository = userDataRepository
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `when user selects temperature unit, it should get updated in ui state`() = runTest {
-        viewModel.showCelsius(false)
+    fun whenTemperatureUnitChanges_uiStateGetsUpdated() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {}
+        }
+
+        userDataRepository.setWeatherUnit(useCelsius = false)
+
         assertEquals(
-            false,
-            viewModel.uiState.map { it.showCelsius }.first()
+            SettingsUiState(showCelsius = false),
+            viewModel.uiState.value
         )
-        viewModel.showCelsius(true)
+
+        userDataRepository.setWeatherUnit(useCelsius = true)
+
         assertEquals(
-            true,
-            viewModel.uiState.map { it.showCelsius }.first()
+            SettingsUiState(showCelsius = true),
+            viewModel.uiState.value
         )
+
+        collectJob.cancel()
     }
 }

@@ -26,7 +26,7 @@ class SettingsViewModel @Inject constructor(
         initialValue = SettingsUiState()
     )
 
-    fun showCelsius(useCelsius: Boolean) {
+    fun useCelsius(useCelsius: Boolean) {
         viewModelScope.launch {
             userDataRepository.setWeatherUnit(useCelsius)
         }

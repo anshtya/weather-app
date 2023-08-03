@@ -17,4 +17,7 @@
     <string name="delete">Delete</string>
     <string name="add_current_location">Add Current Location</string>
     <string name="loading">Loading</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
 </resources>
