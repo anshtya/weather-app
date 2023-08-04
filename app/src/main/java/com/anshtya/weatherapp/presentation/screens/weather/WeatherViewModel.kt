@@ -3,11 +3,11 @@ package com.anshtya.weatherapp.presentation.screens.weather
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
-import com.anshtya.weatherapp.domain.repository.LocationRepository
-import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
+import com.anshtya.weatherapp.domain.repository.WeatherRepository
+import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
 import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
-import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
 import com.anshtya.weatherapp.util.Resource
+import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
 import com.anshtya.weatherapp.util.network.NetworkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,16 +23,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase,
+    private val getWeatherWithPreferencesUseCase: GetWeatherWithPreferencesUseCase,
     private val updateWeatherUseCase: UpdateWeatherUseCase,
     private val connectionTracker: NetworkConnectionTracker,
-    locationRepository: LocationRepository
+    weatherRepository: WeatherRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState = _uiState.asStateFlow()
 
-    val hasLocations = locationRepository.isLocationTableNotEmpty.shareIn(
+    val hasLocations = weatherRepository.isLocationTableNotEmpty.shareIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         replay = 1
@@ -58,7 +58,7 @@ class WeatherViewModel @Inject constructor(
 
     private fun getWeather() {
         viewModelScope.launch {
-            getWeatherUseCase().collect { userWeather ->
+            getWeatherWithPreferencesUseCase().collect { userWeather ->
                 _uiState.update { it.copy(userWeather = userWeather) }
             }
         }

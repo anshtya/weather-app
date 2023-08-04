@@ -73,7 +73,7 @@ fun ManageLocationScreen(
         ) {
             LazyColumn {
                 items(
-                    items = uiState.savedLocations.weatherList,
+                    items = uiState.savedLocations.weather,
                     key = { weather ->
                         weather.weatherLocation.id
                     }

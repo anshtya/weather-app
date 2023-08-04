@@ -3,8 +3,8 @@ package com.anshtya.weatherapp.presentation.screens.manageLocation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
-import com.anshtya.weatherapp.domain.repository.LocationRepository
-import com.anshtya.weatherapp.domain.useCase.GetWeatherUseCase
+import com.anshtya.weatherapp.domain.repository.WeatherRepository
+import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ManageLocationViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase,
-    private val locationRepository: LocationRepository
+    private val getWeatherWithPreferencesUseCase: GetWeatherWithPreferencesUseCase,
+    private val weatherRepository: WeatherRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ManageLocationUiState())
@@ -26,7 +26,7 @@ class ManageLocationViewModel @Inject constructor(
     private val _selectedLocations = MutableStateFlow<Set<String>>(emptySet())
     val selectedLocations = _selectedLocations.asStateFlow()
 
-    val hasLocations = locationRepository.isLocationTableNotEmpty.shareIn(
+    val hasLocations = weatherRepository.isLocationTableNotEmpty.shareIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         replay = 1
@@ -38,7 +38,7 @@ class ManageLocationViewModel @Inject constructor(
 
     private fun getSavedLocations() {
         viewModelScope.launch {
-            getWeatherUseCase().collect { savedLocations ->
+            getWeatherWithPreferencesUseCase().collect { savedLocations ->
                 _uiState.update { it.copy(savedLocations = savedLocations) }
             }
         }
@@ -65,7 +65,7 @@ class ManageLocationViewModel @Inject constructor(
                 val itemIterator = selected.iterator()
                 while(itemIterator.hasNext()) {
                     val item = itemIterator.next()
-                    locationRepository.deleteWeatherLocation(item)
+                    weatherRepository.deleteWeather(item)
                     itemIterator.remove()
                 }
             }

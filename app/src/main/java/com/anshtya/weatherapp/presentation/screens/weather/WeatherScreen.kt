@@ -24,7 +24,7 @@ fun WeatherScreen(
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
-    val weatherLocations = uiState.userWeather.weatherList
+    val weatherLocations = uiState.userWeather.weather
     var selectedWeatherLocationId by rememberSaveable { mutableStateOf("") }
     var weatherDisplayed by rememberSaveable { mutableStateOf(false) }
 

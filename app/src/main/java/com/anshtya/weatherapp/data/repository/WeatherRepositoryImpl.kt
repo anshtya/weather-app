@@ -2,12 +2,16 @@ package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
+import com.anshtya.weatherapp.data.mapper.toEntity
 import com.anshtya.weatherapp.data.mapper.toExternalModel
-import com.anshtya.weatherapp.data.mapper.toUpdatedModel
+import com.anshtya.weatherapp.data.mapper.toUpdatedEntity
 import com.anshtya.weatherapp.data.remote.WeatherApi
+import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
+import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,14 +20,49 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
     private val weatherDao: WeatherDao,
 ) : WeatherRepository {
+
+    override val weather: Flow<List<Weather>> = weatherDao.getWeather()
+        .map {
+            it.map { weatherModel ->
+                weatherModel.toExternalModel()
+            }
+        }
+
+    override val isLocationTableNotEmpty = weatherDao.checkTableNotEmpty().distinctUntilChanged()
+
+    override suspend fun getSearchLocations(searchQuery: String): List<SearchLocation> {
+        return weatherApi.searchLocation(searchQuery)
+            .map {
+                it.toExternalModel()
+            }
+    }
+
+    override suspend fun addWeather(locationUrl: String): Resource<Unit> {
+        return if (!weatherDao.checkWeatherExist(locationUrl)) {
+            val response = weatherApi.getWeatherForecast(locationUrl)
+            val location = response.location.toEntity(locationUrl)
+            val currentEpochTime = location.localtimeEpoch
+            val currentWeather = response.current.toEntity(locationUrl)
+            val weatherForecast = response.forecast.forecastDay
+                .map {
+                    it.toEntity(locationUrl, currentEpochTime)
+                }
+
+            weatherDao.upsertWeather(location, currentWeather, weatherForecast)
+            Resource.Success(Unit)
+        } else {
+            Resource.Error("Location Already Exists")
+        }
+    }
+
     override suspend fun updateWeather() {
         val weatherLocations = weatherDao.getLocationIds().first()
 
         weatherLocations.forEach { locationId ->
             val response = weatherApi.getWeatherForecast(locationId)
-            val location = response.location.toUpdatedModel(locationId)
+            val location = response.location.toEntity(locationId)
             val currentEpochTime = location.localtimeEpoch
-            val currentWeather = response.current.toUpdatedModel(
+            val currentWeather = response.current.toUpdatedEntity(
                 locationId,
                 id = weatherDao.getCurrentWeatherId(locationId)
             )
@@ -33,7 +72,7 @@ class WeatherRepositoryImpl @Inject constructor(
             val weatherIds = weatherDao.getWeatherForecastIds(locationId)
             val updatedForecast = mutableListOf<WeatherForecastEntity>()
             weatherForecast.forEach {
-                val forecast = it.toUpdatedModel(
+                val forecast = it.toUpdatedEntity(
                     locationId,
                     id = weatherIds[index],
                     currentEpochTime = currentEpochTime
@@ -46,8 +85,7 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getWeather(): Flow<List<Weather>> {
-        return weatherDao.getWeather()
-            .map { it.map { weatherModel -> weatherModel.toExternalModel() } }
+    override suspend fun deleteWeather(locationId: String) {
+        weatherDao.deleteWeatherLocation(locationId)
     }
 }

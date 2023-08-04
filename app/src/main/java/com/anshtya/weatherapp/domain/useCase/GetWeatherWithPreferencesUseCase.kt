@@ -7,17 +7,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class GetWeatherUseCase @Inject constructor(
+class GetWeatherWithPreferencesUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val userDataRepository: UserDataRepository
 ) {
     operator fun invoke(): Flow<WeatherWithPreferences> {
         return combine(
-            weatherRepository.getWeather(),
+            weatherRepository.weather,
             userDataRepository.userData
-        ) { weatherList, userData ->
+        ) { weather, userData ->
             WeatherWithPreferences(
-                weatherList = weatherList,
+                weather = weather,
                 showCelsius = userData.showCelsius
             )
         }

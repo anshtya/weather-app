@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.location.LocationTracker
 import com.anshtya.weatherapp.domain.model.SearchLocation
-import com.anshtya.weatherapp.domain.repository.LocationRepository
+import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
 import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddLocationViewModel @Inject constructor(
     private val getSearchResultUseCase: GetSearchResultUseCase,
-    private val locationRepository: LocationRepository,
+    private val weatherRepository: WeatherRepository,
     private val locationTracker: LocationTracker,
     private val connectionTracker: NetworkConnectionTracker
 ) : ViewModel() {
@@ -106,7 +106,9 @@ class AddLocationViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = true) }
                 locationTracker.getCurrentLocation()?.let { location ->
                     val response =
-                        locationRepository.getLocations("${location.latitude},${location.longitude}")
+                        weatherRepository.getSearchLocations(
+                            "${location.latitude},${location.longitude}"
+                        )
                     val locationUrl = response.first().url
                     onLocationClick(locationUrl)
                 } ?: _uiState.update {
@@ -121,7 +123,7 @@ class AddLocationViewModel @Inject constructor(
     fun onLocationClick(locationUrl: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            when (val response = locationRepository.addWeatherLocation(locationUrl)) {
+            when (val response = weatherRepository.addWeather(locationUrl)) {
                 is Resource.Success -> {
                     _isLocationAdded.emit(true)
                 }
