@@ -19,12 +19,12 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherLocationDao: WeatherLocationDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
-        val currentEpochTime = System.currentTimeMillis() / 1000
         val weatherLocations = weatherLocationDao.getLocationIds().first()
 
         weatherLocations.forEach { locationId ->
             val response = weatherApi.getWeatherForecast(locationId)
             val location = response.location.toUpdatedModel(locationId)
+            val currentEpochTime = location.localtimeEpoch
             val currentWeather = response.current.toUpdatedModel(
                 locationId,
                 id = weatherDao.getCurrentWeatherId(locationId)

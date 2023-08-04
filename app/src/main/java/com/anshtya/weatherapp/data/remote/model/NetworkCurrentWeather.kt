@@ -4,7 +4,6 @@ import com.anshtya.weatherapp.domain.model.WeatherCondition
 import com.squareup.moshi.Json
 
 data class NetworkCurrentWeather(
-    val cloud: Int,
     val condition: WeatherCondition,
 
     @field:Json(name = "feelslike_c")

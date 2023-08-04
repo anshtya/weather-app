@@ -21,7 +21,6 @@ data class CurrentWeatherEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val locationId: String,
-    val cloud: Int,
     @Embedded val condition: WeatherCondition,
     val feelsLikeC: Double,
     val feelsLikeF: Double,

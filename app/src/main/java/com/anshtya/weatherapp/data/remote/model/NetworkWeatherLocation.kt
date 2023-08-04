@@ -8,6 +8,9 @@ data class NetworkWeatherLocation(
     @field:Json(name = "tz_id")
     val timezoneId: String,
 
+    @field:Json(name = "localtime_epoch")
+    val localtimeEpoch: Int,
+
     val name: String,
     val region: String
 )

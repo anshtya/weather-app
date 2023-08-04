@@ -10,7 +10,6 @@ import com.anshtya.weatherapp.domain.model.WeatherType
 
 fun CurrentWeatherEntity.toExternalModel() = CurrentWeather(
     locationId = locationId,
-    cloud = cloud,
     weatherType = WeatherType.fromWeatherCondition(condition.code),
     feelsLikeC = feelsLikeC,
     feelsLikeF = feelsLikeF,
@@ -38,6 +37,7 @@ fun WeatherLocationEntity.toExternalModel() = WeatherLocation(
     id = id,
     country = country,
     timezoneId = timezoneId,
+    localtimeEpoch = localtimeEpoch,
     name = name,
     region = region
 )

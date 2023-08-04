@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.local.WeatherDatabase
 import com.anshtya.weatherapp.data.local.WeatherDatabase.Companion.MIGRATION_2_3
+import com.anshtya.weatherapp.data.local.WeatherDatabase.Companion.MIGRATION_3_4
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import dagger.Module
@@ -27,6 +28,7 @@ object LocalModule {
         return Room
             .databaseBuilder(app, WeatherDatabase::class.java, "weather.db")
             .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_3_4)
             .build()
     }
 

@@ -28,9 +28,9 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addWeatherLocation(locationUrl: String): Resource<Unit> {
-        val currentEpochTime = System.currentTimeMillis() / 1000
         val response = weatherApi.getWeatherForecast(locationUrl)
         val location = response.location.toEntity(locationUrl)
+        val currentEpochTime = location.localtimeEpoch
         val currentWeather = response.current.toEntity(locationUrl)
         val weatherForecast = response.forecast.forecastDay
             .map {

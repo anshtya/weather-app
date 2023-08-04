@@ -19,6 +19,7 @@ fun NetworkWeatherLocation.toEntity(locationUrl: String) = WeatherLocationEntity
     id = locationUrl,
     country = country,
     timezoneId = timezoneId,
+    localtimeEpoch = localtimeEpoch,
     name = name,
     region = region
 )
@@ -27,13 +28,13 @@ fun NetworkWeatherLocation.toUpdatedModel(locationUrl: String) = WeatherLocation
     id = locationUrl,
     country = country,
     timezoneId = timezoneId,
+    localtimeEpoch = localtimeEpoch,
     name = name,
     region = region
 )
 
 fun NetworkCurrentWeather.toEntity(locationId: String) = CurrentWeatherEntity(
     locationId = locationId,
-    cloud = cloud,
     condition = condition,
     feelsLikeC = feelsLikeC,
     feelsLikeF = feelsLikeF,
@@ -52,7 +53,6 @@ fun NetworkCurrentWeather.toEntity(locationId: String) = CurrentWeatherEntity(
 fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = CurrentWeatherEntity(
     id = id,
     locationId = locationId,
-    cloud = cloud,
     condition = condition,
     feelsLikeC = feelsLikeC,
     feelsLikeF = feelsLikeF,
@@ -68,7 +68,7 @@ fun NetworkCurrentWeather.toUpdatedModel(locationId: String, id: Long) = Current
     windMph = windMph
 )
 
-fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Long) = WeatherForecastEntity(
+fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Int) = WeatherForecastEntity(
     locationId = locationId,
     dateEpoch = dateEpoch,
     astro = astro.toExternalModel(),
@@ -78,7 +78,7 @@ fun NetworkForecastDay.toEntity(locationId: String, currentEpochTime: Long) = We
         .map { it.toModel() }
 )
 
-fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long, currentEpochTime: Long) = WeatherForecastEntity(
+fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long, currentEpochTime: Int) = WeatherForecastEntity(
     id = id,
     locationId = locationId,
     dateEpoch = dateEpoch,
@@ -90,10 +90,6 @@ fun NetworkForecastDay.toUpdatedModel(locationId: String, id: Long, currentEpoch
 )
 
 fun NetworkAstro.toExternalModel() = Astro(
-    isMoonUp = isMoonUp,
-    isSunUp = isSunUp,
-    moonrise = moonrise,
-    moonset = moonset,
     sunrise = sunrise,
     sunset = sunset
 )
