@@ -113,5 +113,7 @@ android {
         //Location Service
         implementation("com.google.android.gms:play-services-location:21.0.1")
 
+        //Lottie
+        implementation("com.airbnb.android:lottie-compose:6.1.0")
     }
 }

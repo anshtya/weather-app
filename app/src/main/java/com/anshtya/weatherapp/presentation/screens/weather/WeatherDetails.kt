@@ -40,6 +40,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.model.WeatherForecast
@@ -156,6 +159,7 @@ fun WeatherDetails(
                     WeatherGridItem(
                         name = stringResource(R.string.uv),
                         description = currentWeather.uv.toString(),
+                        animationResource = R.raw.animation_sun,
                         modifier = Modifier.weight(1f)
                     )
 
@@ -167,6 +171,7 @@ fun WeatherDetails(
                                 currentWeather.windKph,
                                 currentWeather.windDir
                             ),
+                            animationResource = R.raw.animation_wind,
                             modifier = Modifier.weight(1f)
                         )
                     } else {
@@ -177,6 +182,7 @@ fun WeatherDetails(
                                 currentWeather.windMph,
                                 currentWeather.windDir
                             ),
+                            animationResource = R.raw.animation_wind,
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -186,12 +192,14 @@ fun WeatherDetails(
                     WeatherGridItem(
                         name = stringResource(R.string.humidity),
                         description = "${currentWeather.humidity}%",
+                        animationResource = R.raw.animation_humidity,
                         modifier = Modifier.weight(1f)
                     )
 
                     AstroGridItem(
                         sunrise = astro.sunrise,
                         sunset = astro.sunset,
+                        animationResource = R.raw.animation_sunset,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -245,6 +253,7 @@ fun WeatherImage(
 fun WeatherGridItem(
     name: String,
     description: String,
+    animationResource: Int,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -259,6 +268,11 @@ fun WeatherGridItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxHeight()
         ) {
+            Animation(
+                animationResource = animationResource,
+                modifier = Modifier.size(50.dp)
+            )
+            Spacer(Modifier.height(2.dp))
             Text(
                 text = name,
                 style = MaterialTheme.typography.titleMedium
@@ -272,6 +286,7 @@ fun WeatherGridItem(
 fun AstroGridItem(
     sunrise: String,
     sunset: String,
+    animationResource: Int,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -282,6 +297,7 @@ fun AstroGridItem(
             .padding(5.dp)
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxHeight()
@@ -300,7 +316,7 @@ fun AstroGridItem(
                     )
                     Text(
                         text = sunrise,
-                        style =MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
@@ -313,10 +329,15 @@ fun AstroGridItem(
                     )
                     Text(
                         text = sunset,
-                        style =MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
+            Spacer(Modifier.height(5.dp))
+            Animation(
+                animationResource = animationResource,
+                modifier = Modifier.size(60.dp)
+            )
         }
     }
 }
@@ -397,23 +418,30 @@ fun ForecastItem(
         }
 
         if (expanded) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 5.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                items(
-                    items = forecast.hour
+            if (forecast.hour.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.no_forecasts),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            } else {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
-                    HourForecastItem(
-                        showCelsius = showCelsius,
-                        chanceOfRain = it.chanceOfRain,
-                        chanceOfSnow = it.chanceOfSnow,
-                        weatherType = it.weatherType,
-                        isDay = it.isDay,
-                        tempC = it.tempC,
-                        tempF = it.tempF,
-                        time = it.time.split(" ")[1]
-                    )
+                    items(
+                        items = forecast.hour
+                    ) {
+                        HourForecastItem(
+                            showCelsius = showCelsius,
+                            chanceOfRain = it.chanceOfRain,
+                            chanceOfSnow = it.chanceOfSnow,
+                            weatherType = it.weatherType,
+                            isDay = it.isDay,
+                            tempC = it.tempC,
+                            tempF = it.tempF,
+                            time = it.time.split(" ")[1]
+                        )
+                    }
                 }
             }
         }
@@ -487,4 +515,16 @@ fun HourForecastItem(
             Text("$chanceOfSnow%")
         }
     }
+}
+
+@Composable
+fun Animation(
+    animationResource: Int,
+    modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationResource))
+    LottieAnimation(
+        composition = composition,
+        modifier = modifier
+    )
 }
