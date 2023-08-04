@@ -1,14 +1,14 @@
-package com.anshtya.weatherapp
+package com.anshtya.weatherapp.data.repository.test
 
 import com.anshtya.weatherapp.domain.model.UserData
 import com.anshtya.weatherapp.domain.repository.UserDataRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class TestUserDataRepository: UserDataRepository {
 
-    private val _data = MutableStateFlow(UserData(true))
+    private val _data = MutableSharedFlow<UserData>()
 
     override val userData: Flow<UserData> = _data.asSharedFlow()
 
