@@ -33,14 +33,14 @@ class SettingsViewModelTest {
             viewModel.uiState.collect {}
         }
 
-        userDataRepository.setWeatherUnit(useCelsius = false)
+        viewModel.useCelsius(useCelsius = false)
 
         assertEquals(
             SettingsUiState(showCelsius = false),
             viewModel.uiState.value
         )
 
-        userDataRepository.setWeatherUnit(useCelsius = true)
+        viewModel.useCelsius(useCelsius = true)
 
         assertEquals(
             SettingsUiState(showCelsius = true),
