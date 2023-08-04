@@ -62,6 +62,8 @@ fun WeatherDetails(
     val weatherLocation = weather.weatherLocation
     val currentWeather = weather.currentWeather
     val weatherForecast = weather.weatherForecast
+    val astro = weatherForecast[0].astro
+
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -75,8 +77,8 @@ fun WeatherDetails(
     ) { paddingValues ->
         Box(
             modifier = modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .padding(paddingValues)
         ) {
             Column(
                 modifier = modifier
@@ -94,12 +96,12 @@ fun WeatherDetails(
                     if (currentWeather.isDay == 1) {
                         WeatherImage(
                             currentWeather.weatherType.dayIconRes,
-                            modifier = Modifier.size(150.dp)
+                            modifier = Modifier.size(120.dp)
                         )
                     } else {
                         WeatherImage(
                             currentWeather.weatherType.nightIconRes,
-                            modifier = Modifier.size(150.dp)
+                            modifier = Modifier.size(120.dp)
                         )
                     }
 
@@ -152,14 +154,14 @@ fun WeatherDetails(
 
                 Row(Modifier.fillMaxWidth()) {
                     WeatherGridItem(
-                        name = "UV",
-                        description = "${currentWeather.uv}",
+                        name = stringResource(R.string.uv),
+                        description = currentWeather.uv.toString(),
                         modifier = Modifier.weight(1f)
                     )
 
                     if (showCelsius) {
                         WeatherGridItem(
-                            name = "Wind",
+                            name = stringResource(R.string.wind),
                             description = stringResource(
                                 R.string.wind_kph,
                                 currentWeather.windKph,
@@ -169,7 +171,7 @@ fun WeatherDetails(
                         )
                     } else {
                         WeatherGridItem(
-                            name = "Wind",
+                            name = stringResource(R.string.wind),
                             stringResource(
                                 R.string.wind_mph,
                                 currentWeather.windMph,
@@ -182,10 +184,35 @@ fun WeatherDetails(
 
                 Row(Modifier.fillMaxWidth()) {
                     WeatherGridItem(
-                        name = "Humidity",
-                        description = "${currentWeather.humidity}",
+                        name = stringResource(R.string.humidity),
+                        description = "${currentWeather.humidity}%",
                         modifier = Modifier.weight(1f)
                     )
+
+                    AstroGridItem(
+                        sunrise = astro.sunrise,
+                        sunset = astro.sunset,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Column(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    if (showCelsius) {
+                        Text(
+                            stringResource(
+                                R.string.visiblity_km,
+                                currentWeather.visKm.roundToInt()
+                            )
+                        )
+                    } else {
+                        Text(
+                            stringResource(
+                                R.string.visiblity_km,
+                                currentWeather.visMiles.roundToInt()
+                            )
+                        )
+                    }
                 }
 
                 errorMessage?.let { message ->
@@ -209,7 +236,7 @@ fun WeatherImage(
     ) {
         Image(
             painterResource(image),
-            contentDescription = contentDescription,
+            contentDescription = contentDescription
         )
     }
 }
@@ -232,8 +259,64 @@ fun WeatherGridItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxHeight()
         ) {
-            Text(name)
-            Text(description)
+            Text(
+                text = name,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = description)
+        }
+    }
+}
+
+@Composable
+fun AstroGridItem(
+    sunrise: String,
+    sunset: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = modifier
+            .height(150.dp)
+            .padding(5.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.sunrise),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = sunrise,
+                        style =MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.sunset),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = sunset,
+                        style =MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
     }
 }
@@ -285,7 +368,10 @@ fun ForecastItem(
                 .clickable { expanded = !expanded }
                 .padding(10.dp)
         ) {
-            Text(dayName)
+            Text(
+                text = dayName,
+                style = MaterialTheme.typography.titleMedium
+            )
 
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,

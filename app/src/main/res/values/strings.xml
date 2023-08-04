@@ -6,8 +6,13 @@
     <string name="temperature">%d°</string>
     <string name="max_min_temp">%d° / %d°</string>
     <string name="feels_like">Feels like %d°</string>
+    <string name="wind">Wind</string>
+    <string name="uv">UV</string>
+    <string name="humidity">Humidity</string>
     <string name="wind_kph">%s kph, %s</string>
     <string name="wind_mph">%s mph, %s</string>
+    <string name="visiblity_km">Visibility: %d km</string>
+    <string name="visibility_mi">Visibility: %d mi</string>
     <string name="show_navigation_menu">Show navigation menu</string>
     <string name="refresh_weather">Refresh Weather</string>
     <string name="settings">Settings</string>
@@ -20,4 +25,6 @@
     <string name="temperature_unit">Temperature Unit</string>
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
 </resources>

@@ -2,6 +2,7 @@ package com.anshtya.weatherapp.presentation.screens.manageLocation
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -116,6 +117,7 @@ fun SavedLocationItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
+            .animateContentSize()
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .combinedClickable(
                 onClick = {
@@ -131,7 +133,7 @@ fun SavedLocationItem(
                 }
             )
     ) {
-        Row {
+        Row(Modifier.weight(1f)) {
             if (isCheckEnabled) {
                 Checkbox(
                     checked = isChecked,
