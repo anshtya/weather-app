@@ -201,14 +201,14 @@ fun WeatherDetails(
                     if (showCelsius) {
                         Text(
                             stringResource(
-                                R.string.visiblity_km,
+                                R.string.visibility_km,
                                 currentWeather.visKm.roundToInt()
                             )
                         )
                     } else {
                         Text(
                             stringResource(
-                                R.string.visiblity_km,
+                                R.string.visibility_mi,
                                 currentWeather.visMiles.roundToInt()
                             )
                         )

@@ -11,7 +11,7 @@
     <string name="humidity">Humidity</string>
     <string name="wind_kph">%s kph, %s</string>
     <string name="wind_mph">%s mph, %s</string>
-    <string name="visiblity_km">Visibility: %d km</string>
+    <string name="visibility_km">Visibility: %d km</string>
     <string name="visibility_mi">Visibility: %d mi</string>
     <string name="show_navigation_menu">Show navigation menu</string>
     <string name="refresh_weather">Refresh Weather</string>
