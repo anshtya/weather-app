@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeatherDao {
 
+    @Query("SELECT id FROM weather_location")
+    fun getLocationIds(): Flow<List<String>>
+
     @Query("SELECT id FROM current_weather WHERE locationId = :locationId")
     suspend fun getCurrentWeatherId(locationId: String): Long
 
@@ -22,6 +25,9 @@ interface WeatherDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM weather_location where id =:locationId)")
     suspend fun checkWeatherExist(locationId: String): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM weather_location)")
+    fun checkTableNotEmpty(): Flow<Boolean>
 
     @Upsert
     suspend fun upsertWeatherLocation(weatherLocation: WeatherLocationEntity)
@@ -42,4 +48,7 @@ interface WeatherDao {
         upsertCurrentWeather(currentWeather)
         upsertWeatherForecast(weatherForecast)
     }
+
+    @Query("DELETE FROM weather_location where id =:locationId")
+    suspend fun deleteWeatherLocation(locationId: String)
 }

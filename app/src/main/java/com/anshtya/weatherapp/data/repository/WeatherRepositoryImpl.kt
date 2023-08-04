@@ -1,12 +1,11 @@
 package com.anshtya.weatherapp.data.repository
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
-import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.domain.model.Weather
-import com.anshtya.weatherapp.data.local.dao.WeatherLocationDao
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.mapper.toUpdatedModel
+import com.anshtya.weatherapp.data.remote.WeatherApi
+import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -16,10 +15,9 @@ import javax.inject.Inject
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi,
     private val weatherDao: WeatherDao,
-    private val weatherLocationDao: WeatherLocationDao
 ) : WeatherRepository {
     override suspend fun updateWeather() {
-        val weatherLocations = weatherLocationDao.getLocationIds().first()
+        val weatherLocations = weatherDao.getLocationIds().first()
 
         weatherLocations.forEach { locationId ->
             val response = weatherApi.getWeatherForecast(locationId)
