@@ -1,7 +1,20 @@
-# weather-app
-Displays weather fetched from WeatherAPI
+<p align="center">
+  <img src="./images/weather_foreground.png" height="150"/>
+</p>
 
-Status: Work in Progress 🚧
+# Weather-App
+This app is built with Kotlin and Jetpack Compose. It provides weather information from [WeatherAPI](https://www.weatherapi.com/) to keep users updated about current and upcoming weather.
+
+## 📸 Screenshots
+<img src="./images/weather-app-github.png"/>
+
+## ✨ Features
+- Plan your activities ahead using app's 3-day hourly weather forecast
+- Utilizes your device's location services to automatically detect your location
+- Local caching of weather
+
+## Architecture
+This app follows [recommended architecture guidelines](https://developer.android.com/topic/architecture) as close as possible.
 
 ## 🖥️Installation
 
