@@ -2,20 +2,20 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     kotlin("kapt")
-    id("com.google.devtools.ksp")
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.anshtya.weatherapp"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.anshtya.weatherapp"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -46,16 +46,12 @@ android {
             targetCompatibility = JavaVersion.VERSION_17
         }
 
-        kotlinOptions {
-            jvmTarget = "17"
-        }
-
         buildFeatures {
             compose = true
         }
 
         composeOptions {
-            kotlinCompilerExtensionVersion = "1.4.3"
+            kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
         }
 
         packaging {
@@ -71,49 +67,53 @@ android {
 
     dependencies {
 
-        implementation("androidx.core:core-ktx:1.10.1")
-        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-        implementation("androidx.activity:activity-compose:1.7.2")
-        implementation("androidx.compose.ui:ui:1.4.3")
-        implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
-        implementation("androidx.compose.material3:material3:1.1.1")
-        testImplementation("junit:junit:4.13.2")
-        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-        androidTestImplementation("androidx.test.ext:junit:1.1.5")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
-        debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
-        debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
+        val composeBom = platform(libs.androidx.compose.bom)
+        implementation(composeBom)
+        androidTestImplementation(composeBom)
+
+        implementation(libs.androidx.core.ktx)
+        implementation(libs.androidx.lifecycle.runtime.ktx)
+        implementation(libs.androidx.activity.compose)
+        implementation(libs.androidx.compose.ui)
+        implementation(libs.androidx.compose.ui.tooling.preview)
+        implementation(libs.androidx.compose.material3)
+        testImplementation(libs.junit)
+        testImplementation(libs.kotlinx.coroutines.test)
+        androidTestImplementation(libs.androidx.test.ext.junit)
+        androidTestImplementation(libs.androidx.test.espresso.espresso.core)
+        androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+        debugImplementation(libs.androidx.compose.ui.tooling)
+        debugImplementation(libs.androidx.compose.ui.test.manifest)
 
         //Lifecycle
-        implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-        implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+        implementation(libs.androidx.lifecycle.viewmodel.compose)
+        implementation(libs.androidx.lifecycle.runtime.compose)
 
         //DataStore
-        implementation("androidx.datastore:datastore-preferences:1.0.0")
+        implementation(libs.androidx.datastore.preferences)
 
         //Navigation
-        implementation("androidx.navigation:navigation-compose:2.6.0")
-        implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+        implementation(libs.androidx.navigation.compose)
+        implementation(libs.androidx.hilt.navigation.compose)
 
         //Room
-        implementation("androidx.room:room-runtime:2.5.2")
-        implementation("androidx.room:room-ktx:2.5.2")
-        ksp("androidx.room:room-compiler:2.5.2")
+        implementation(libs.androidx.room.runtime)
+        implementation(libs.androidx.room.ktx)
+        ksp(libs.androidx.room.compiler)
 
         //Hilt
-        implementation("com.google.dagger:hilt-android:2.44")
-        kapt("com.google.dagger:hilt-compiler:2.44")
+        implementation(libs.hilt.android)
+        kapt(libs.hilt.compiler)
 
         //Retrofit
-        implementation("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
-        implementation("com.squareup.okhttp3:logging-interceptor:4.5.0")
+        implementation(libs.retrofit)
+        implementation(libs.converter.moshi)
+        implementation(libs.okhttp.logging.interceptor)
 
         //Location Service
-        implementation("com.google.android.gms:play-services-location:21.0.1")
+        implementation(libs.play.services.location)
 
         //Lottie
-        implementation("com.airbnb.android:lottie-compose:6.1.0")
+        implementation(libs.lottie.compose)
     }
 }
