@@ -106,11 +106,24 @@ class AddLocationViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = true) }
                 locationTracker.getCurrentLocation()?.let { location ->
                     val response =
-                        weatherRepository.getSearchLocations(
+                        getSearchResultUseCase(
                             "${location.latitude},${location.longitude}"
                         )
-                    val locationUrl = response.first().url
-                    onLocationClick(locationUrl)
+
+                    when (response) {
+                        is Resource.Success -> {
+                            val locationUrl = response.data.first().url
+                            onLocationClick(locationUrl)
+                        }
+
+                        is Resource.Error -> {
+                            _uiState.update { it.copy(
+                                isLoading = false,
+                                errorMessage = response.message
+                            ) }
+                        }
+                    }
+
                 } ?: _uiState.update {
                     it.copy(isLoading = false, errorMessage = "Can't retrieve current location")
                 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
-import com.anshtya.weatherapp.domain.useCase.UpdateWeatherUseCase
 import com.anshtya.weatherapp.util.Resource
 import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
 import com.anshtya.weatherapp.util.network.NetworkStatus
@@ -24,9 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val getWeatherWithPreferencesUseCase: GetWeatherWithPreferencesUseCase,
-    private val updateWeatherUseCase: UpdateWeatherUseCase,
-    private val connectionTracker: NetworkConnectionTracker,
-    weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val connectionTracker: NetworkConnectionTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
@@ -68,7 +66,7 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             if (isNetworkAvailable) {
                 _uiState.update { it.copy(isLoading = true) }
-                when (updateWeatherUseCase()) {
+                when (weatherRepository.updateWeather()) {
                     is Resource.Success -> {
                         _uiState.update { it.copy(isLoading = false) }
                     }

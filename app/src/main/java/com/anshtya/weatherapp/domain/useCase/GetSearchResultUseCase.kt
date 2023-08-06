@@ -9,11 +9,6 @@ class GetSearchResultUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) {
     suspend operator fun invoke(searchQuery: String): Resource<List<SearchLocation>> {
-        return try {
-            val list = weatherRepository.getSearchLocations(searchQuery)
-            Resource.Success(list)
-        } catch (e: Exception) {
-            Resource.Error(e.message)
-        }
+        return weatherRepository.getSearchLocations(searchQuery)
     }
 }

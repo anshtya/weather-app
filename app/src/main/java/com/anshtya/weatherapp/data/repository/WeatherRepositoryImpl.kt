@@ -30,11 +30,16 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override val isLocationTableNotEmpty = weatherDao.checkTableNotEmpty().distinctUntilChanged()
 
-    override suspend fun getSearchLocations(searchQuery: String): List<SearchLocation> {
-        return weatherApi.searchLocation(searchQuery)
-            .map {
-                it.toExternalModel()
-            }
+    override suspend fun getSearchLocations(searchQuery: String): Resource<List<SearchLocation>> {
+        return try {
+            val result = weatherApi.searchLocation(searchQuery)
+                .map {
+                    it.toExternalModel()
+                }
+            Resource.Success(result)
+        } catch (e: Exception) {
+            Resource.Error(e.message)
+        }
     }
 
     override suspend fun addWeather(locationUrl: String): Resource<Unit> {
@@ -55,33 +60,38 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateWeather() {
+    override suspend fun updateWeather(): Resource<Unit> {
         val weatherLocations = weatherDao.getLocationIds().first()
 
-        weatherLocations.forEach { locationId ->
-            val response = weatherApi.getWeatherForecast(locationId)
-            val location = response.location.toEntity(locationId)
-            val currentEpochTime = location.localtimeEpoch
-            val currentWeather = response.current.toUpdatedEntity(
-                locationId,
-                id = weatherDao.getCurrentWeatherId(locationId)
-            )
-            val weatherForecast = response.forecast.forecastDay
-
-            var index = 0
-            val weatherIds = weatherDao.getWeatherForecastIds(locationId)
-            val updatedForecast = mutableListOf<WeatherForecastEntity>()
-            weatherForecast.forEach {
-                val forecast = it.toUpdatedEntity(
+        return try {
+            weatherLocations.forEach { locationId ->
+                val response = weatherApi.getWeatherForecast(locationId)
+                val location = response.location.toEntity(locationId)
+                val currentEpochTime = location.localtimeEpoch
+                val currentWeather = response.current.toUpdatedEntity(
                     locationId,
-                    id = weatherIds[index],
-                    currentEpochTime = currentEpochTime
+                    id = weatherDao.getCurrentWeatherId(locationId)
                 )
-                updatedForecast.add(forecast)
-                index++
-            }
+                val weatherForecast = response.forecast.forecastDay
 
-            weatherDao.upsertWeather(location, currentWeather, updatedForecast)
+                var index = 0
+                val weatherIds = weatherDao.getWeatherForecastIds(locationId)
+                val updatedForecast = mutableListOf<WeatherForecastEntity>()
+                weatherForecast.forEach {
+                    val forecast = it.toUpdatedEntity(
+                        locationId,
+                        id = weatherIds[index],
+                        currentEpochTime = currentEpochTime
+                    )
+                    updatedForecast.add(forecast)
+                    index++
+                }
+
+                weatherDao.upsertWeather(location, currentWeather, updatedForecast)
+            }
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Resource.Error(e.message)
         }
     }
 

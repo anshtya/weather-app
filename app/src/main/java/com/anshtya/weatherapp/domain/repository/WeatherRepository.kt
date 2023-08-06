@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface WeatherRepository {
     val weather: Flow<List<Weather>>
     val isLocationTableNotEmpty: Flow<Boolean>
-    suspend fun getSearchLocations(searchQuery: String): List<SearchLocation>
+    suspend fun getSearchLocations(searchQuery: String): Resource<List<SearchLocation>>
     suspend fun addWeather(locationUrl: String): Resource<Unit>
-    suspend fun updateWeather()
+    suspend fun updateWeather(): Resource<Unit>
     suspend fun deleteWeather(locationId: String)
 }
