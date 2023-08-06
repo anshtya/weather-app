@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.util.network
+package com.anshtya.weatherapp.domain.connectivity
 
 sealed class NetworkStatus {
     object Available: NetworkStatus()

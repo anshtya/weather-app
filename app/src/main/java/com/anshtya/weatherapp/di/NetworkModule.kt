@@ -3,7 +3,8 @@ package com.anshtya.weatherapp.di
 import android.content.Context
 import com.anshtya.weatherapp.util.Constants
 import com.anshtya.weatherapp.data.remote.WeatherApi
-import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
+import com.anshtya.weatherapp.data.connectivity.NetworkConnectionObserverImpl
+import com.anshtya.weatherapp.domain.connectivity.NetworkConnectionObserver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +37,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCheckConnection(@ApplicationContext context: Context): NetworkConnectionTracker {
-        return NetworkConnectionTracker(context)
+    fun provideNetworkConnectionTracker(@ApplicationContext context: Context): NetworkConnectionObserver {
+        return NetworkConnectionObserverImpl(context)
     }
 }

@@ -2,13 +2,12 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.anshtya.weatherapp.domain.connectivity.NetworkConnectionObserver
+import com.anshtya.weatherapp.domain.connectivity.NetworkStatus
 import com.anshtya.weatherapp.domain.location.LocationTracker
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
-import com.anshtya.weatherapp.domain.useCase.GetSearchResultUseCase
 import com.anshtya.weatherapp.util.Resource
-import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
-import com.anshtya.weatherapp.util.network.NetworkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,10 +24,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddLocationViewModel @Inject constructor(
-    private val getSearchResultUseCase: GetSearchResultUseCase,
     private val weatherRepository: WeatherRepository,
     private val locationTracker: LocationTracker,
-    private val connectionTracker: NetworkConnectionTracker
+    private val connectionObserver: NetworkConnectionObserver
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddLocationUiState())
@@ -47,7 +45,7 @@ class AddLocationViewModel @Inject constructor(
     }
 
     private fun observeNetworkStatus() {
-        connectionTracker.networkStatus
+        connectionObserver.networkStatus
             .map {
                 it == NetworkStatus.Available
             }
@@ -84,7 +82,7 @@ class AddLocationViewModel @Inject constructor(
     private fun executeSearch(text: String) {
         viewModelScope.launch {
             if (isNetworkAvailable) {
-                when (val response = getSearchResultUseCase(text)) {
+                when (val response = weatherRepository.getSearchLocations(text)) {
                     is Resource.Success -> {
                         _uiState.update { it.copy(searchLocations = response.data) }
                     }
@@ -95,7 +93,12 @@ class AddLocationViewModel @Inject constructor(
                 }
                 _uiState.update { it.copy(isSearching = false) }
             } else {
-                _uiState.update { it.copy(errorMessage = "Network unavailable") }
+                _uiState.update {
+                    it.copy(
+                        isSearching = false,
+                        errorMessage = "Network unavailable"
+                    )
+                }
             }
         }
     }
@@ -106,7 +109,7 @@ class AddLocationViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = true) }
                 locationTracker.getCurrentLocation()?.let { location ->
                     val response =
-                        getSearchResultUseCase(
+                        weatherRepository.getSearchLocations(
                             "${location.latitude},${location.longitude}"
                         )
 
@@ -117,10 +120,12 @@ class AddLocationViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            _uiState.update { it.copy(
-                                isLoading = false,
-                                errorMessage = response.message
-                            ) }
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = response.message
+                                )
+                            }
                         }
                     }
 

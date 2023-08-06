@@ -6,8 +6,8 @@ import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
 import com.anshtya.weatherapp.util.Resource
-import com.anshtya.weatherapp.util.network.NetworkConnectionTracker
-import com.anshtya.weatherapp.util.network.NetworkStatus
+import com.anshtya.weatherapp.domain.connectivity.NetworkConnectionObserver
+import com.anshtya.weatherapp.domain.connectivity.NetworkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class WeatherViewModel @Inject constructor(
     private val getWeatherWithPreferencesUseCase: GetWeatherWithPreferencesUseCase,
     private val weatherRepository: WeatherRepository,
-    private val connectionTracker: NetworkConnectionTracker
+    private val connectionObserver: NetworkConnectionObserver
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
@@ -44,7 +44,7 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun observeNetworkStatus() {
-        connectionTracker.networkStatus
+        connectionObserver.networkStatus
             .map {
                 it == NetworkStatus.Available
             }
