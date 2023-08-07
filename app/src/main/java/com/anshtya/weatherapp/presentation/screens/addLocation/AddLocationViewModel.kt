@@ -59,17 +59,17 @@ class AddLocationViewModel @Inject constructor(
     private fun updateSearch() {
         searchText
             .onEach { text ->
-                _uiState.update {
-                    it.copy(
-                        searchText = text,
-                        isSearching = true
-                    )
+                _uiState.update { it.copy(searchText = text) }
+                if (text.isNotEmpty()) {
+                    _uiState.update { it.copy(isSearching = true) }
                 }
             }
             .debounce(500L)
-            .onEach {
-                if (it.isNotEmpty()) {
-                    executeSearch(it)
+            .onEach { text ->
+                if (text.isNotEmpty()) {
+                    executeSearch(text)
+                } else {
+                    _uiState.update { it.copy(isSearching = false) }
                 }
             }
             .launchIn(viewModelScope)
@@ -82,6 +82,7 @@ class AddLocationViewModel @Inject constructor(
     private fun executeSearch(text: String) {
         viewModelScope.launch {
             if (isNetworkAvailable) {
+                _uiState.update { it.copy(isLoading = true) }
                 when (val response = weatherRepository.getSearchLocations(text)) {
                     is Resource.Success -> {
                         _uiState.update { it.copy(searchLocations = response.data) }
@@ -91,10 +92,16 @@ class AddLocationViewModel @Inject constructor(
                         _uiState.update { it.copy(errorMessage = response.message) }
                     }
                 }
-                _uiState.update { it.copy(isSearching = false) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isSearching = false,
+                    )
+                }
             } else {
                 _uiState.update {
                     it.copy(
+                        isLoading = false,
                         isSearching = false,
                         errorMessage = "Network unavailable"
                     )

@@ -97,7 +97,7 @@ fun AddLocationScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                if (uiState.isLoading || uiState.searchText.isNotEmpty() && uiState.isSearching) {
+                if (uiState.isLoading || uiState.isSearching) {
                     val loadContentDescription = stringResource(R.string.loading)
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -131,9 +131,7 @@ fun AddLocationScreen(
                         text = stringResource(id = R.string.enter_location),
                         modifier = Modifier.align(Alignment.Center)
                     )
-                }
-
-                if (!uiState.isSearching) {
+                } else {
                     if (uiState.searchLocations.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.no_results),

@@ -60,11 +60,12 @@ class AddLocationScreenTest {
     }
 
     @Test
-    fun searchResult_whenIsSearchingFalse_SearchTextIsNotEmpty_exists() {
+    fun searchResult_whenIsSearchingFalse_IsLoadingFalse_SearchTextIsNotEmpty_exists() {
         composeTestRule.setContent {
             AddLocationScreen(
                 uiState = AddLocationUiState(
                     isSearching = false,
+                    isLoading = false,
                     searchText = "text",
                     searchLocations = testSearchResults
                 ),
