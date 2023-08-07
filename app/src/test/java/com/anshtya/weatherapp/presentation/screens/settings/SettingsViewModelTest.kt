@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.presentation.screens.settings
 
 import com.anshtya.weatherapp.MainDispatcherRule
-import com.anshtya.weatherapp.data.repository.test.TestUserDataRepository
+import com.anshtya.weatherapp.repository.TestUserDataRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
