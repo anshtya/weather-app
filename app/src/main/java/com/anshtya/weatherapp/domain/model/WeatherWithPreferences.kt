@@ -5,5 +5,5 @@ package com.anshtya.weatherapp.domain.model
 */
 data class WeatherWithPreferences(
     val weather: List<Weather> = emptyList(),
-    val showCelsius: Boolean = false
+    val showCelsius: Boolean = true
 )

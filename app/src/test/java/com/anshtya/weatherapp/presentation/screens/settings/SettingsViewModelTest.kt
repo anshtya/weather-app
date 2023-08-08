@@ -34,7 +34,7 @@ class SettingsViewModelTest {
         }
 
         assertEquals(
-            SettingsUiState(),
+            SettingsUiState(showCelsius = true),
             viewModel.uiState.value
         )
 
