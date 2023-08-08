@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.presentation.screens.addLocation
+package com.anshtya.weatherapp
 
 import com.anshtya.weatherapp.domain.connectivity.NetworkConnectionObserver
 import com.anshtya.weatherapp.domain.connectivity.NetworkStatus
