@@ -11,6 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
     private lateinit var viewModel: SettingsViewModel
@@ -26,7 +27,20 @@ class SettingsViewModelTest {
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testInitialUiState() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {}
+        }
+
+        assertEquals(
+            SettingsUiState(),
+            viewModel.uiState.value
+        )
+
+        collectJob.cancel()
+    }
+
     @Test
     fun whenTemperatureUnitChanges_uiStateGetsUpdated() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) {

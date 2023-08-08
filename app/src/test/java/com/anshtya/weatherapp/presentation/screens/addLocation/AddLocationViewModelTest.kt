@@ -1,5 +1,6 @@
 package com.anshtya.weatherapp.presentation.screens.addLocation
 
+import com.anshtya.weatherapp.FakeNetworkConnectionObserver
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.repository.TestWeatherRepository
 import com.anshtya.weatherapp.domain.model.SearchLocation
@@ -31,6 +32,20 @@ class AddLocationViewModelTest {
             locationTracker = locationTracker,
             connectionObserver = connectivityObserver
         )
+    }
+
+    @Test
+    fun testInitialUiState() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {}
+        }
+
+        assertEquals(
+            AddLocationUiState(),
+            viewModel.uiState.value
+        )
+
+        collectJob.cancel()
     }
 
     @Test
