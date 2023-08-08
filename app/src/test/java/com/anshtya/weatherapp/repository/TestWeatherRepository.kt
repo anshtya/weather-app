@@ -78,14 +78,25 @@ class TestWeatherRepository : WeatherRepository {
         }
     }
 
+    var updateReturnsError = false
     override suspend fun updateWeather(): Resource<Unit> {
-        return Resource.Success(Unit)
+        return if (updateReturnsError) {
+            Resource.Error("")
+        } else {
+            Resource.Success(Unit)
+        }
     }
 
     override suspend fun deleteWeather(locationId: String) {
-        weatherList.remove(
-            weatherList.find { it.weatherLocation.id == locationId }
-        )
+        weatherList.apply {
+            remove(
+                weatherList.find { it.weatherLocation.id == locationId }
+            )
+        }
         _weather.update { weatherList }
+    }
+
+    fun setWeather(list: List<Weather>) {
+        _weather.update { list }
     }
 }
