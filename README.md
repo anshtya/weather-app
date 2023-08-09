@@ -13,8 +13,11 @@ This app is built with Kotlin and Jetpack Compose. It provides weather informati
 - Utilizes your device's location services to automatically detect your location
 - Local caching of weather
 
-## Architecture
+## 🏗️ Architecture
 This app follows [recommended architecture guidelines](https://developer.android.com/topic/architecture) as close as possible.
+
+## 🧪 Testing
+Adding tests gradually to ensure app's correctness and functional behavior.
 
 ## 🖥️Installation
 
