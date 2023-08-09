@@ -3,7 +3,7 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 import com.anshtya.weatherapp.FakeNetworkConnectionObserver
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.domain.model.SearchLocation
-import com.anshtya.weatherapp.repository.TestWeatherRepository
+import com.anshtya.weatherapp.repository.FakeWeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ import org.junit.Test
 class AddLocationViewModelTest {
 
     private lateinit var viewModel: AddLocationViewModel
-    private val weatherRepository = TestWeatherRepository()
+    private val weatherRepository = FakeWeatherRepository()
     private val locationTracker = FakeLocationTracker()
     private val connectivityObserver = FakeNetworkConnectionObserver()
 

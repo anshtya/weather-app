@@ -3,8 +3,8 @@ package com.anshtya.weatherapp.presentation.screens.manageLocation
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
-import com.anshtya.weatherapp.repository.TestUserDataRepository
-import com.anshtya.weatherapp.repository.TestWeatherRepository
+import com.anshtya.weatherapp.repository.FakeUserDataRepository
+import com.anshtya.weatherapp.repository.FakeWeatherRepository
 import com.anshtya.weatherapp.sampleWeatherList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -19,8 +19,8 @@ import org.junit.Test
 class ManageLocationViewModelTest {
 
     private lateinit var viewModel: ManageLocationViewModel
-    private val weatherRepository = TestWeatherRepository()
-    private val userDataRepository = TestUserDataRepository()
+    private val weatherRepository = FakeWeatherRepository()
+    private val userDataRepository = FakeUserDataRepository()
     private val getWeatherWithPreferencesUseCase = GetWeatherWithPreferencesUseCase(
         weatherRepository = weatherRepository,
         userDataRepository = userDataRepository

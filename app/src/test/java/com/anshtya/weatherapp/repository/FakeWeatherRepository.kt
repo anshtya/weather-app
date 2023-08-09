@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-class TestWeatherRepository : WeatherRepository {
+class FakeWeatherRepository : WeatherRepository {
 
     private val weatherList = mutableListOf<Weather>()
 
