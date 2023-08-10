@@ -1,6 +1,7 @@
 package com.anshtya.weatherapp
 
 import com.anshtya.weatherapp.domain.model.CurrentWeather
+import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.model.WeatherLocation
 import com.anshtya.weatherapp.domain.model.WeatherType
@@ -60,4 +61,23 @@ val sampleWeatherList = listOf(
         ),
         weatherForecast = emptyList()
     )
+)
+
+val sampleSavedLocations = sampleWeatherList.map { weather ->
+    toSavedLocation(weather.weatherLocation.id)
+}
+
+fun toSavedLocation(id: String) = SavedLocation(
+    id = id,
+    country = "country",
+    name = "name",
+    region = "region",
+    weatherType = WeatherType.Clear,
+    isDay = 0,
+    tempC = 0.0,
+    tempF = 0.0,
+    maxTempC = 0.0,
+    maxTempF = 0.0,
+    minTempC = 0.0,
+    minTempF = 0.0
 )

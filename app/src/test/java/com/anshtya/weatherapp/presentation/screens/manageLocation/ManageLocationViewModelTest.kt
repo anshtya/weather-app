@@ -2,9 +2,10 @@ package com.anshtya.weatherapp.presentation.screens.manageLocation
 
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
-import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
+import com.anshtya.weatherapp.domain.useCase.GetSavedLocationsWithPreferencesUseCase
 import com.anshtya.weatherapp.repository.FakeUserDataRepository
 import com.anshtya.weatherapp.repository.FakeWeatherRepository
+import com.anshtya.weatherapp.sampleSavedLocations
 import com.anshtya.weatherapp.sampleWeatherList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ class ManageLocationViewModelTest {
     private lateinit var viewModel: ManageLocationViewModel
     private val weatherRepository = FakeWeatherRepository()
     private val userDataRepository = FakeUserDataRepository()
-    private val getWeatherWithPreferencesUseCase = GetWeatherWithPreferencesUseCase(
+    private val getSavedLocationsWithPreferencesUseCase = GetSavedLocationsWithPreferencesUseCase(
         weatherRepository = weatherRepository,
         userDataRepository = userDataRepository
     )
@@ -32,7 +33,7 @@ class ManageLocationViewModelTest {
     @Before
     fun setUp() {
         viewModel = ManageLocationViewModel(
-            getWeatherWithPreferencesUseCase = getWeatherWithPreferencesUseCase,
+            getSavedLocationsWithPreferencesUseCase = getSavedLocationsWithPreferencesUseCase,
             weatherRepository = weatherRepository
         )
     }
@@ -79,8 +80,8 @@ class ManageLocationViewModelTest {
 
         assertEquals(
             ManageLocationUiState(
-                savedLocations = WeatherWithPreferences(
-                    weather = sampleWeatherList
+                locationWithPreferences = WeatherWithPreferences(
+                    savedLocations = sampleSavedLocations
                 )
             ),
             viewModel.uiState.value
@@ -138,10 +139,20 @@ class ManageLocationViewModelTest {
     }
 
     @Test
-    fun onDeleteLocation_GetsDeleted() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
+    fun onDeleteLocation_SelectedLocationsGetsDeleted() = runTest {
+        val collectJob1 = launch(UnconfinedTestDispatcher()) {
             viewModel.selectedLocations.collect {}
         }
+
+        val collectJob2 = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {}
+        }
+
+        weatherRepository.setWeather(sampleWeatherList)
+        assertEquals(
+            sampleSavedLocations,
+            viewModel.uiState.value.locationWithPreferences.savedLocations
+        )
 
         viewModel.selectLocation("id1")
         viewModel.selectLocation("id2")
@@ -152,7 +163,13 @@ class ManageLocationViewModelTest {
             viewModel.selectedLocations.value
         )
 
-        collectJob.cancel()
+        assertEquals(
+            false,
+            viewModel.uiState.value.locationWithPreferences.savedLocations.containsAll(sampleSavedLocations)
+        )
+
+        collectJob1.cancel()
+        collectJob2.cancel()
     }
 
     @Test

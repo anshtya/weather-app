@@ -1,11 +1,13 @@
 package com.anshtya.weatherapp.repository
 
 import com.anshtya.weatherapp.domain.model.CurrentWeather
+import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.model.Weather
 import com.anshtya.weatherapp.domain.model.WeatherLocation
 import com.anshtya.weatherapp.domain.model.WeatherType
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
+import com.anshtya.weatherapp.toSavedLocation
 import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +21,11 @@ class FakeWeatherRepository : WeatherRepository {
 
     private val _weather = MutableStateFlow<List<Weather>>(emptyList())
     override val weather: Flow<List<Weather>> = _weather.asStateFlow()
+    override val savedLocations: Flow<List<SavedLocation>> = weather.map {
+        it.map { weather ->
+            toSavedLocation(weather.weatherLocation.id)
+        }
+    }
 
     override val isLocationTableNotEmpty: Flow<Boolean> = weather
         .map {
