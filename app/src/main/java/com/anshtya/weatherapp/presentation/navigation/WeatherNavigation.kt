@@ -1,5 +1,9 @@
 package com.anshtya.weatherapp.presentation.navigation
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -19,7 +23,19 @@ fun WeatherNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destinations.Weather.routeWithArg
+        startDestination = Destinations.Weather.routeWithArg,
+        enterTransition = {
+            slideInHorizontally(
+                animationSpec = tween(durationMillis = 200,easing = LinearOutSlowInEasing),
+                initialOffsetX = { -it }
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                animationSpec = tween(durationMillis = 200,easing = LinearOutSlowInEasing),
+                targetOffsetX = { it }
+            )
+        }
     ) {
         composable(route = Destinations.AddLocation.route) {
             val context = LocalContext.current as MainActivity
