@@ -29,7 +29,6 @@ import com.anshtya.weatherapp.domain.model.Weather
 fun WeatherDrawer(
     weatherLocations: List<Weather>,
     drawerState: DrawerState,
-    onDrawerClose: () -> Unit,
     onChangeSelectedId: (String) -> Unit,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
@@ -46,25 +45,18 @@ fun WeatherDrawer(
                     modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
                 ) {
                     DrawerHeader(
-                        onSettingsClick = {
-                            onDrawerClose()
-                            onSettingsClick()
-                        }
+                        onSettingsClick = onSettingsClick
                     )
 
                     DrawerWeatherLocations(
                         weatherLocations = weatherLocations,
                         onClick = {
                             onChangeSelectedId(it.weatherLocation.id)
-                            onDrawerClose()
                         }
                     )
 
                     Button(
-                        onClick = {
-                            onDrawerClose()
-                            onManageLocationsClick()
-                        },
+                        onClick = onManageLocationsClick,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .fillMaxWidth()

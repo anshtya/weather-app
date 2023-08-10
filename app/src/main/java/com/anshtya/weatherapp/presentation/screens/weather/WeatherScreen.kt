@@ -37,11 +37,6 @@ fun WeatherScreen(
     WeatherDrawer(
         weatherLocations = weatherLocations,
         drawerState = drawerState,
-        onDrawerClose = {
-            scope.launch {
-                drawerState.close()
-            }
-        },
         onChangeSelectedId = {
             selectedWeatherLocationId = it
         },
