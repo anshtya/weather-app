@@ -29,6 +29,7 @@ import com.anshtya.weatherapp.domain.model.Weather
 fun WeatherDrawer(
     weatherLocations: List<Weather>,
     drawerState: DrawerState,
+    onDrawerClose: () -> Unit,
     onChangeSelectedId: (String) -> Unit,
     onSettingsClick: () -> Unit,
     onManageLocationsClick: () -> Unit,
@@ -52,6 +53,7 @@ fun WeatherDrawer(
                         weatherLocations = weatherLocations,
                         onClick = {
                             onChangeSelectedId(it.weatherLocation.id)
+                            onDrawerClose()
                         }
                     )
 
