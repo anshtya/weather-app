@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
-import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
+import com.anshtya.weatherapp.domain.useCase.GetSavedLocationsWithPreferencesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ManageLocationViewModel @Inject constructor(
-    private val getWeatherWithPreferencesUseCase: GetWeatherWithPreferencesUseCase,
+    private val getSavedLocationsWithPreferencesUseCase: GetSavedLocationsWithPreferencesUseCase,
     private val weatherRepository: WeatherRepository
 ) : ViewModel() {
 
@@ -38,8 +38,8 @@ class ManageLocationViewModel @Inject constructor(
 
     private fun getSavedLocations() {
         viewModelScope.launch {
-            getWeatherWithPreferencesUseCase().collect { savedLocations ->
-                _uiState.update { it.copy(savedLocations = savedLocations) }
+            getSavedLocationsWithPreferencesUseCase().collect { savedLocations ->
+                _uiState.update { it.copy(locationWithPreferences = savedLocations) }
             }
         }
     }
@@ -52,8 +52,7 @@ class ManageLocationViewModel @Inject constructor(
         } else {
             selected.add(id)
         }
-
-        _selectedLocations.value = selected.toSet()
+        _selectedLocations.update { selected.toSet() }
     }
 
     fun deleteLocation() {
@@ -69,7 +68,7 @@ class ManageLocationViewModel @Inject constructor(
                     itemIterator.remove()
                 }
             }
-            _selectedLocations.value = selected
+            _selectedLocations.update { selected }
         }
     }
 
@@ -79,6 +78,6 @@ class ManageLocationViewModel @Inject constructor(
 }
 
 data class ManageLocationUiState(
-    val savedLocations: WeatherWithPreferences = WeatherWithPreferences(),
+    val locationWithPreferences: WeatherWithPreferences = WeatherWithPreferences(),
     val errorMessage: String? = null
 )

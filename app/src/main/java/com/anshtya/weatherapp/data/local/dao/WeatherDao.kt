@@ -4,6 +4,7 @@ import androidx.room.*
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherForecastEntity
 import com.anshtya.weatherapp.data.local.entity.WeatherLocationEntity
+import com.anshtya.weatherapp.data.local.model.SavedLocationModel
 import com.anshtya.weatherapp.data.local.model.WeatherModel
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +23,23 @@ interface WeatherDao {
     @Transaction
     @Query("SELECT * FROM weather_location")
     fun getWeather(): Flow<List<WeatherModel>>
+
+    @Query(
+        value = """
+            WITH current_forecast AS (
+                SELECT * FROM weather_forecast WHERE id IN (
+                    SELECT MIN(id) FROM weather_forecast GROUP BY locationId 
+                )
+            )
+        
+            SELECT weather_location.id, country, name, region,  current_weather.code, current_weather.isDay,
+            current_weather.tempC,  current_weather.tempF,  current_forecast.maxTempC,  current_forecast.maxTempF, 
+            current_forecast. minTempC,  current_forecast.minTempF FROM weather_location
+            JOIN current_weather ON current_weather.locationId = weather_location.id
+            JOIN current_forecast ON current_forecast.locationId = weather_location.id
+    """
+    )
+    fun getSavedLocations(): Flow<List<SavedLocationModel>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM weather_location where id =:locationId)")
     suspend fun checkWeatherExist(locationId: String): Boolean

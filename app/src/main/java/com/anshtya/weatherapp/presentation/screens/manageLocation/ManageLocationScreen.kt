@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anshtya.weatherapp.R
-import com.anshtya.weatherapp.domain.model.Weather
+import com.anshtya.weatherapp.domain.model.SavedLocation
 import com.anshtya.weatherapp.presentation.components.ManageLocationTopAppBar
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import kotlin.math.roundToInt
@@ -73,15 +73,15 @@ fun ManageLocationScreen(
         ) {
             LazyColumn {
                 items(
-                    items = uiState.savedLocations.weather,
-                    key = { weather ->
-                        weather.weatherLocation.id
+                    items = uiState.locationWithPreferences.savedLocations,
+                    key = { savedLocation ->
+                        savedLocation.id
                     }
                 ) { location ->
                     SavedLocationItem(
                         savedLocation = location,
-                        showCelsius = uiState.savedLocations.showCelsius,
-                        isChecked = selectedLocations.contains(location.weatherLocation.id),
+                        showCelsius = uiState.locationWithPreferences.showCelsius,
+                        isChecked = selectedLocations.contains(location.id),
                         onLocationCheck = onLocationCheck,
                         onLongClick = { deleteClicked = true },
                         onLocationClick = onLocationClick,
@@ -100,7 +100,7 @@ fun ManageLocationScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SavedLocationItem(
-    savedLocation: Weather,
+    savedLocation: SavedLocation,
     showCelsius: Boolean,
     isChecked: Boolean,
     isCheckEnabled: Boolean,
@@ -109,9 +109,6 @@ fun SavedLocationItem(
     onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val weatherLocation = savedLocation.weatherLocation
-    val currentWeather = savedLocation.currentWeather
-    val weatherForecast = savedLocation.weatherForecast.first().day
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -122,14 +119,14 @@ fun SavedLocationItem(
             .combinedClickable(
                 onClick = {
                     if (isCheckEnabled) {
-                        onLocationCheck(weatherLocation.id)
+                        onLocationCheck(savedLocation.id)
                     } else {
-                        onLocationClick(weatherLocation.id)
+                        onLocationClick(savedLocation.id)
                     }
                 },
                 onLongClick = {
                     onLongClick()
-                    onLocationCheck(weatherLocation.id)
+                    onLocationCheck(savedLocation.id)
                 }
             )
     ) {
@@ -138,18 +135,18 @@ fun SavedLocationItem(
                 Checkbox(
                     checked = isChecked,
                     onCheckedChange = {
-                        onLocationCheck(weatherLocation.id)
+                        onLocationCheck(savedLocation.id)
                     }
                 )
             }
             Column {
                 Text(
-                    savedLocation.weatherLocation.name,
+                    savedLocation.name,
                     style = Typography.titleMedium,
                     fontSize = 18.sp
                 )
                 Text(
-                    "${weatherLocation.region}, ${weatherLocation.country}",
+                    "${savedLocation.region}, ${savedLocation.country}",
                     style = Typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -157,14 +154,14 @@ fun SavedLocationItem(
         }
         Column {
             Row {
-                if (currentWeather.isDay == 1) {
+                if (savedLocation.isDay == 1) {
                     Image(
-                        painterResource(currentWeather.weatherType.dayIconRes),
+                        painterResource(savedLocation.weatherType.dayIconRes),
                         contentDescription = null
                     )
                 } else {
                     Image(
-                        painterResource(currentWeather.weatherType.nightIconRes),
+                        painterResource(savedLocation.weatherType.nightIconRes),
                         contentDescription = null
                     )
                 }
@@ -172,7 +169,7 @@ fun SavedLocationItem(
                     Text(
                         stringResource(
                             R.string.temperature,
-                            currentWeather.tempC.roundToInt()
+                            savedLocation.tempC.roundToInt()
                         ),
                         style = Typography.titleMedium,
                         fontSize = 18.sp
@@ -181,7 +178,7 @@ fun SavedLocationItem(
                     Text(
                         stringResource(
                             R.string.temperature,
-                            currentWeather.tempF.roundToInt()
+                            savedLocation.tempF.roundToInt()
                         ),
                         style = Typography.titleMedium,
                         fontSize = 18.sp
@@ -192,8 +189,8 @@ fun SavedLocationItem(
                 Text(
                     stringResource(
                         R.string.max_min_temp,
-                        weatherForecast.maxTempC.roundToInt(),
-                        weatherForecast.minTempC.roundToInt()
+                        savedLocation.maxTempC.roundToInt(),
+                        savedLocation.minTempC.roundToInt()
                     ),
                     style = Typography.bodyMedium,
                     color = Color.Gray
@@ -202,8 +199,8 @@ fun SavedLocationItem(
                 Text(
                     stringResource(
                         R.string.max_min_temp,
-                        weatherForecast.maxTempF.roundToInt(),
-                        weatherForecast.minTempF.roundToInt()
+                        savedLocation.maxTempF.roundToInt(),
+                        savedLocation.minTempF.roundToInt()
                     ),
                     style = Typography.bodyMedium,
                     color = Color.Gray
