@@ -56,7 +56,7 @@ class WeatherDaoTest {
 
         assertEquals(
             listOf("id1", "id2"),
-            weatherDao.getLocationIds().first()
+            weatherDao.getLocationIds()
         )
     }
 

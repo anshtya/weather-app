@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface WeatherDao {
 
     @Query("SELECT id FROM weather_location")
-    fun getLocationIds(): Flow<List<String>>
+    suspend fun getLocationIds(): List<String>
 
     @Query("SELECT id FROM current_weather WHERE locationId = :locationId")
     suspend fun getCurrentWeatherId(locationId: String): Long

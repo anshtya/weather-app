@@ -13,7 +13,6 @@ import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -69,7 +68,7 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateWeather(): Resource<Unit> {
-        val weatherLocations = weatherDao.getLocationIds().first()
+        val weatherLocations = weatherDao.getLocationIds()
 
         return try {
             weatherLocations.forEach { locationId ->
