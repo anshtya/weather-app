@@ -2,9 +2,11 @@ package com.anshtya.weatherapp.presentation.screens.addLocation
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +49,7 @@ import com.anshtya.weatherapp.R
 import com.anshtya.weatherapp.presentation.ui.theme.Typography
 import com.anshtya.weatherapp.util.locationRequest
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun AddLocationScreen(
     uiState: AddLocationUiState,
