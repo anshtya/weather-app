@@ -51,17 +51,21 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun addWeather(locationUrl: String): Resource<Unit> {
         return if (!weatherDao.checkWeatherExist(locationUrl)) {
-            val response = weatherApi.getWeatherForecast(locationUrl)
-            val location = response.location.toEntity(locationUrl)
-            val currentEpochTime = location.localtimeEpoch
-            val currentWeather = response.current.toEntity(locationUrl)
-            val weatherForecast = response.forecast.forecastDay
-                .map {
-                    it.toEntity(locationUrl, currentEpochTime)
-                }
+            try {
+                val response = weatherApi.getWeatherForecast(locationUrl)
+                val location = response.location.toEntity(locationUrl)
+                val currentEpochTime = location.localtimeEpoch
+                val currentWeather = response.current.toEntity(locationUrl)
+                val weatherForecast = response.forecast.forecastDay
+                    .map {
+                        it.toEntity(locationUrl, currentEpochTime)
+                    }
 
-            weatherDao.upsertWeather(location, currentWeather, weatherForecast)
-            Resource.Success(Unit)
+                weatherDao.upsertWeather(location, currentWeather, weatherForecast)
+                Resource.Success(Unit)
+            } catch (e: Exception) {
+                Resource.Error(e.message)
+            }
         } else {
             Resource.Error("Location Already Exists")
         }
