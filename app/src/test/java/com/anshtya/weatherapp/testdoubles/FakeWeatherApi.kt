@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp
+package com.anshtya.weatherapp.testdoubles
 
 import com.anshtya.weatherapp.data.remote.WeatherApi
 import com.anshtya.weatherapp.data.remote.model.NetworkAstro

@@ -1,11 +1,11 @@
 package com.anshtya.weatherapp.presentation.screens.weather
 
-import com.anshtya.weatherapp.FakeNetworkConnectionObserver
+import com.anshtya.weatherapp.testdoubles.FakeNetworkConnectionObserver
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.domain.model.WeatherWithPreferences
 import com.anshtya.weatherapp.domain.useCase.GetWeatherWithPreferencesUseCase
-import com.anshtya.weatherapp.repository.FakeUserDataRepository
-import com.anshtya.weatherapp.repository.FakeWeatherRepository
+import com.anshtya.weatherapp.testdoubles.repository.FakeUserDataRepository
+import com.anshtya.weatherapp.testdoubles.repository.FakeWeatherRepository
 import com.anshtya.weatherapp.sampleWeatherList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

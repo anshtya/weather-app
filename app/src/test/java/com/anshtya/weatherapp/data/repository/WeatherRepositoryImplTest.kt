@@ -1,7 +1,7 @@
 package com.anshtya.weatherapp.data.repository
 
-import com.anshtya.weatherapp.FakeWeatherApi
-import com.anshtya.weatherapp.FakeWeatherDao
+import com.anshtya.weatherapp.testdoubles.FakeWeatherApi
+import com.anshtya.weatherapp.testdoubles.FakeWeatherDao
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.data.mapper.toExternalModel
 import com.anshtya.weatherapp.data.remote.model.NetworkSearchLocation

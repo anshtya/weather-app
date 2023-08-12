@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp
+package com.anshtya.weatherapp.testdoubles
 
 import com.anshtya.weatherapp.domain.connectivity.NetworkConnectionObserver
 import com.anshtya.weatherapp.domain.connectivity.NetworkStatus

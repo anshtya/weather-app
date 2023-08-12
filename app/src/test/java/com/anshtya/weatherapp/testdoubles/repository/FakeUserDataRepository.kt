@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.repository
+package com.anshtya.weatherapp.testdoubles.repository
 
 import com.anshtya.weatherapp.domain.model.UserData
 import com.anshtya.weatherapp.domain.repository.UserDataRepository

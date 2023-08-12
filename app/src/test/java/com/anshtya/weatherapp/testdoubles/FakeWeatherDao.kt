@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp
+package com.anshtya.weatherapp.testdoubles
 
 import com.anshtya.weatherapp.data.local.dao.WeatherDao
 import com.anshtya.weatherapp.data.local.entity.CurrentWeatherEntity

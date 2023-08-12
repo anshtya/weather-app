@@ -1,4 +1,4 @@
-package com.anshtya.weatherapp.repository
+package com.anshtya.weatherapp.testdoubles.repository
 
 import com.anshtya.weatherapp.domain.model.CurrentWeather
 import com.anshtya.weatherapp.domain.model.SavedLocation
