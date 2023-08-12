@@ -29,16 +29,10 @@ class SettingsViewModelTest {
 
     @Test
     fun testInitialUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         assertEquals(
             SettingsUiState(showCelsius = true),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
@@ -47,17 +41,17 @@ class SettingsViewModelTest {
             viewModel.uiState.collect {}
         }
 
-        viewModel.useCelsius(useCelsius = false)
-
-        assertEquals(
-            SettingsUiState(showCelsius = false),
-            viewModel.uiState.value
-        )
-
         viewModel.useCelsius(useCelsius = true)
 
         assertEquals(
             SettingsUiState(showCelsius = true),
+            viewModel.uiState.value
+        )
+
+        viewModel.useCelsius(useCelsius = false)
+
+        assertEquals(
+            SettingsUiState(showCelsius = false),
             viewModel.uiState.value
         )
 

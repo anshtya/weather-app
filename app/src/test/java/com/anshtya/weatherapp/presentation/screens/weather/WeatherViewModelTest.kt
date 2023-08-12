@@ -42,24 +42,14 @@ class WeatherViewModelTest {
 
     @Test
     fun testInitialUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         assertEquals(
             WeatherUiState(),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun afterErrorShown_MessageSetToNull() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.errorShown()
 
         assertEquals(
@@ -68,16 +58,10 @@ class WeatherViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun userWeatherUpdatedInUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         weatherRepository.setWeather(sampleWeatherList)
 
         assertEquals(
@@ -88,8 +72,6 @@ class WeatherViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
@@ -108,10 +90,6 @@ class WeatherViewModelTest {
 
     @Test
     fun ifNetworkUnavailable_UpdateFails() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         connectionObserver.unavailableNetwork()
         viewModel.updateWeather()
 
@@ -122,16 +100,10 @@ class WeatherViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifUpdateFails_ErrorMessageUpdated() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         weatherRepository.updateReturnsError = true
         viewModel.updateWeather()
 
@@ -142,16 +114,10 @@ class WeatherViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifUpdateSuccess_SuccessResponseReceived() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         weatherRepository.updateReturnsError = false
         viewModel.updateWeather()
 
@@ -161,7 +127,5 @@ class WeatherViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 }

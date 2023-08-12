@@ -1,8 +1,8 @@
 package com.anshtya.weatherapp.presentation.screens.addLocation
 
-import com.anshtya.weatherapp.testdoubles.FakeNetworkConnectionObserver
 import com.anshtya.weatherapp.MainDispatcherRule
 import com.anshtya.weatherapp.domain.model.SearchLocation
+import com.anshtya.weatherapp.testdoubles.FakeNetworkConnectionObserver
 import com.anshtya.weatherapp.testdoubles.repository.FakeWeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -36,24 +36,14 @@ class AddLocationViewModelTest {
 
     @Test
     fun testInitialUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         assertEquals(
             AddLocationUiState(),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun afterErrorShown_MessageSetToNull() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.errorShown()
 
         assertEquals(
@@ -62,16 +52,10 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun whenSearchTextEntered_SearchIsExecuted() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.onSearchTextChange("name")
 
         // delay to let debounce trigger and search to execute
@@ -92,16 +76,10 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun whenSearchTextIsEmpty_SearchNotExecuted() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.onSearchTextChange("")
 
         // delay to let debounce trigger and search to execute
@@ -114,16 +92,10 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifNetworkUnavailable_SearchFails() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         connectivityObserver.unavailableNetwork()
         viewModel.onSearchTextChange("name")
 
@@ -138,16 +110,10 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifSearchErrorOccurs_ErrorResponseRecieved() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.onSearchTextChange("error")
 
         // delay to let debounce trigger and search to execute
@@ -162,16 +128,10 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifNetworkUnavailable_CurrentLocationNotRetrieved() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         connectivityObserver.unavailableNetwork()
         viewModel.getUserCurrentLocation()
 
@@ -183,8 +143,6 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
@@ -206,10 +164,6 @@ class AddLocationViewModelTest {
 
     @Test
     fun ifLocationExists_ErrorResponseReceived() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.onLocationClick("exist")
 
         assertEquals(
@@ -218,7 +172,5 @@ class AddLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 }

@@ -34,5 +34,5 @@ class SettingsViewModel @Inject constructor(
 }
 
 data class SettingsUiState(
-    val showCelsius: Boolean = false
+    val showCelsius: Boolean = true
 )

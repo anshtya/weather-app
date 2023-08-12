@@ -40,24 +40,14 @@ class ManageLocationViewModelTest {
 
     @Test
     fun testInitialUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         assertEquals(
             ManageLocationUiState(),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun afterErrorShown_MessageSetToNull() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.errorShown()
 
         assertEquals(
@@ -66,16 +56,10 @@ class ManageLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun savedLocationsUpdatedInUiState() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         weatherRepository.setWeather(sampleWeatherList)
 
         assertEquals(
@@ -86,8 +70,6 @@ class ManageLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
@@ -106,10 +88,6 @@ class ManageLocationViewModelTest {
 
     @Test
     fun onSelectLocation_GetsAdded() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.selectedLocations.collect {}
-        }
-
         viewModel.selectLocation("id1")
         viewModel.selectLocation("id2")
 
@@ -117,16 +95,10 @@ class ManageLocationViewModelTest {
             setOf("id1", "id2"),
             viewModel.selectedLocations.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun ifLocationAlreadySelected_GetsRemoved() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.selectedLocations.collect {}
-        }
-
         viewModel.selectLocation("id1")
         viewModel.selectLocation("id1")
 
@@ -134,16 +106,10 @@ class ManageLocationViewModelTest {
             emptySet<String>(),
             viewModel.selectedLocations.value
         )
-
-        collectJob.cancel()
     }
 
     @Test
     fun onDeleteLocation_SelectedLocationsGetsDeleted() = runTest {
-        val collectJob1 = launch(UnconfinedTestDispatcher()) {
-            viewModel.selectedLocations.collect {}
-        }
-
         val collectJob2 = launch(UnconfinedTestDispatcher()) {
             viewModel.uiState.collect {}
         }
@@ -168,16 +134,11 @@ class ManageLocationViewModelTest {
             viewModel.uiState.value.locationWithPreferences.savedLocations.containsAll(sampleSavedLocations)
         )
 
-        collectJob1.cancel()
         collectJob2.cancel()
     }
 
     @Test
     fun ifNoLocationsSelected_DeleteGivesError() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.uiState.collect {}
-        }
-
         viewModel.deleteLocation()
 
         assertEquals(
@@ -186,7 +147,5 @@ class ManageLocationViewModelTest {
             ),
             viewModel.uiState.value
         )
-
-        collectJob.cancel()
     }
 }
