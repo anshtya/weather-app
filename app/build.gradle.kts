@@ -109,6 +109,7 @@ android {
         implementation(libs.retrofit)
         implementation(libs.converter.moshi)
         implementation(libs.okhttp.logging.interceptor)
+        implementation(libs.okhttp.mockwebserver)
 
         //Location Service
         implementation(libs.play.services.location)
