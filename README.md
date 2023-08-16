@@ -17,7 +17,7 @@ This app is built with Kotlin and Jetpack Compose. It provides weather informati
 This app follows [recommended architecture guidelines](https://developer.android.com/topic/architecture) as close as possible.
 
 ## 🧪 Testing
-Adding tests gradually to ensure app's correctness and functional behavior.
+Appropriate tests have been added to ensure app's correctness and functional behavior.
 
 ## 🖥️Installation
 
