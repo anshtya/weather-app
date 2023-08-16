@@ -62,7 +62,7 @@ jobs:
       - name: Run instrumentation tests
         uses: ReactiveCircus/android-emulator-runner@v2.28.0
         with:
-          api-level: 32
+          api-level: 30
           arch: x86_64
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
