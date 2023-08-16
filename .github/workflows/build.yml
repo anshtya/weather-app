@@ -50,7 +50,7 @@ jobs:
           path: app/build/reports/test*UnitTest
 
   androidTest:
-    requires: build-and-test
+    needs: build-and-test
     runs-on: macOS-latest
     steps:
       - name: Checkout
