@@ -96,57 +96,44 @@ fun WeatherDetails(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    if (currentWeather.isDay == 1) {
-                        WeatherImage(
-                            currentWeather.weatherType.dayIconRes,
-                            modifier = Modifier.size(120.dp)
-                        )
-                    } else {
-                        WeatherImage(
-                            currentWeather.weatherType.nightIconRes,
-                            modifier = Modifier.size(120.dp)
-                        )
-                    }
+                    WeatherImage(
+                        image = if (currentWeather.isDay == 1) {
+                            currentWeather.weatherType.dayIconRes
+                        } else {
+                            currentWeather.weatherType.nightIconRes
+                        },
+                        modifier = Modifier.size(120.dp)
+                    )
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (showCelsius) {
-                            Text(
-                                stringResource(
-                                    R.string.temperature,
+                        Text(
+                            stringResource(
+                                R.string.temperature,
+                                if (showCelsius) {
                                     currentWeather.tempC.roundToInt()
-                                )
-                            )
-                        } else {
-                            Text(
-                                stringResource(
-                                    R.string.temperature,
+                                } else {
                                     currentWeather.tempF.roundToInt()
-                                )
+                                }
                             )
-                        }
+                        )
 
                         Text(currentWeather.weatherType.weatherDescription.trim())
                         Text(weatherLocation.name)
 
-                        if (showCelsius) {
-                            Text(
-                                stringResource(
-                                    R.string.feels_like,
+                        Text(
+                            stringResource(
+                                R.string.feels_like,
+                                if (showCelsius) {
                                     currentWeather.feelsLikeC.roundToInt()
-                                )
-                            )
-                        } else {
-                            Text(
-                                stringResource(
-                                    R.string.feels_like,
+                                } else {
                                     currentWeather.feelsLikeF.roundToInt()
-                                )
+                                }
                             )
-                        }
+                        )
                     }
                 }
 
@@ -162,30 +149,20 @@ fun WeatherDetails(
                         animationResource = R.raw.animation_sun,
                         modifier = Modifier.weight(1f)
                     )
-
-                    if (showCelsius) {
-                        WeatherGridItem(
-                            name = stringResource(R.string.wind),
-                            description = stringResource(
-                                R.string.wind_kph,
-                                currentWeather.windKph,
-                                currentWeather.windDir
-                            ),
-                            animationResource = R.raw.animation_wind,
-                            modifier = Modifier.weight(1f)
-                        )
-                    } else {
-                        WeatherGridItem(
-                            name = stringResource(R.string.wind),
+                    WeatherGridItem(
+                        name = stringResource(R.string.wind),
+                        description = if (showCelsius) {
                             stringResource(
-                                R.string.wind_mph,
-                                currentWeather.windMph,
-                                currentWeather.windDir
-                            ),
-                            animationResource = R.raw.animation_wind,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                                R.string.wind_kph, currentWeather.windKph, currentWeather.windDir
+                            )
+                        } else {
+                            stringResource(
+                                R.string.wind_mph, currentWeather.windMph, currentWeather.windDir
+                            )
+                        },
+                        animationResource = R.raw.animation_wind,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
 
                 Row(Modifier.fillMaxWidth()) {
@@ -206,21 +183,17 @@ fun WeatherDetails(
                 Column(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    if (showCelsius) {
-                        Text(
+                    Text(
+                        text = if (showCelsius) {
                             stringResource(
-                                R.string.visibility_km,
-                                currentWeather.visKm.roundToInt()
+                                R.string.visibility_km, currentWeather.visKm.roundToInt()
                             )
-                        )
-                    } else {
-                        Text(
+                        } else {
                             stringResource(
-                                R.string.visibility_mi,
-                                currentWeather.visMiles.roundToInt()
+                                R.string.visibility_mi, currentWeather.visMiles.roundToInt()
                             )
-                        )
-                    }
+                        }
+                    )
                 }
 
                 errorMessage?.let { message ->
@@ -469,27 +442,22 @@ fun HourForecastItem(
     ) {
         Text(time)
 
-        if (isDay == 1) {
-            WeatherImage(
-                weatherType.dayIconRes,
-                modifier = Modifier.size(25.dp)
-            )
-        } else {
-            WeatherImage(
-                weatherType.nightIconRes,
-                modifier = Modifier.size(25.dp)
-            )
-        }
+        WeatherImage(
+            image = if (isDay == 1) {
+                weatherType.dayIconRes
+            } else {
+                weatherType.nightIconRes
+            },
+            modifier = Modifier.size(25.dp)
+        )
 
-        if (showCelsius) {
-            Text(
+        Text(
+            text = if (showCelsius) {
                 stringResource(R.string.temperature, tempC.roundToInt())
-            )
-        } else {
-            Text(
+            } else {
                 stringResource(R.string.temperature, tempF.roundToInt())
-            )
-        }
+            }
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
