@@ -154,58 +154,45 @@ fun SavedLocationItem(
         }
         Column {
             Row {
-                if (savedLocation.isDay == 1) {
-                    Image(
-                        painterResource(savedLocation.weatherType.dayIconRes),
-                        contentDescription = null
-                    )
-                } else {
-                    Image(
-                        painterResource(savedLocation.weatherType.nightIconRes),
-                        contentDescription = null
-                    )
-                }
-                if (showCelsius) {
-                    Text(
-                        stringResource(
-                            R.string.temperature,
-                            savedLocation.tempC.roundToInt()
-                        ),
-                        style = Typography.titleMedium,
-                        fontSize = 18.sp
-                    )
-                } else {
-                    Text(
-                        stringResource(
-                            R.string.temperature,
-                            savedLocation.tempF.roundToInt()
-                        ),
-                        style = Typography.titleMedium,
-                        fontSize = 18.sp
-                    )
-                }
-            }
-            if (showCelsius) {
+                Image(
+                    painter = if (savedLocation.isDay == 1) {
+                        painterResource(savedLocation.weatherType.dayIconRes)
+                    } else {
+                        painterResource(savedLocation.weatherType.nightIconRes)
+                    },
+                    contentDescription = null
+                )
                 Text(
+                    text = if (showCelsius) {
+                        stringResource(
+                            R.string.temperature, savedLocation.tempC.roundToInt()
+                        )
+                    } else {
+                        stringResource(
+                            R.string.temperature, savedLocation.tempF.roundToInt()
+                        )
+                    },
+                    style = Typography.titleMedium,
+                    fontSize = 18.sp
+                )
+            }
+            Text(
+                text = if (showCelsius) {
                     stringResource(
                         R.string.max_min_temp,
                         savedLocation.maxTempC.roundToInt(),
                         savedLocation.minTempC.roundToInt()
-                    ),
-                    style = Typography.bodyMedium,
-                    color = Color.Gray
-                )
-            } else {
-                Text(
+                    )
+                } else {
                     stringResource(
                         R.string.max_min_temp,
                         savedLocation.maxTempF.roundToInt(),
                         savedLocation.minTempF.roundToInt()
-                    ),
-                    style = Typography.bodyMedium,
-                    color = Color.Gray
-                )
-            }
+                    )
+                },
+                style = Typography.bodyMedium,
+                color = Color.Gray
+            )
         }
     }
 }
