@@ -1,7 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
-    kotlin("kapt")
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -59,10 +58,6 @@ android {
                 excludes.add("/META-INF/{AL2.0,LGPL2.1}")
             }
         }
-
-        kapt {
-            correctErrorTypes = true
-        }
     }
 
     dependencies {
@@ -86,7 +81,6 @@ android {
         debugImplementation(libs.androidx.compose.ui.test.manifest)
 
         //Lifecycle
-        implementation(libs.androidx.lifecycle.viewmodel.compose)
         implementation(libs.androidx.lifecycle.runtime.compose)
 
         //DataStore
@@ -103,7 +97,7 @@ android {
 
         //Hilt
         implementation(libs.hilt.android)
-        kapt(libs.hilt.compiler)
+        ksp(libs.hilt.compiler)
 
         //Retrofit
         implementation(libs.retrofit)
