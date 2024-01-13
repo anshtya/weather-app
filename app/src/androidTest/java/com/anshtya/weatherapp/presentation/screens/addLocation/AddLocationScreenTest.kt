@@ -18,9 +18,9 @@ class AddLocationScreenTest {
     fun circularProgressIndicator_whenIsLoadingTrue_exists() {
         composeTestRule.setContent {
             AddLocationScreen(
-                uiState = AddLocationUiState(
-                    isLoading = true
-                ),
+                uiState = AddLocationUiState(isLoading = true),
+                searchQuery = "search",
+                searchLocations = emptyList(),
                 onBackClick = {},
                 onSearchTextChange = {},
                 onLocationClick = {},
@@ -37,38 +37,12 @@ class AddLocationScreenTest {
     }
 
     @Test
-    fun circularProgressIndicator_whenIsSearchingTrue_SearchTextIsNotEmpty_exists() {
+    fun searchResult_IsLoadingFalse_SearchQueryIsNotEmpty_exists() {
         composeTestRule.setContent {
             AddLocationScreen(
-                uiState = AddLocationUiState(
-                    isSearching = true,
-                    searchText = "text"
-                ),
-                onBackClick = {},
-                onSearchTextChange = {},
-                onLocationClick = {},
-                onAddCurrentLocationClick = {},
-                onErrorShown = {}
-            )
-        }
-
-        composeTestRule
-            .onNodeWithContentDescription(
-                composeTestRule.activity.resources.getString(R.string.loading)
-            )
-            .assertExists()
-    }
-
-    @Test
-    fun searchResult_whenIsSearchingFalse_IsLoadingFalse_SearchTextIsNotEmpty_exists() {
-        composeTestRule.setContent {
-            AddLocationScreen(
-                uiState = AddLocationUiState(
-                    isSearching = false,
-                    isLoading = false,
-                    searchText = "text",
-                    searchLocations = testSearchResults
-                ),
+                uiState = AddLocationUiState(isLoading = false),
+                searchQuery = "text",
+                searchLocations = testSearchResults,
                 onBackClick = {},
                 onSearchTextChange = {},
                 onLocationClick = {},

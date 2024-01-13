@@ -14,6 +14,7 @@ import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import java.io.IOException
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
@@ -44,8 +45,8 @@ class WeatherRepositoryImpl @Inject constructor(
                     it.toExternalModel()
                 }
             Resource.Success(result)
-        } catch (e: Exception) {
-            Resource.Error(e.message)
+        } catch (e: IOException) {
+            Resource.Error(null)
         }
     }
 

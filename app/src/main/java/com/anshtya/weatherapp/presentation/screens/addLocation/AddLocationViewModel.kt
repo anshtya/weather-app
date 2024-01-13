@@ -9,19 +9,22 @@ import com.anshtya.weatherapp.domain.model.SearchLocation
 import com.anshtya.weatherapp.domain.repository.WeatherRepository
 import com.anshtya.weatherapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class AddLocationViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
@@ -32,83 +35,45 @@ class AddLocationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddLocationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _isLocationAdded = MutableSharedFlow<Boolean>()
-    val isLocationAdded = _isLocationAdded.asSharedFlow()
-
-    private val searchText = MutableStateFlow("")
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
 
     private var isNetworkAvailable: Boolean = false
 
     init {
         observeNetworkStatus()
-        updateSearch()
     }
 
-    private fun observeNetworkStatus() {
-        connectionObserver.networkStatus
-            .map {
-                it == NetworkStatus.Available
-            }
-            .onEach {
-                isNetworkAvailable = it
-            }
-            .launchIn(viewModelScope)
-    }
-
-    @OptIn(FlowPreview::class)
-    private fun updateSearch() {
-        searchText
-            .onEach { text ->
-                _uiState.update { it.copy(searchText = text) }
-                if (text.isNotEmpty()) {
-                    _uiState.update { it.copy(isSearching = true) }
-                }
-            }
-            .debounce(500L)
-            .onEach { text ->
-                if (text.isNotEmpty()) {
-                    executeSearch(text)
-                } else {
-                    _uiState.update { it.copy(isSearching = false) }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun onSearchTextChange(text: String) {
-        searchText.value = text
-    }
-
-    private fun executeSearch(text: String) {
-        viewModelScope.launch {
-            if (isNetworkAvailable) {
-                _uiState.update { it.copy(isLoading = true) }
-                when (val response = weatherRepository.getSearchLocations(text)) {
-                    is Resource.Success -> {
-                        _uiState.update { it.copy(searchLocations = response.data) }
-                    }
-
-                    is Resource.Error -> {
-                        _uiState.update { it.copy(errorMessage = response.message) }
-                    }
-                }
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isSearching = false,
-                    )
-                }
+    val searchLocations: StateFlow<List<SearchLocation>> = _searchQuery
+        .mapLatest { query ->
+            delay(100L)
+            if (query.isEmpty()) {
+                emptyList()
             } else {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isSearching = false,
-                        errorMessage = "Network unavailable"
-                    )
+                if (isNetworkAvailable) {
+                    _uiState.update { it.copy(isLoading = true) }
+
+                    when (val response = weatherRepository.getSearchLocations(query)) {
+                        is Resource.Success -> response.data
+
+                        is Resource.Error -> {
+                            _uiState.update { it.copy(errorMessage = "An error occurred") }
+                            emptyList()
+                        }
+                    }
+
+                } else {
+                    _uiState.update { it.copy(errorMessage = "Network unavailable") }
+                    emptyList()
                 }
             }
         }
-    }
+        .onEach { _uiState.update { it.copy(isLoading = false) } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = emptyList()
+        )
 
     fun getUserCurrentLocation() {
         viewModelScope.launch {
@@ -137,7 +102,10 @@ class AddLocationViewModel @Inject constructor(
                     }
 
                 } ?: _uiState.update {
-                    it.copy(isLoading = false, errorMessage = "Can't retrieve current location")
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Can't retrieve current location"
+                    )
                 }
             } else {
                 _uiState.update { it.copy(errorMessage = "Network unavailable") }
@@ -150,26 +118,39 @@ class AddLocationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             when (val response = weatherRepository.addWeather(locationUrl)) {
                 is Resource.Success -> {
-                    _isLocationAdded.emit(true)
+                    _uiState.update { it.copy(isLocationAdded = true) }
                 }
 
                 is Resource.Error -> {
-                    _uiState.update { it.copy(errorMessage = response.message) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = response.message
+                        )
+                    }
                 }
             }
-            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun errorShown() {
         _uiState.update { it.copy(errorMessage = null) }
     }
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.update { query }
+    }
+
+    private fun observeNetworkStatus() {
+        connectionObserver.networkStatus
+            .map { it == NetworkStatus.Available }
+            .onEach { isNetworkAvailable = it }
+            .launchIn(viewModelScope)
+    }
 }
 
 data class AddLocationUiState(
-    val searchText: String = "",
-    val isSearching: Boolean = false,
-    val searchLocations: List<SearchLocation> = emptyList(),
     val isLoading: Boolean = false,
+    val isLocationAdded: Boolean? = null,
     val errorMessage: String? = null
 )

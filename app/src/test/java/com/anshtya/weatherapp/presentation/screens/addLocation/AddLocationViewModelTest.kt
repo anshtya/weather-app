@@ -56,78 +56,85 @@ class AddLocationViewModelTest {
 
     @Test
     fun whenSearchTextEntered_SearchIsExecuted() = runTest {
-        viewModel.onSearchTextChange("name")
-
-        // delay to let debounce trigger and search to execute
-        delay(600L)
-
-        assertEquals(
-            AddLocationUiState(
-                searchLocations = listOf(
-                    SearchLocation(
-                        name = "name",
-                        region = "region",
-                        country = "country",
-                        url = "url"
-                    )
-                ),
-                isLoading = false,
-                searchText = "name"
-            ),
-            viewModel.uiState.value
+        val testSearchLocations = listOf(
+            SearchLocation(
+                name = "name",
+                region = "region",
+                country = "country",
+                url = "url"
+            )
         )
-    }
+        var searchLocations = emptyList<SearchLocation>()
+        viewModel.onSearchQueryChange("name")
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.searchLocations.collect {
+               searchLocations = it
+            }
+        }
 
-    @Test
-    fun whenSearchTextIsEmpty_SearchNotExecuted() = runTest {
-        viewModel.onSearchTextChange("")
+        // delay for search to execute
+        delay(200L)
 
-        // delay to let debounce trigger and search to execute
-        delay(600L)
+        assertEquals(searchLocations, testSearchLocations)
 
-        assertEquals(
-            AddLocationUiState(
-                isLoading = false,
-                searchText = ""
-            ),
-            viewModel.uiState.value
-        )
+        collectJob.cancel()
     }
 
     @Test
     fun ifNetworkUnavailable_SearchFails() = runTest {
-        connectivityObserver.unavailableNetwork()
-        viewModel.onSearchTextChange("name")
-
-        // delay to let debounce trigger and search to execute
-        delay(600L)
-
-        assertEquals(
-            AddLocationUiState(
-                errorMessage = "Network unavailable",
-                isLoading = false,
-                searchText = "name"
-            ),
-            viewModel.uiState.value
+        val testUIState = AddLocationUiState(
+            errorMessage = "Network unavailable",
+            isLoading = false
         )
+        var uiState: AddLocationUiState? = null
+
+        connectivityObserver.unavailableNetwork()
+        viewModel.onSearchQueryChange("name")
+
+        val searchLocationsCollectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.searchLocations.collect{}
+        }
+        val uiStateCollectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {
+                uiState = it
+            }
+        }
+
+        // delay for search to execute
+        delay(200L)
+
+        assertEquals(testUIState, uiState)
+
+        uiStateCollectJob.cancel()
+        searchLocationsCollectJob.cancel()
     }
 
     @Test
-    fun ifSearchErrorOccurs_ErrorResponseRecieved() = runTest {
-        viewModel.onSearchTextChange("error")
-
-        // delay to let debounce trigger and search to execute
-        delay(600L)
-
-        assertEquals(
-            AddLocationUiState(
-                errorMessage = "An Error Occurred",
-                isLoading = false,
-                isSearching = false,
-                searchText = "error"
-            ),
-            viewModel.uiState.value
+    fun ifSearchErrorOccurs_ErrorResponseReceived() = runTest {
+        val testUIState = AddLocationUiState(
+            errorMessage = "An error occurred",
+            isLoading = false
         )
+        var uiState: AddLocationUiState? = null
+        viewModel.onSearchQueryChange("error")
+
+        val searchLocationsCollectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.searchLocations.collect{}
+        }
+        val uiStateCollectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.uiState.collect {
+                println("$it")
+                uiState = it
+            }
+        }
+
+        // delay for search to execute
+        delay(200L)
+
+        assertEquals(testUIState, uiState)
+
+        uiStateCollectJob.cancel()
+        searchLocationsCollectJob.cancel()
     }
 
     @Test
@@ -148,10 +155,10 @@ class AddLocationViewModelTest {
     @Test
     fun ifLocationAdded_SuccessResponseReceived() = runTest {
 
-        var isLocationAdded = false
+        var isLocationAdded: Boolean? = false
         val collectJob = launch(UnconfinedTestDispatcher()) {
-            viewModel.isLocationAdded.collect {
-                isLocationAdded = it
+            viewModel.uiState.collect {
+                isLocationAdded = it.isLocationAdded
             }
         }
 
