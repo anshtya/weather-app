@@ -11,6 +11,7 @@ import com.anshtya.weatherapp.data.remote.model.NetworkSearchLocation
 import com.anshtya.weatherapp.data.remote.model.NetworkWeatherLocation
 import com.anshtya.weatherapp.data.remote.model.NetworkWeatherResponse
 import com.anshtya.weatherapp.domain.model.WeatherCondition
+import java.io.IOException
 
 class FakeWeatherApi : WeatherApi {
 
@@ -18,7 +19,7 @@ class FakeWeatherApi : WeatherApi {
 
     override suspend fun searchLocation(q: String, key: String): List<NetworkSearchLocation> {
         return if(shouldThrowError) {
-            throw Exception("error")
+            throw IOException("error")
         } else {
             listOf(
                 NetworkSearchLocation(
@@ -36,7 +37,7 @@ class FakeWeatherApi : WeatherApi {
         q: String, days: Int, key: String
     ): NetworkWeatherResponse {
         return if (shouldThrowError) {
-            throw Exception("error")
+            throw IOException("error")
         } else {
             if (updateWeather) {
                 testWeatherResponse(timeEpoch = 1)

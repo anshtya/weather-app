@@ -77,7 +77,7 @@ class WeatherRepositoryImplTest {
         val result = weatherRepository.getSearchLocations("q")
 
         assertEquals(
-            "error",
+            null,
             (result as Resource.Error).message
         )
     }

@@ -36,14 +36,6 @@ class ManageLocationViewModel @Inject constructor(
         getSavedLocations()
     }
 
-    private fun getSavedLocations() {
-        viewModelScope.launch {
-            getSavedLocationsWithPreferencesUseCase().collect { savedLocations ->
-                _uiState.update { it.copy(locationWithPreferences = savedLocations) }
-            }
-        }
-    }
-
     fun selectLocation(id: String) {
         val selected = _selectedLocations.value.toMutableSet()
 
@@ -74,6 +66,15 @@ class ManageLocationViewModel @Inject constructor(
 
     fun errorShown() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+
+    private fun getSavedLocations() {
+        viewModelScope.launch {
+            getSavedLocationsWithPreferencesUseCase().collect { savedLocations ->
+                _uiState.update { it.copy(locationWithPreferences = savedLocations) }
+            }
+        }
     }
 }
 

@@ -43,25 +43,6 @@ class WeatherViewModel @Inject constructor(
         observeNetworkStatus()
     }
 
-    private fun observeNetworkStatus() {
-        connectionObserver.networkStatus
-            .map {
-                it == NetworkStatus.Available
-            }
-            .onEach {
-                isNetworkAvailable = it
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun getWeather() {
-        viewModelScope.launch {
-            getWeatherWithPreferencesUseCase().collect { userWeather ->
-                _uiState.update { it.copy(userWeather = userWeather) }
-            }
-        }
-    }
-
     fun updateWeather() {
         viewModelScope.launch {
             if (isNetworkAvailable) {
@@ -77,15 +58,31 @@ class WeatherViewModel @Inject constructor(
                         ) }
                     }
                 }
-                _uiState.update { it.copy(isLoading = false) }
             } else {
-                _uiState.update { it.copy(errorMessage = "Update Failed, Network unavailable") }
+                _uiState.update {
+                    it.copy(errorMessage = "Update Failed, Network unavailable")
+                }
             }
         }
     }
 
     fun errorShown() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    private fun observeNetworkStatus() {
+        connectionObserver.networkStatus
+            .map { it == NetworkStatus.Available }
+            .onEach { isNetworkAvailable = it }
+            .launchIn(viewModelScope)
+    }
+
+    private fun getWeather() {
+        viewModelScope.launch {
+            getWeatherWithPreferencesUseCase().collect { userWeather ->
+                _uiState.update { it.copy(userWeather = userWeather) }
+            }
+        }
     }
 }
 

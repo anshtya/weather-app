@@ -14,6 +14,7 @@ import com.anshtya.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
@@ -47,6 +48,8 @@ class WeatherRepositoryImpl @Inject constructor(
             Resource.Success(result)
         } catch (e: IOException) {
             Resource.Error(null)
+        } catch (e: HttpException) {
+            Resource.Error(e.message)
         }
     }
 
@@ -64,7 +67,9 @@ class WeatherRepositoryImpl @Inject constructor(
 
                 weatherDao.upsertWeather(location, currentWeather, weatherForecast)
                 Resource.Success(Unit)
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                Resource.Error(e.message)
+            } catch (e: HttpException) {
                 Resource.Error(e.message)
             }
         } else {
@@ -102,7 +107,9 @@ class WeatherRepositoryImpl @Inject constructor(
                 weatherDao.upsertWeather(location, currentWeather, updatedForecast)
             }
             Resource.Success(Unit)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Resource.Error(e.message)
+        } catch (e: HttpException) {
             Resource.Error(e.message)
         }
     }
